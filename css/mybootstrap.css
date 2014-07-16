@@ -1,0 +1,41 @@
+.alert .pull-right{position:relative; top:-6px; margin-left: 3px}
+
+.nav-stacked li:hover a{
+  color: #fff;
+  background-color: #428bca; 
+}
+
+.nav-stacked li:hover .badge{
+  color: #428bca;
+  background-color: #fff;
+}
+
+.nav-stacked li a{
+  background-color: #C1E4FF;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  color: #0C74C9;
+}
+
+.glyphicon{
+  text-shadow: 1px 1px 1px #aaa;
+}
+
+.row{
+  margin: 0;
+}
+
+.input-group-addon{
+  background-color: #f47b20;
+  color: white;
+  border-color: #ef6d0c
+}
+
+a.list-group-item.active, a.list-group-item.active:hover {
+  background-color: #f0ad4e;
+  border-color: #f0ad4e;
+  color: white;
+}
+
+.panel{margin-bottom: 0 !important}
+

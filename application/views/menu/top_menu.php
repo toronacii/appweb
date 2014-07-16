@@ -1,0 +1,77 @@
+<?php 
+	$user=$this->session->userdata('taxpayer');
+	$info_user=$this->session->userdata('usuario_appweb');
+	$tax_types = $this->session->userdata('tax_types');
+?>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="navbar-header">
+		<?php if ($info_user): ?>
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+			<span class="sr-only">Desplegar navegación</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<?php endif; ?>
+		<a class="navbar-brand" href="<?php echo site_url('oficina_principal') ?>">Oficina Virtual</a>
+	</div>
+	<?php if ($info_user): ?>
+	<div class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav visible-sm visible-xs">
+			<li><a href="<?php echo site_url('oficina_principal/edocuenta'); ?>">Estados de cuenta</a></li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Pago de impuestos <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="<?php echo site_url('planillas_pago/tasas'); ?>">Planilla de tasas</a></li>
+					<li><a href="<?php echo site_url('planillas_pago/impuestos'); ?>">Planilla de impuestos</a></li>
+					<?php if ($this->session->userdata('total_taxes') >= 5): ?>
+					<li><a href="<?php echo site_url('planillas_pago/unificada'); ?>">Planilla unificada</a></li>
+					<?php endif; ?>
+					<li><a href="<?php echo site_url('oficina_principal/generadas'); ?>">Histórico de planillas</a></li>
+				</ul>
+			</li>
+			<?php if ($tax_types[1]->total): # ACTIVIDADES ECONOMICAS ?>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Declaraciones <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="<?php echo site_url('declaraciones/cuentas'); ?>">Nueva</a></li>
+					<li><a href="<?php echo site_url('declaraciones'); ?>">Anteriores</a></li>
+				</ul>
+			</li>
+			<?php endif; ?>
+
+			<?php if ($tax_types[1]->total || $tax_types[2]->total): # ACTIVIDADES ECONOMICAS O INMUEBLES?>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Trámites <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<?php if ($tax_types[1]->total || $tax_types[2]->total): ?>
+					<li><a href="<?php echo site_url('tramites/solvencias'); ?>">Solvencias</a></li>
+					<?php endif; ?>
+				</ul>
+			</li>
+			<?php endif; ?>
+			<?php if ($tax_types[4]->total || $tax_types[5]->total): ?>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Publicidad <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="<?php echo site_url('publicidad/calculadora'); ?>">Calculadora</a></li>
+				</ul>
+			</li>
+			<?php endif; ?>
+			<li><a href="<?php echo site_url('fiscales'); ?>">Reconoce a tus fiscales</a></li>
+			<?php #if  ?>
+		</ul>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong><?php echo $info_user->nombres." ".$info_user->apellidos?></strong> <b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#" data-toggle="modal" data-target="#modalPerfil">Datos de usuario</a></li>
+					<li><a href="<?php echo site_url('principal/salir'); ?>">Cerrar sesión</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+<?php endif; ?>
+</nav>

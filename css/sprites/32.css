@@ -1,0 +1,102 @@
+.document_add, 
+.document_add_blue, 
+.document_delete, 
+.document_delete_blue, 
+.document_edit, 
+.document_edit_blue, 
+.document_pdf, 
+.document_pdf_blue, 
+.document_pdf_blue_not, 
+.document_pdf_not, 
+.document_search, 
+.document_search_blue,
+.cancel,
+.tick{
+    background: url(32.png) no-repeat;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.document_add{
+    background-position: 0 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_delete{
+    background-position: -33px 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_edit{
+    background-position: -67px 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_search{
+    background-position: -101px 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_add_blue{
+    background-position: 0 -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.document_delete_blue{
+    background-position: -33px -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.document_edit_blue{
+    background-position: -67px -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.document_search_blue{
+    background-position: -101px -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.document_pdf{
+    background-position: -135px 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_pdf_blue{
+    background-position: -135px -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.document_pdf_not{
+    background-position: -169px 0;
+    width: 32px;
+    height: 32px;
+}
+
+.document_pdf_blue_not{
+    background-position: -169px -35px ;
+    width: 32px;
+    height: 32px;
+}
+
+.cancel{
+    background-position: -203px 0;
+    width: 32px;
+    height: 32px;
+    }
+    .tick{
+    background-position: -203px -34px;
+    width: 32px;
+    height: 32px;
+}
+

@@ -1,0 +1,38 @@
+#mailbox .nav-tabs .glyphicon:not(.no-margin) { margin-right:10px; }
+#mailbox .tab-pane .list-group-item:first-child {border-top-right-radius: 0px;border-top-left-radius: 0px;}
+#mailbox .tab-pane .list-group-item:last-child {border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
+#mailbox .tab-pane .list-group .checkbox { display: inline-block;margin: 0px; }
+#mailbox .tab-pane .list-group input[type="checkbox"]{ margin-top: 2px; }
+#mailbox .tab-pane .list-group .glyphicon { margin-right:5px; }
+#mailbox .tab-pane .list-group .glyphicon:hover { color:#FFBC00; }
+
+#mailbox div.list-group-item:hover {
+	background-color: transparent; 
+	background-image: url('sprites/grippy_large.png');
+	background-repeat: repeat-y;
+}
+#mailbox div.list-group-item.read {color: #222;background-color: #F3F3F3;}
+#mailbox div.list-group-item .title{font-weight: bold;}
+#mailbox div.list-group-item.read .title{font-weight: normal}
+
+#mailbox hr { margin-top: 5px;margin-bottom: 10px; }
+#mailbox .nav-pills>li>a {padding: 5px 10px;}
+
+#mailbox .ad { padding: 5px;background: #F5F5F5;color: #222;font-size: 80%;border: 1px solid #E5E5E5; }
+#mailbox .ad div.title {color: #15C;text-decoration: none;font-weight: bold;font-size: 110%;}
+#mailbox .ad div.url {color: #093;text-decoration: none;}
+
+#mailbox .tab-content .list-group .title {min-width: 120px;display: inline-block;}
+#mailbox .tab-content .list-group .excerpt, 
+#mailbox .tab-content .list-group .badge {font-size: 11px;}
+
+#mailbox .overflow{white-space: nowrap; overflow: hidden;}
+
+#mailbox div.new:hover{cursor: pointer;}
+
+#mailbox .form-control.inline{
+	display: inline-block;
+	max-width: 200px;
+	width: 20%;
+	min-width: 100px;
+}

@@ -36,6 +36,10 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+define('API_DIR', 'http://localhost/appweb_server/public/api/v1');
+define('PAGO_ONLINE', 'http://localhost/planilla.php');
+define('REDIRECT_PAGO_ONLINE', 'https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control=');
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
