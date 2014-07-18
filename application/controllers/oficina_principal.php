@@ -23,25 +23,6 @@ class Oficina_principal extends MY_Controller {
 
     public function index() {
 
-        #d($this->taxpayer);
-
-        $header['sidebar'] = 'menu/oficina_menu';
-        $header['arrayJs'] = array('bootstrap-dialog/bootstrap-dialog.min.js', 'funciones_oficina.js');
-        $header['arrayCss'] = array('oficina.css','bootstrap-dialog/bootstrap-dialog-custom.min.css');
-        $header['show_breadcrumbs'] = FALSE;
-        $this->load->view('header', $header);
-
-        $data['news'] = $this->news->get_news($this->taxpayer->id_taxpayer);
-
-        $this->load->view('principal/index', $data);
-
-        #d($data, $this->news);
-
-        $this->load->view('footer');
-    }
-
-    public function news_angular()
-    {
         $header['sidebar'] = 'menu/oficina_menu';
         $header['arrayJs'] = array('bootstrap-dialog/bootstrap-dialog.min.js','angular/angular.min.js','angular/simplePagination.js','angular/principal.js');
         $header['arrayCss'] = array('oficina.css','bootstrap-dialog/bootstrap-dialog-custom.min.css');
@@ -58,7 +39,7 @@ class Oficina_principal extends MY_Controller {
     public function ajax_news()
     {
         extract($_POST);
-        var_dump($_POST);
+        #var_dump($_POST);
         #d($_POST, $_GET);
         $id_taxpayer = $this->taxpayer->id_taxpayer;
         switch ($type)
@@ -80,6 +61,8 @@ class Oficina_principal extends MY_Controller {
 
     public function api_get_news()
     {
+        sleep(2);
+
         $news = $this->news->get_news($this->taxpayer->id_taxpayer);
 
         foreach ($news as $i => $new) {

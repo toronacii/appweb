@@ -1,3 +1,5 @@
+/*
+
 $(function(){
 
 	var change_mark = function(news, id_taxpayer, type)
@@ -172,3 +174,5 @@ $(function(){
 	});
 
 });
+
+*/
