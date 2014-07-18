@@ -40,18 +40,34 @@ class Oficina_principal extends MY_Controller {
         $this->load->view('footer');
     }
 
+    public function news_angular()
+    {
+        $header['sidebar'] = 'menu/oficina_menu';
+        $header['arrayJs'] = array('bootstrap-dialog/bootstrap-dialog.min.js','angular/angular.min.js','angular/simplePagination.js','angular/principal.js');
+        $header['arrayCss'] = array('oficina.css','bootstrap-dialog/bootstrap-dialog-custom.min.css');
+        $header['show_breadcrumbs'] = FALSE;
+        $this->load->view('header', $header);
+
+        $this->load->view('principal/news_angular');
+
+        #d($data, $this->news);
+
+        $this->load->view('footer');
+    }
+
     public function ajax_news()
     {
         extract($_POST);
         var_dump($_POST);
         #d($_POST, $_GET);
+        $id_taxpayer = $this->taxpayer->id_taxpayer;
         switch ($type)
         {
-            case 'mark':
+            case 'read':
                 $r = $this->news->mark($news, $id_taxpayer);
             break;
 
-            case 'unmark':
+            case 'unread':
                 $r = $this->news->unmark($news, $id_taxpayer);
             break;
 
@@ -59,6 +75,19 @@ class Oficina_principal extends MY_Controller {
                 $r = $this->news->delete($news, $id_taxpayer);
             break;
         }
+        var_dump($type, $r, $this->news);
+    }
+
+    public function api_get_news()
+    {
+        $news = $this->news->get_news($this->taxpayer->id_taxpayer);
+
+        foreach ($news as $i => $new) {
+            $news[$i]->message_strip_tags = strip_tags($new->message);
+            $news[$i]->created = ($new->created == date('Y-m-d')) ? "HOY" : date('d/m/Y', strtotime($new->created));
+        }
+        
+        echo json_encode($news);
     }
 
     function edocuenta() {
