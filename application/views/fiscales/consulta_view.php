@@ -1,49 +1,3 @@
- 
-<!--
-
- <?php if ($this->session->userdata('usuario_appweb')) 
-echo "<h2>Consulta de Fiscales </h2>"?>
-
-<div id="left" class="mitad">
- 	<div id="description" ></div>
-</div>
-
-
-<?=form_open(site_url("consulta_fiscales"),array('id'=>'consulta_fiscales', 'method' => 'post'));?>
-<?php echo validation_errors() ?>
-<div id="right" class="mitad">
-    <table id="tableCalc">
-        <caption>Consulta Fiscales</caption>
-        <thead>
-        <tr>
-            <th>Cedula</th>
-            <th><input type="text" name="cedula" value="<?php echo set_value('cedula') ?>"></th>
-            <th><input type="submit" id="buttonConsultar" value="Consultar" /> </th>
-         </tr>
-         <?php if (isset($fiscal) && $fiscal ): ?>
-           <tr>
-           		<td> Nombre: <?php echo $fiscal->nombre?><br/>
-					<?php echo $fiscal->tipo?> Division <?php echo $fiscal->grupo?>
-           		</td>
-           		<td colspan="2"> <img src='<?php echo base_url("fiscales/".set_value('cedula')) ?>.jpg' width="120" height="120" /></td>
-           		
-           </tr>
-        <?php endif; ?>
-        </thead>
-        <tbody>
-              </tbody>
-        <tfoot style="display:none">
-            <tr>
-            </tr>             
-         
-        </tfoot>
-    </table>
-</div>
-<?=form_close() ?>
-
-
--->
-
 <?php echo form_open(site_url("fiscales"),array('id'=>'consulta_fiscales', 'method' => 'post'));?>
 
 <div class="panel panel-primary">
@@ -65,7 +19,7 @@ echo "<h2>Consulta de Fiscales </h2>"?>
                 <br>
                 <?php echo validation_errors() ?>
                 <?php if (isset($fiscal) && $fiscal): ?>
-                    
+
                     <div class="alert alert-success"><?php echo $fiscal->nombre?>, <?php echo $fiscal->tipo ?> Division <?php echo $fiscal->grupo ?></div>
 
                 <?php endif?>

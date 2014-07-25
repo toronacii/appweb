@@ -90,8 +90,11 @@
 
 						</div>
 
-						<div class="list-group-item text-center" ng-class="{'hide' : news.length}">
+						<div class="list-group-item text-center" ng-class="{'hide' : news.length || loading}">
 							No posee mensajes en su buzón
+						</div>
+						<div class="list-group-item text-center" ng-class="{'hide' : !loading}">
+							Cargando
 						</div>
 					</div>
 				</div>

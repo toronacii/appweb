@@ -57,6 +57,10 @@ class Principal extends MY_Controller {
         $this->init_fee_types();
         $this->session->set_userdata('usuario_appweb', $valid_user);
         $this->session->unset_userdata('eventual');
+
+        #guardar datos de la sesion en base de datos
+
+        $this->principal->save_user_login($valid_user->id, getClientIP());
     }
 
     private function init_tax_types($taxes){

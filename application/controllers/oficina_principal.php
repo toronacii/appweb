@@ -39,7 +39,7 @@ class Oficina_principal extends MY_Controller {
     public function ajax_news()
     {
         extract($_POST);
-        #var_dump($_POST);
+        var_dump($_POST);
         #d($_POST, $_GET);
         $id_taxpayer = $this->taxpayer->id_taxpayer;
         switch ($type)
@@ -61,9 +61,9 @@ class Oficina_principal extends MY_Controller {
 
     public function api_get_news()
     {
-        sleep(2);
-
         $news = $this->news->get_news($this->taxpayer->id_taxpayer);
+
+        #var_dump($this->news,$news);
 
         foreach ($news as $i => $new) {
             $news[$i]->message_strip_tags = strip_tags($new->message);
@@ -73,7 +73,7 @@ class Oficina_principal extends MY_Controller {
         echo json_encode($news);
     }
 
-    function edocuenta() {
+    public function edocuenta() {
         $header['sidebar'] = 'menu/oficina_menu';
         $this->load->view('header', $header);
         $data['cuentas'] = $this->session->userdata('taxes');

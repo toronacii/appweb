@@ -90,6 +90,28 @@ if(!function_exists('create_breadcrumb')){
 	        	$r[$i] = $result;
         return $r;
     }
+
+    function getClientIP() {
+
+    	if (isset($_SERVER)) {
+
+    		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+    			return $_SERVER["HTTP_X_FORWARDED_FOR"];
+
+    		if (isset($_SERVER["HTTP_CLIENT_IP"]))
+    			return $_SERVER["HTTP_CLIENT_IP"];
+
+    		return $_SERVER["REMOTE_ADDR"];
+    	}
+
+    	if ($ip = getenv('HTTP_X_FORWARDED_FOR'))
+    		return $ip;
+
+    	if ($ip = getenv('HTTP_CLIENT_IP'))
+    		return $ip;
+
+    	return getenv('REMOTE_ADDR');
+    }
 }
 
 
