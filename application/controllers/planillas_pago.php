@@ -5,7 +5,7 @@ if (!defined('BASEPATH'))
 
 class Planillas_pago extends MY_Controller {
 
-	public $taxes; 
+	public $taxes;
 
 	public function __construct()
 	{
@@ -30,9 +30,7 @@ class Planillas_pago extends MY_Controller {
 		$data['tipos_tasas'] = $this->session->userdata('tipos_tasas');
 		$data['taxpayer'] = $this->session->userdata('taxpayer');
 
-		$this->session->unset_userdata('imprime_tasa');
-
-		#var_dump($data);
+		#d($_SESSION);
 
  		$this->load->view('planillas_pago/tasas_view', $data);
 
@@ -42,18 +40,20 @@ class Planillas_pago extends MY_Controller {
 
 	public function tasas_confirmation()
 	{
+		#d($_SESSION);
 		#var_dump($_SESSION);exit;
 		#var_dump($_POST, $this->session->userdata('tipos_tasas'));
 		extract($_POST);
 
 		$page = ($this->session->userdata('eventual')) ? 'eventual/express' : 'planillas_pago/tasas';
 
-		if (! ($id_tax && $id_tasa) || 
-			! preg_match('/^[\d]+$/', $id_tax) || 
-			! preg_match('/^[\d]+$/', $id_tasa) || 
+		if (! ($id_tax && $id_tasa) ||
+			! preg_match('/^[\d]+$/', $id_tax) ||
+			! preg_match('/^[\d]+$/', $id_tasa) ||
 			! ($tipos_tasas = $this->session->userdata('tipos_tasas'))) {
-			
+
 			#CONTRIBUYENTE EVENTUAL
+			$this->session->unset_userdata('imprime_tasa');
 			redirect($page);
 		}
 
@@ -63,11 +63,11 @@ class Planillas_pago extends MY_Controller {
 		$data['tasa'] = $tipos_tasas[$id_tasa];
 
 		#var_dump($data, $this->taxes);
-		
+
 
 		$this->session->set_userdata('imprime_tasa', array('tax' => $data['tax'], 'tasa' => $data['tasa']));
 
-		#var_dump($data);
+		#d($_SESSION);
 
 		$this->load->view('planillas_pago/tasas_confirmation_view', $data);
 
@@ -77,18 +77,20 @@ class Planillas_pago extends MY_Controller {
 
 	public function generar_planilla_tasa(){
 
-		#var_dump($this->session->userdata('imprime_tasa')); exit;
+		#dd($_SESSION, $this->session->userdata('imprime_tasa'));
 
 		if (! $info_tasa = $this->session->userdata('imprime_tasa')){
 			redirect(site_url('planillas_pago/tasas'));
 		}
+
+		$this->session->unset_userdata('imprime_tasa');
 
 		#var_dump($this->planillas->generar_planilla_tasa($info_tasa['tax']->id_tax, $info_tasa['tasa']->id), $this->planillas); exit;
 
 		if ($id_invoice = $this->planillas->generar_planilla_tasa($info_tasa['tax']->id_tax, $info_tasa['tasa']->id)){
 
 			$this->session->set_userdata('id_invoice', $id_invoice);
-			
+
 			if ($info_tasa['tax']->id_tax == 'NULL' || @$_POST['action'] == 'imprimir'){
 
 				redirect(site_url('generar_planilla/imprime_planilla'));
@@ -103,10 +105,10 @@ class Planillas_pago extends MY_Controller {
 
 		}else{
 
-			#var_dump($id_invoice, $this->planillas); exit;
+			#dd($id_invoice, $this->planillas, $info_tasa);
 
 			$this->messages->add_message("Ha ocurrido un error al insertar la planilla");
-			redirect(site_url($page));
+			#redirect(site_url($page));
 		}
 
 	}
@@ -122,7 +124,7 @@ class Planillas_pago extends MY_Controller {
 		#var_dump($this->planillas);
 
 		$this->session->set_userdata('cargos_planilla', $data['cargos']);
-		
+
 		$this->session->unset_userdata('imprime_tasa');
 
 		#var_dump($data['cargos']);
@@ -141,11 +143,11 @@ class Planillas_pago extends MY_Controller {
 		#CONTRIBUYENTE EVENTUAL
 		$page = ($this->session->userdata('eventual')) ? 'eventual/express' : 'planillas_pago/impuestos';
 
-		if (! ($id_tax) 
+		if (! ($id_tax)
 			|| ! preg_match('/^[\d]+$/', $id_tax)
 			|| ! $cargos_planilla
 			|| ! isset($cargos_planilla[$id_tax])) {
-			
+
 			redirect($page);
 		}
 
@@ -167,7 +169,7 @@ class Planillas_pago extends MY_Controller {
 	}
 
 	public function generar_planilla_impuesto(){
-		
+
 		#CONTRIBUYENTE EVENTUAL
 		$page = ($this->session->userdata('eventual')) ? 'eventual/express' : 'planillas_pago/impuestos';
 
@@ -182,7 +184,7 @@ class Planillas_pago extends MY_Controller {
 		if ($id_invoice = $this->planillas->generar_planilla_impuesto($_POST['id_tax'], $ids_transaction)){
 
 			$this->session->set_userdata('id_invoice', $id_invoice);
-			
+
 			if ($_POST['action'] == 'imprimir'){
 
 				redirect(site_url('generar_planilla/imprime_planilla'));
@@ -232,7 +234,7 @@ class Planillas_pago extends MY_Controller {
         foreach ($_POST['cuentas'] as $id_tax => $type) {
             $id_taxes .= '{' . "$id_tax," . $type . '},';
         }
-        
+
         $id_taxes = substr($id_taxes, 0, -1) . '}';
         $id_taxpayer = $this->session->userdata('taxpayer')->id_taxpayer;
 
@@ -241,7 +243,7 @@ class Planillas_pago extends MY_Controller {
 		if ($id_invoice = $this->planillas->generar_planilla_unificada($id_taxpayer, $id_taxes)){
 
 			$this->session->set_userdata('id_invoice', $id_invoice);
-			
+
 			if ($_POST['action'] == 'imprimir')
 			{
 				redirect(site_url('generar_planilla/unificada'));
@@ -295,8 +297,8 @@ class Planillas_pago extends MY_Controller {
 
 	public function delete($id_invoice)
 	{
-		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice)) 
-		{	
+		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice))
+		{
 			redirect(site_url('planillas_pago/generadas'));
 		}
 
@@ -315,8 +317,8 @@ class Planillas_pago extends MY_Controller {
 
 	public function pago_online($id_invoice)
 	{
-		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice)) 
-		{	
+		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice))
+		{
 			redirect(site_url());
 		}
 
@@ -334,7 +336,7 @@ class Planillas_pago extends MY_Controller {
 			$post["formAppweb.$prop"] = $value;
 		}
 
-		$control_number = $this->curl->simple_post(PAGO_ONLINE, $post); 
+		$control_number = $this->curl->simple_post(PAGO_ONLINE, $post);
 
 		#d($post, $this->planillas);
 		echo $control_number;
