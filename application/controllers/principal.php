@@ -22,7 +22,7 @@ class Principal extends MY_Controller {
         $this->form_validation->set_rules('user', 'Usuario', 'required|trim|valid_email');
         $this->form_validation->set_rules('pass', 'Contrase&ntilde;a', 'required||trim');
         if ($this->form_validation->run() == FALSE) {
-            session_destroy();
+            $this->session->unset_userdata('usuario_appweb');
 
             $this->load->view('principal/principal_view');
         } else {
