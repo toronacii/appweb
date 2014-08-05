@@ -26,7 +26,7 @@
                         </select>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" name="rif" class="form-control" placeholder="C.I. / RIF" value="<?php echo set_value('rif') ?>" required>
+                        <input type="number" name="rif" class="form-control" placeholder="C.I. / RIF" value="<?php echo set_value('rif') ?>" required>
                     </div>
                 </div>
             </li>
