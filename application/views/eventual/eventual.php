@@ -1,11 +1,11 @@
 <div class="col-md-12">
     <div class="well well-sm">
         <h4>Contribuyente eventual</h4>
-        Estimado contribuyente, desde este módulo podrás generar planillas de tasas sin necesidad de tener una cuenta de impuestos 
+        Estimado contribuyente, desde este módulo podrás generar planillas de tasas sin necesidad de tener una cuenta de impuestos
     </div>
     <?php echo validation_errors(); ?>
 </div>
-<?php echo form_open(site_url('eventual'), array("role"=>"form"));?>
+<?php echo form_open(site_url('eventual'), array("role"=>"form", "target" => "_blank"));?>
     <div class="col-md-6">
         <ul class="list-group">
             <li class="list-group-item">
@@ -46,7 +46,7 @@
                 </div>
             </li>
         </ul>
-        
+
     </div>
 
     <div class="col-md-6">
@@ -70,7 +70,7 @@
                                   </label>
                                 </div>
                             </li>
-                            
+
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
     }
 
     #tasas_accordion .panel-title {font-size: 14px}
-    #tasas_accordion .panel-heading, 
+    #tasas_accordion .panel-heading,
     #tasas_accordion .panel-body {padding: 0}
 
     #tasas_accordion .panel-body {}
@@ -107,8 +107,8 @@ $(function(){
         //console.log(this)
     })
 })
-    
-    
+
+
 </script>
 
 
