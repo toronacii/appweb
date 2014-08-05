@@ -9,7 +9,7 @@ class Principal extends MY_Controller {
         parent::__construct();
         if ($this->uri->segment(2) !== 'salir' && $this->session->userdata('usuario_appweb'))
             redirect(site_url('oficina_principal'));
-        foreach ($_SESSION as $i => $v) unset($_SESSION[$i]);
+        $this->session->unset_userdata('usuario_appweb');
         #var_dump($_SESSION);
     }
 
@@ -64,9 +64,9 @@ class Principal extends MY_Controller {
     }
 
     private function init_tax_types($taxes){
-        
+
         $tax_types = array(
-            
+
             1 => (object)array(
                 'name' => 'Actividades económicas',
                 'total' => 0
@@ -111,7 +111,7 @@ class Principal extends MY_Controller {
         }
 
         #var_dump($this->cuentas);
-            
+
         $this->session->set_userdata('total_taxes',$total_taxes);
         $this->session->set_userdata('tax_types', $tax_types);
 
@@ -181,7 +181,7 @@ class Principal extends MY_Controller {
     }
 
     public function probar_email() {
-        
+
         $this->load->model('api_model', 'gestion_usuario');
 
         $datos = 'xxxxxxxxxxxxxxxxxxx';

@@ -44,6 +44,7 @@ class Gestion_usuario extends MY_Controller {
         }else if ($this->paso_actual != 5) {
             redirect('gestion_usuario/registro/5');
         } else if ($this->session->userdata('registro')) {
+
             $this->session->unset_userdata('datos_principales');
             $this->session->unset_userdata('cuentas');
             $this->session->unset_userdata('cuentas_reportadas');
@@ -53,6 +54,7 @@ class Gestion_usuario extends MY_Controller {
             $this->sess_destroy = TRUE;
             $this->session->unset_userdata('registro');
             redirect('gestion_usuario/registro');
+
         }
         //$this->session->unset_userdata('respuestas_correctas');
         $this->form_validation->set_error_delimiters('<div class="alert alert-danger"><small>', '</small><a href="#" class="close" aria-hidden="true" data-dismiss="alert">&times;</a></div>');
@@ -115,7 +117,7 @@ class Gestion_usuario extends MY_Controller {
                     if ($planillas->posee_planillas == 1)
                         $this->session->set_userdata('ultima_planilla_pagada', $planillas);
                 }
-                //verificacion de planillas de declaracion 	
+                //verificacion de planillas de declaracion
                 if (!$this->session->userdata('ultimo_numero_declaracion')) {
                     #$decla = $this->querys->ultimo_numero_declaracion($cuentas['id_taxpayer']);
                     /* echo"<pre>";
@@ -140,7 +142,7 @@ class Gestion_usuario extends MY_Controller {
                     $cuentas_reportadas_bruto = unserialize($this->session->userdata('cuentas_reportadas'));
                     $datos_insertar['datos_basicos'] = unserialize($this->session->userdata('datos_principales'));
                     $datos_insertar['id_taxpayer'] = $cuentas['id_taxpayer'];
-                    $cuentas_reportadas = NULL;
+                    $cuentas_reportadas = "";
                     foreach ($cuentas_reportadas_bruto as $indObj => $objCuentas) {
                         foreach ($objCuentas as $cuenta) {
                             if (!empty($cuenta))
@@ -150,7 +152,7 @@ class Gestion_usuario extends MY_Controller {
                     $datos_insertar['cuentas_reportadas'] = $cuentas_reportadas;
 
                     $resp['id_user'] = $this->gestion_usuario->registrar_contribuyente($datos_insertar);
-                    #var_dump($id_user, $this->gestion_usuario);
+                    #dd($resp, $this->gestion_usuario);
                     #echo "<pre>";print_r($resp);echo "</pre>";//exit;
 
                     #var_dump($datos_insertar); exit;
@@ -331,7 +333,7 @@ class Gestion_usuario extends MY_Controller {
             $this->form_validation->set_rules('local', '<strong>teléfono local</strong>', 'trim|required');
             $this->form_validation->set_rules('celular', '<strong>teléfono celular</strong>', 'trim|required');
             $this->form_validation->set_rules('my_password', '<strong>contraseña actual</strong>', 'trim');
-            
+
             #$_POST['my_password'] = trim($_POST['my_password']);
 
             if (! empty($_POST['my_password']))
@@ -349,7 +351,7 @@ class Gestion_usuario extends MY_Controller {
                 {
                     $update['password'] = sha1($update['password']);
                 }
-                
+
                 $resp = $this->gestion_usuario->update_user($data['user']->id, $update);
 
                 if ($resp)
@@ -375,7 +377,7 @@ class Gestion_usuario extends MY_Controller {
                             $this->messages->add_message("Error al enviar correo electrónico", "danger");
                         }
                     }
-                    
+
                     #d($this->gestion_usuario);
                     redirect(site_url());
                 }
@@ -393,7 +395,7 @@ class Gestion_usuario extends MY_Controller {
 
         $this->load->view('gestion_usuario/modificar_perfil', $data);
 
-        $this->load->view('footer'); 
+        $this->load->view('footer');
     }
 
     function valid_my_password($str)
@@ -407,7 +409,7 @@ class Gestion_usuario extends MY_Controller {
     }
 
     public function probar_email() {
-        
+
         $datos = '127/' . md5('127toronacii@gmail.com');
 
         $data = array(
@@ -422,6 +424,12 @@ class Gestion_usuario extends MY_Controller {
         var_dump($this->gestion_usuario->send_email_WS($data));
 
 
+    }
+
+    function http()
+    {
+        $param = unserialize('a:3:{s:13:"datos_basicos";a:13:{s:12:"tipo_persona";s:7:"natural";s:6:"cedula";s:10:"19.387.920";s:3:"rif";s:0:"";s:12:"razon_social";s:0:"";s:7:"nombres";s:4:"JOSE";s:9:"apellidos";s:4:"TORO";s:9:"tlf_local";s:14:"0212-163-16-51";s:11:"tlf_celular";s:14:"0412-656-45-64";s:5:"email";s:22:"toronacii.ml@gmail.com";s:10:"conf_email";s:22:"toronacii.ml@gmail.com";s:4:"pass";s:6:"abc123";s:9:"conf_pass";s:6:"abc123";s:8:"contrato";s:1:"1";}s:11:"id_taxpayer";i:127442;s:18:"cuentas_reportadas";s:0:"";}');
+        d(http_build_query($param, NULL, '&'));
     }
 
 }
