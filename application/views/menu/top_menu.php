@@ -1,9 +1,14 @@
-<?php 
+<?php
 	$user=$this->session->userdata('taxpayer');
 	$info_user=$this->session->userdata('usuario_appweb');
 	$tax_types = $this->session->userdata('tax_types');
 ?>
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="col-md-2 col-xs-2" style="padding-left:0; padding-right:0; background-color:white">
+	<div class="navbar-header"><img style="border-color: #e76a0b; width:100%; height:51px"src="<?php echo base_url('css/img/alcaldia-rentas.png') ?>"></div>
+	<!--<div class="navbar-header pull-right"><img style="border-color: #e76a0b;" src="<?php echo base_url('css/img/rentas.png') ?>"></div>-->
+</div>
+
 	<div class="navbar-header">
 		<?php if ($info_user): ?>
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -46,6 +51,10 @@
 				<ul class="dropdown-menu">
 					<?php if ($tax_types[1]->total || $tax_types[2]->total): ?>
 					<li><a href="<?php echo site_url('tramites/solvencias'); ?>">Solvencias</a></li>
+					<?php if ($tax_types[2]->total) : ?>
+                    <li><a href="<?php echo site_url('tramites/cedula_catastral'); ?>">Cédula catastral</a></li>
+                    <?php endif; ?>
+                    <li><a href="<?php echo site_url('tramites/historico'); ?>">Histórico</a></li>
 					<?php endif; ?>
 				</ul>
 			</li>

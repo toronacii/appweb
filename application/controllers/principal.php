@@ -49,14 +49,16 @@ class Principal extends MY_Controller {
 
     private function init_session_vars($valid_user)
     {
-        $this->load->model('api_model', 'principal');
         $this->session->set_userdata('taxpayer', $this->principal->taxpayer($valid_user->id_taxpayer));
         $taxes = objectToArray($this->principal->taxes($valid_user->id_taxpayer));
         $this->session->set_userdata('taxes', $taxes);
+
         $this->init_tax_types($taxes);
         $this->init_fee_types();
         $this->session->set_userdata('usuario_appweb', $valid_user);
         $this->session->unset_userdata('eventual');
+
+        #dd($this->session->userdata('taxes'));
 
         #guardar datos de la sesion en base de datos
 

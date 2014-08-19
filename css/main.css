@@ -54,7 +54,7 @@ textarea.form-control{
 
 #wrapper{
   min-height: 100%;
-  margin-bottom: -220px; 
+  margin-bottom: -220px;
 }
 
 #wrapper:after{
@@ -121,7 +121,7 @@ ul { list-style-type: none; }
 
   /*Panel tabs*/
 
-.panel-tabs {   
+.panel-tabs {
     border-bottom: 1px solid transparent;
 }
 
@@ -181,13 +181,13 @@ ul { list-style-type: none; }
 .modal .modal-header .modal-title{color:white;}
 
 .tooltip-inner {
-    white-space:initial;
+    white-space:pre;
     max-width:500px;
     text-align: left;
 }
 
 .center-center{
-  display:table; 
+  display:table;
   height: 100%;
   width: 100%;
 }

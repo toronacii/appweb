@@ -52,12 +52,28 @@ class Tramites extends MY_Controller {
                 default:
                     $this->messages->add_message("Trámite solicitado con éxito", "success");
                     redirect(site_url("tramites/imprimir/$id_request"));
-            } 
+            }
         }
 
     	$this->load->view('tramites/solvencias_view', $data);
 
     	$this->load->view('footer');
+    }
+
+    public function cedula_catastral()
+    {
+        $header['sidebar'] = 'menu/oficina_menu';
+        $header['arrayJs'] = array('funciones_tramites.js');
+        $this->load->view('header', $header);
+
+        $data['tax_types'] = $this->session->userdata('tax_types');
+        $data['taxpayer'] = $this->session->userdata('taxpayer');
+
+        $data['catastro'] = $this->tramites->get_procedimiento_catastro($data['taxpayer']->id_taxpayer);
+
+        $this->load->view('tramites/cedula_catastral', $data);
+
+        $this->load->view('footer');
     }
 
     public function imprimir($id_request)
@@ -130,9 +146,8 @@ class Tramites extends MY_Controller {
         $data['tax_types'] = $this->session->userdata('tax_types');
         $data['procedimientos'] = array(
             'auditoria' => $this->tramites->get_procedimiento_auditoria($data['taxpayer']->id_taxpayer),
-            'fiscalizacion' => $this->tramites->get_procedimiento_fiscalizacion($data['taxpayer']->id_taxpayer),
-            'catastro' => $this->tramites->get_procedimiento_catastro($data['taxpayer']->id_taxpayer)
-        ); 
+            'fiscalizacion' => $this->tramites->get_procedimiento_fiscalizacion($data['taxpayer']->id_taxpayer)
+        );
 
         #d($data, $this->tramites);
 

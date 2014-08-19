@@ -1,7 +1,7 @@
 <?php $tax_types = $this->session->userdata('tax_types'); ?>
 
 <div class="panel-group hidden-sm hidden-xs" id="accordion">
-    
+
     <div class="panel panel-default no-collapse">
         <div class="panel-heading">
             <h4 class="panel-title">
@@ -64,6 +64,9 @@
                 <div class="panel-body">
                     <table class="table">
                         <tr><td><a href="<?php echo site_url('tramites/solvencias'); ?>">Solvencias</a></td></tr>
+                        <?php if ($tax_types[2]->total) : ?>
+                        <tr><td><a href="<?php echo site_url('tramites/cedula_catastral'); ?>">Cédula catastral</a></td></tr>
+                        <?php endif; ?>
                         <tr><td><a href="<?php echo site_url('tramites/historico'); ?>">Histórico</a></td></tr>
                     </table>
                 </div>
@@ -120,7 +123,7 @@
 </div>
 &nbsp;
 <div class="alert alert-success hidden-sm hidden-xs">
-    <p id="contacto">Para soporte comun&iacute;cate al:<br /> <strong>0800-MISUCRE</strong> <br>o escribe a <small><a href="#">registro.rentas@alcaldiasucre.net</a> o a nuestra cuenta de twitter <a href="#"> @recaudasucre </a></small></p>    
+    <p id="contacto">Para soporte comun&iacute;cate al:<br /> <strong>0800-MISUCRE</strong> <br>o escribe a <small><a href="#">registro.rentas@alcaldiasucre.net</a> o a nuestra cuenta de twitter <a href="#"> @recaudasucre </a></small></p>
 </div>
 <?php if ($this->session->userdata('usuario_appweb')): ?>
 <div class="alert alert-success hidden-sm hidden-xs">

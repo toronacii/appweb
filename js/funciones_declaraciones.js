@@ -6,9 +6,9 @@ function changeClassActivitySpecified()
 {
     var $elements = $('.activitySpecified');
     var count = $elements.length;
-    if (count > 4) 
+    if (count > 4)
         count = 4;
-    var classColumn = 12 / count; 
+    var classColumn = 12 / count;
 
     //remove class y add class
     var pattern = /^col-md-(\d){1,2}$/;
@@ -23,7 +23,7 @@ function changeClassActivitySpecified()
                     //console.log($(this).is(':visible'));
                 else
                     $(this).removeClass(classes[i]).addClass('col-md-' + classColumn);
-                
+
             }
         }
     });
@@ -41,7 +41,7 @@ function get_html_select(obj){
 }
 
 function classifier_specialized_change(){
-    
+
     $('.activitySpecified select').change(function(){
 
         var idchildren = parseInt(this.id.substr(1,1)) + 1;
@@ -71,7 +71,7 @@ function classifier_specialized_change(){
             });
 
             $(document).ajaxStart(function(){
-                
+
             }).ajaxStop(function () {
                 $children.removeAttr('disabled');
             });
@@ -89,22 +89,22 @@ function calcular_montos(){
     var total_monto = 0;
     var sttm_old = original_number($('#sttm_old').text());
     var sttm_type = parseInt($('#sttm_type').val());
-    
+
     for (i=0; i < totalRows; i++){
         var impuesto = 0;
         monto = original_number($('#monto_' + i).val());
 
         //console.log($('#monto_' + i));
-        
-        if (isNaN(monto)) 
+
+        if (isNaN(monto))
             monto = 0;
-        
+
         impuesto = monto * parseFloat($('#ali_' + i).text()) / 100;
         $('#total_' + i).text(format(impuesto));
         total_monto += monto;
         total_impuesto += impuesto;
-        
-        if (impuesto > impuestoMayor){ 
+
+        if (impuesto > impuestoMayor){
             impuestoMayor = impuesto;
             iImpuestoMayor = i;
         }
@@ -112,13 +112,13 @@ function calcular_montos(){
     var minimo_tributario = parseFloat($('#minimo_tributario').attr('value'));
 
     //console.log(minimo_tributario);
-    
-    
+
+
     if (impuestoMayor < minimo_tributario){
         $('#total_' + iImpuestoMayor).text(format(minimo_tributario));
         total_impuesto = total_impuesto - impuestoMayor + minimo_tributario;
     }
-    
+
     $('#total_monto').text(format(total_monto));
     $('#total_impuesto').text(format(total_impuesto));
 
@@ -128,13 +128,13 @@ function calcular_montos(){
         total_impuesto = total_impuesto - descuento;
         $('#total_impuesto_rebaja').text(format(total_impuesto));
     }
-    
+
     if (sttm_type){ //DEFINITIVA
         var total_final = total_impuesto - sttm_old;
     }else{ //ESTIMADA
         var total_final = total_impuesto/4;
     }
-    
+
     $('#total_final').text(format(total_final));
 }
 
@@ -146,22 +146,22 @@ function llenar_tabla_resumen(){
         $td = $(this).find('td');
         //console.log($td);
         row += "<tr>" +
-                   "<td>" + $td.filter(':eq(0)').html() + "</td>" + 
-                   "<td><span class='hidden-sm hidden-xs'>" + $td.filter(':eq(2)').html() + "</span></td>" + 
+                   "<td>" + $td.filter(':eq(0)').html() + "</td>" +
+                   "<td><span class='hidden-sm hidden-xs'>" + $td.filter(':eq(2)').html() + "</span></td>" +
                    "<td>" + $td.filter(':eq(3)').find('input').val() + "</td>" +
                    "<td>" + $td.filter(':eq(5)').text() + "</td>" +
                "</tr>";
     });
-    
+
     $('.table-declaracion tfoot tr').each(function(){
-        $td = $(this).find('td');        
-        foot += "<tr>" + 
-                   "<td colspan='2'>" + $td.filter(':eq(0)').html() + "</td>" + 
+        $td = $(this).find('td');
+        foot += "<tr>" +
+                   "<td colspan='2'>" + $td.filter(':eq(0)').html() + "</td>" +
                    "<td>" + (($td.filter(':eq(1) input').length == 0) ? $td.filter(':eq(1)').text() : $td.filter(':eq(1) input').val()) + "</td>" +
                    "<td>" + $td.filter(':eq(3)').html() + "</td>" +
                 "</tr>";
     });
-    
+
     $('#table_resumen tbody').append(row);
     $('#table_resumen tfoot').append(foot);
 }
@@ -183,9 +183,10 @@ $(function(){
     	modal.modal('show');
     });
 
-    $('#statement_filter').change(function () {
+    $('#button_statement_filter').click(function(){
+        $(this).prop('disabled', true);
         $('form').submit();
-    });
+    })
 
     $('#activitiesTaxpayer').find('.list-group').children().each(function(){
         $('#allActivities').find('.list-group a[id|="' + this.id + '"]').remove();
@@ -225,7 +226,7 @@ $(function(){
             var $other = $('#activitiesTaxpayer');
             var i = $actSpec.find('.activitySpecified').length;
             $allA.each(function(){
-                
+
                 var $option = $(this);
                 //console.log($option);
 
@@ -248,7 +249,7 @@ $(function(){
                     {
                         var name = '', disabled;
                         html +='<div class="list-group-item">';
-                        if (j === 3) name = 'name = "last_children[' + $option.attr('id') + ']"'; 
+                        if (j === 3) name = 'name = "last_children[' + $option.attr('id') + ']"';
                         (j===0) ? disabled = '' : disabled = 'disabled';
                         html += '<select ' + name + ' id="s' + j + '_' + i + '" class="form-control select validate" data-validate-rules="required[-1]" ' + disabled + '>';
                         html +='<option value="-1">Seleccione</option>';
@@ -262,13 +263,13 @@ $(function(){
                     changeClassActivitySpecified();
                     classifier_specialized_change();
                     calcular_montos();
-                    i++; 
-                });   
+                    i++;
+                });
 
-                            
+
                 /**/
             });
-            
+
         }
         else // QUITAR ELEMENTO
         {
@@ -276,7 +277,7 @@ $(function(){
             $allA.each(function(){
                 $('.activitySpecified').filter('[option-id="' + this.id + '"]').find('.close').trigger('click');
             });
-            
+
 
         }
 
@@ -318,18 +319,18 @@ $(function(){
 });
 
 jQuery.fn.sort = (function(){
- 
+
     var sort = [].sort;
- 
+
     return function(comparator, getSortable) {
- 
+
         getSortable = getSortable || function(){return this;};
- 
+
         var placements = this.map(function(){
- 
+
             var sortElement = getSortable.call(this),
                 parentNode = sortElement.parentNode,
- 
+
                 // Since the element itself will change position, we have
                 // to have some way of storing its original position in
                 // the DOM. The easiest way is to have a 'flag' node:
@@ -337,28 +338,28 @@ jQuery.fn.sort = (function(){
                     document.createTextNode(''),
                     sortElement.nextSibling
                 );
- 
+
             return function() {
- 
+
                 if (parentNode === this) {
                     throw new Error(
                         "You can't sort elements if any one is a descendant of another."
                     );
                 }
- 
+
                 // Insert before flag:
                 parentNode.insertBefore(this, nextSibling);
                 // Remove flag:
                 parentNode.removeChild(nextSibling);
- 
+
             };
- 
+
         });
- 
+
         return sort.call(this, comparator).each(function(i){
             placements[i].call(getSortable.call(this));
         });
- 
+
     };
- 
+
 })();

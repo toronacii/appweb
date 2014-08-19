@@ -6,10 +6,6 @@
         <ul class="nav panel-tabs">
         	<li><a href="#"><h3 class="panel-title"><?php echo $taxpayer->firm_name?></h3></a></li>
 
-            <?php if ($count_c = count($procedimientos['catastro'])): ?>
-                <li class="pull-right"><a href="#catastro" data-toggle="tab">Trámites de ficha catastral <span class="badge"><?php echo $count_c ?></span></a></li>
-            <?php endif; ?>
-
             <?php if ($count_f = count($procedimientos['fiscalizacion'])): ?>
                 <li class="pull-right"><a href="#fiscalizacion" data-toggle="tab">Procedimientos <span class="badge"><?php echo $count_f ?></span></a></li>
             <?php endif; ?>
@@ -35,13 +31,7 @@
             </div>
             <?php endif; ?>
 
-            <?php if ($count_c): ?>
-            <div class="tab-pane" id="catastro">
-                <?php $this->load->view('tramites/partials/proceso_catastro', array('procedimientos' => $procedimientos['catastro'])) ?>
-            </div>
-            <?php endif; ?>
-
-            <?php if ($count_a + $count_f + $count_c == 0): ?>
+            <?php if ($count_a + $count_f == 0): ?>
                 <br>
                 <div class="text-center">No tiene procesos administrativos pendientes</div>
             <?php endif; ?>

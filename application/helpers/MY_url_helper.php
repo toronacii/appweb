@@ -30,8 +30,9 @@ if(!function_exists('create_breadcrumb')){
 			'tasas_confirmation' => 'confirmación',
 			'gestion_usuario' => 'gestion de usuario',
 			'modificar_perfil' => 'modificar',
-			'procesos_administrativos' => 'procesos administrativos'
-			
+			'procesos_administrativos' => 'procesos administrativos',
+			'cedula_catastral' => 'cédula catastral'
+
 		);
 
 		$uris_nulas = array(
@@ -68,7 +69,7 @@ if(!function_exists('create_breadcrumb')){
 			for($j=1; $j<=$i;$j++) $prep_link .= $ci->uri->slash_segment($j);
 			$link_name = (isset($names[$ci->uri->segment($i)])) ? $names[$ci->uri->segment($i)] : $ci->uri->segment($i);
 			if ($i < $num_link){ //SI NO ES EL ULTIMO SEGMENTO
-				if ($use_link || $ci->uri->segment($i) == $page_index)	
+				if ($use_link || $ci->uri->segment($i) == $page_index)
 					$link.='<li><a class="'.$class_link_crumb.'" href="'.site_url($prep_link).'">'.$link_name.'</a></li>';
 				else
 					$link.="<li>" . $tag_open_lastcrumb.$link_name.$tag_close_lastcrumb. "</li>";

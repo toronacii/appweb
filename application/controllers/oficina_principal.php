@@ -4,7 +4,7 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Oficina_principal extends MY_Controller {
-    
+
     public $cuentas;
     public $taxpayer;
 
@@ -69,7 +69,7 @@ class Oficina_principal extends MY_Controller {
             $news[$i]->message_strip_tags = strip_tags($new->message);
             $news[$i]->created = ($new->created == date('Y-m-d')) ? "HOY" : date('d/m/Y', strtotime($new->created));
         }
-        
+
         echo json_encode($news);
     }
 
@@ -92,7 +92,7 @@ class Oficina_principal extends MY_Controller {
         $this->load->view('footer');
     }
 
-    
+
 
     function tasas() {
         $id = $this->session->userdata('id_taxpayer');
@@ -234,12 +234,12 @@ class Oficina_principal extends MY_Controller {
 
     */
 
-   
-   
+
+
     public function probar_email() {
-        
+
         $this->load->model('gestion_usuario_model');
-        
+
         $datos = 'xxxxxxxxxxxxxxxxxxx';
 
         $_POST = array(

@@ -7,22 +7,21 @@
         <li>Realizar declaraciones en línea de periodos omitidos a partir de la Declaración Definitiva 2011. Recuerda que si necesita declarar años anteriores al 2011 deberá presentarse en nuestras oficinas.</li>
     </ol>
 </div>
-
+<?php echo form_open(site_url('declaraciones/cuentas')) ?>
 <div class="panel panel-primary">
     <div class="panel-heading" style="height: 50px">
         <h3 class="panel-title">Cuentas de Actividades Económicas
+            <button class="btn btn-success pull-right" style="margin-left: 15px" id="button_statement_filter">Enviar</button>
             <span class="pull-right">
-                <?php echo form_open(site_url('declaraciones/cuentas')) ?>
                 <select name="statement_filter" id="statement_filter" class="form-control">
                     <?php foreach($select as $i => $sttm): $p = explode('_', $sttm);  ?>
-                    <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>   
+                    <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>
                         <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>
                         <?php echo (($p[0] == 'FALSE') ? 'Estimada ' : 'Definitiva ') . $p[1] ?>
                     </option>
                     <?php endforeach; ?>
                     </optgroup>
                 </select>
-                <?php echo form_close() ?> 
             </span>
         </h3>
     </div>
@@ -40,7 +39,7 @@
                     <tr class="<?php echo (@$c++ % 2) ? "trpar odd": "" ?>">
                         <td><?php echo $index[0] ?></td>
                         <td>
-                            <?php if (count($arrErrors) > 0): 
+                            <?php if (count($arrErrors) > 0):
                                 $errores = "Ud. no puede declarar porque:\n";
                                 foreach ($arrErrors as $i => $error){
                                     $errores .= ((count($arrErrors) > 1) ? ($i+1).": " : "") . "$error\n";
@@ -68,6 +67,6 @@
     </div>
 </div>
 
-
+<?php echo form_close() ?>
 <?php #var_dump($this->session->userdata('sttm_tax')) ?>
 </div>
