@@ -31,7 +31,8 @@ if(!function_exists('create_breadcrumb')){
 			'gestion_usuario' => 'gestion de usuario',
 			'modificar_perfil' => 'modificar',
 			'procesos_administrativos' => 'procesos administrativos',
-			'cedula_catastral' => 'cédula catastral'
+			'cedula_catastral' => 'cédula catastral',
+			'pago_online' => 'pago en línea'
 
 		);
 
@@ -45,7 +46,8 @@ if(!function_exists('create_breadcrumb')){
 
 		//LO QUE SE COLOQUE ACA HARA QUE NO SE MUESTRE EN EL BREAD CRUMB LO QUE SIGUE
 		$last_crumb = array(
-			'impuestos_confirmation'
+			'impuestos_confirmation',
+			'pago_online'
 		);
 
 		$use_link = FALSE;

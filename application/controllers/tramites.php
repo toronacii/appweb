@@ -33,7 +33,7 @@ class Tramites extends MY_Controller {
         {
             $id_request = $this->tramites->insert_request_solvencia($_POST['id_tax']);
 
-            var_dump($id_request, $this->tramites);
+            #dd($id_request, $this->tramites);
 
             switch ($id_request) {
                 #TIENE UN CONVENIO DE PAGO

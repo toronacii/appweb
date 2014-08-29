@@ -27,20 +27,26 @@ define('UT', 107);
 |
 */
 
-define('FOPEN_READ',							'rb');
-define('FOPEN_READ_WRITE',						'r+b');
-define('FOPEN_WRITE_CREATE_DESTRUCTIVE',		'wb'); // truncates existing file data, use with care
-define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE',	'w+b'); // truncates existing file data, use with care
-define('FOPEN_WRITE_CREATE',					'ab');
-define('FOPEN_READ_WRITE_CREATE',				'a+b');
-define('FOPEN_WRITE_CREATE_STRICT',				'xb');
-define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
-define('TITLE_APP',		'Alcald&iacute;a WEB');
-define('API_DIR',	'http://localhost/appweb_server/public/api/v1');
-define('DIR_JSP', 'http://200.75.140.58:443/OnlinePayment/enviarPagoCredicard.do');
+define('FOPEN_READ'                          , 	'rb');
+define('FOPEN_READ_WRITE'                    , 	'r+b');
+define('FOPEN_WRITE_CREATE_DESTRUCTIVE'      , 	'wb'); // truncates existing file data, use with care
+define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE' , 	'w+b'); // truncates existing file data, use with care
+define('FOPEN_WRITE_CREATE'                  , 	'ab');
+define('FOPEN_READ_WRITE_CREATE'             , 	'a+b');
+define('FOPEN_WRITE_CREATE_STRICT'           , 	'xb');
+define('FOPEN_READ_WRITE_CREATE_STRICT'      , 	'x+b');
+define('TITLE_APP'                           , 	'Alcaldía WEB');
+define('API_DIR'                            , 	'http://localhost/appweb_server/public/api/v1');
+#define('API_DIR'                             , 	'http://172.16.1.17/api.appweb/api/v1');
+#PRODUCCION
+#define('PAGO_ONLINE'                        , 'http://200.75.140.58:443/OnlinePayment/enviarPagoCredicard.do');
+#PRUEBAS
+define('PAGO_ONLINE'                         , 'http://172.16.1.100:443/OnlinePaymentBanesco/jsp/jsonAppWeb.do');
+#define('BANESCO_ONLINE'                      , 'https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control='); #PRUEBAS
+define('BANESCO_ONLINE'                      , 'https://payment.megasoft.com.ve/payment/action/paymentgatewayuniversal-data?control=');
 /*RECAPTCHA*/
-define('RECAPTCHA_API_SERVER', 'http://www.google.com/recaptcha/api');
-define('RECAPTCHA_API_SECURE_SERVER', 'https://www.google.com/recaptcha/api');
-define('RECAPTCHA_VERIFY_SERVER', 'www.google.com');
+define('RECAPTCHA_API_SERVER'                , 'http://www.google.com/recaptcha/api');
+define('RECAPTCHA_API_SECURE_SERVER'         , 'https://www.google.com/recaptcha/api');
+define('RECAPTCHA_VERIFY_SERVER'             , 'www.google.com');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

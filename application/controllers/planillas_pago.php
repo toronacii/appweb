@@ -327,19 +327,32 @@ class Planillas_pago extends MY_Controller {
 		#dd($this->planillas, $data);
 
 		$post = array(
-			'formAppweb.email'  => $this->session->userdata('usuario_appweb')->email,
-			'formAppweb.pagina' => base_url()
+			'formAppWeb.email'  => $this->session->userdata('usuario_appweb')->email,
+			'formAppWeb.pagina' => base_url()
 		);
 
 		foreach ($data AS $prop => $value)
 		{
-			$post["formAppweb.$prop"] = $value;
+			if ($prop == 'total')
+			{
+				$value = number_format($value, 2, '.', '');
+			}
+			$post["formAppWeb.$prop"] = $value;
 		}
 
-		$control_number = $this->curl->simple_post(PAGO_ONLINE, $post);
+		$control = json_decode($this->curl->simple_post(PAGO_ONLINE, $post));
 
-		#d($post, $this->planillas);
-		echo $control_number;
+		#dd($post, $this->planillas, $control);
+
+		if (! isset($control->control))
+		{
+			echo (isset($control->error)) ? $control->error : "Ha ocurrido un error, intente de nuevo mas tarde";
+		}
+		else
+		{
+			redirect(BANESCO_ONLINE . $control->control);
+		}
+
 	}
 
 }
