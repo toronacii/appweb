@@ -32,7 +32,8 @@ if(!function_exists('create_breadcrumb')){
 			'modificar_perfil' => 'modificar',
 			'procesos_administrativos' => 'procesos administrativos',
 			'cedula_catastral' => 'cédula catastral',
-			'pago_online' => 'pago en línea'
+			'pago_online' => 'pago en línea',
+			'show_invoice_megasoft' => 'factura'
 
 		);
 

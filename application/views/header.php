@@ -10,7 +10,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<?php if (isset($arrayCss)):?>
 	<? foreach ($arrayCss as $dirCss):?>
-	<link type="text/css" href=<?= base_url()."css/$dirCss" ?> rel="stylesheet" />
+	<link type="text/css" href=<?= base_url()."css/$dirCss" ?> rel="stylesheet"/>
 <? endforeach; ?>
 <?php endif; ?>
 <script>site_url='<?=site_url()?>';</script>

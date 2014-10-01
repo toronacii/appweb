@@ -25,6 +25,8 @@ class Planillas_pago extends MY_Controller {
 
 	public function tasas()
 	{
+		$this->session->set_userdata('uri_pago_online', site_url('planillas_pago/tasas'));
+		
 		$data['cuentas'] = $this->taxes;
 		$data['tax_types'] = $this->session->userdata('tax_types');
 		$data['tipos_tasas'] = $this->session->userdata('tipos_tasas');
@@ -63,7 +65,6 @@ class Planillas_pago extends MY_Controller {
 		$data['tasa'] = $tipos_tasas[$id_tasa];
 
 		#var_dump($data, $this->taxes);
-
 
 		$this->session->set_userdata('imprime_tasa', array('tax' => $data['tax'], 'tasa' => $data['tasa']));
 
@@ -113,7 +114,9 @@ class Planillas_pago extends MY_Controller {
 
 	}
 
-	public function impuestos(){
+	public function impuestos()
+	{
+		$this->session->set_userdata('uri_pago_online', site_url('planillas_pago/impuestos'));
 
 		$data['cuentas'] = $this->taxes;
 		$data['tax_types'] = $this->session->userdata('tax_types');
@@ -205,7 +208,9 @@ class Planillas_pago extends MY_Controller {
 
 	}
 
-	public function unificada(){
+	public function unificada()
+	{
+		$this->session->set_userdata('uri_pago_online', site_url('planillas_pago/unificada'));
 
 		$data['cuentas'] = $this->taxes;
 		$data['tax_types'] = $this->session->userdata('tax_types');
@@ -215,7 +220,7 @@ class Planillas_pago extends MY_Controller {
 
 		$this->session->set_userdata('cargos_planilla_unificada', $data['cargos']);
 
-		#var_dump($data['cargos'][102803], $this->planillas);
+		#dd($data['cargos'][102803], $this->planillas);
 
  		$this->load->view('planillas_pago/unificada_view', $data);
 
@@ -261,7 +266,9 @@ class Planillas_pago extends MY_Controller {
 		}
 	}
 
-	public function generadas(){
+	public function generadas()
+	{
+		$this->session->set_userdata('uri_pago_online', site_url('planillas_pago/generadas'));
 
 		$data['taxpayer'] = $this->session->userdata('taxpayer');
 
@@ -317,42 +324,47 @@ class Planillas_pago extends MY_Controller {
 
 	public function pago_online($id_invoice)
 	{
+		#dd($_SERVER);
 		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice))
 		{
 			redirect(site_url());
 		}
+		#$id_invoice = '455323';
 
-		$data = $this->planillas->get_data_invoice($id_invoice);
-
-		#dd($this->planillas, $data);
-
-		$post = array(
-			'formAppWeb.email'  => $this->session->userdata('usuario_appweb')->email,
-			'formAppWeb.pagina' => base_url()
+		$data = array(
+			'id_invoice' => $id_invoice,
+			'pagina' => $this->session->userdata('uri_pago_online')
 		);
 
-		foreach ($data AS $prop => $value)
+		#$this->session->unset_userdata('uri_pago_online');
+
+		$url = ONLINE_PAYMENT . "get_new_control"; 
+		$resp = json_decode($this->curl->simple_post($url, $data));
+
+		#dd($data, $resp, $this->curl->error_string);
+
+		if ($resp->control)
 		{
-			if ($prop == 'total')
-			{
-				$value = number_format($value, 2, '.', '');
-			}
-			$post["formAppWeb.$prop"] = $value;
-		}
-
-		$control = json_decode($this->curl->simple_post(PAGO_ONLINE, $post));
-
-		#dd($post, $this->planillas, $control);
-
-		if (! isset($control->control))
-		{
-			echo (isset($control->error)) ? $control->error : "Ha ocurrido un error, intente de nuevo mas tarde";
+			redirect(BANESCO_ONLINE . $resp->control);
 		}
 		else
 		{
-			redirect(BANESCO_ONLINE . $control->control);
+			echo $resp->error;
 		}
 
+		#https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control=13535633346
+
+	}
+
+	public function show_invoice_megasoft($control)
+	{
+		$online_payment = $this->planillas->get_online_payment($control);
+
+		$this->session->set_userdata('control', $online_payment->control);
+
+		$this->load->view('planillas_pago/invoice_megasoft', $online_payment);
+
+		$this->load->view('footer');
 	}
 
 }

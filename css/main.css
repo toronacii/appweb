@@ -214,3 +214,7 @@ ul { list-style-type: none; }
   padding-bottom: 5px;
   margin-bottom: 10px;
 }
+
+.tabs-primary .panel-heading ul.panel-tabs li a[data-toggle=tab] {font-size: 0.9em !important;}
+
+div.pie{display:none;}

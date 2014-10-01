@@ -7,14 +7,21 @@ class Principal extends MY_Controller {
 
     function __construct() {
         parent::__construct();
+        #dd($_SESSION, "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
         if ($this->uri->segment(2) !== 'salir' && $this->session->userdata('usuario_appweb'))
+        {
+            if (($control = $_GET['control']) && ($page = $this->session->userdata('uri_pago_online')))
+            {
+                #dd($control, $page);
+                redirect("$page/$control");
+            }
             redirect(site_url('oficina_principal'));
+        }
         $this->session->unset_userdata('usuario_appweb');
         #var_dump($_SESSION);
     }
 
     public function index() {
-
         $header['arrayJs'] = array('principal.js');
         $header['sidebar'] = "menu/oficina_menu";
         $this->load->view('header', $header);
@@ -28,6 +35,8 @@ class Principal extends MY_Controller {
         } else {
             $this->load->model('api_model', 'principal');
             $valid_user = $this->principal->valid_user($this->input->post('user'));
+
+            #dd($this->principal, $valid_user); exit;
 
             if (count($valid_user) > 0) {
                 if (sha1($this->input->post('pass')) == @$valid_user->password) {

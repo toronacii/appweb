@@ -1624,5 +1624,59 @@ class Planilla {
         $pdf->Output('PLANILLA.pdf', 'I');
     }
 
+    public function print_invoice_megasoft($control)
+    {
+        $CI = & get_instance();
+        $CI->load->library('fpdf/PDF_Code128');
+        $CI->load->model('api_model', 'planillas');
+        define('FPDF_FONTPATH', 'application/libraries/fpdf/font');
+        $pdf = new PDF_Code128('P', 'mm', 'Letter');
+        $pdf->SetMargins(9, 10);
+        $pdf->SetAutoPageBreak(true, 0.2);
+
+        $data_payment = $CI->planillas->get_online_payment($control);
+        
+        define('_x', 1);
+
+        #dd($data_payment);
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->SetLineWidth(0.5);
+        $pdf->SetFillColor(244, 123, 32); #NARANJA RENTAS
+        $pdf->SetTextColor(255, 255, 255);
+        $pdf->SetLineWidth(0.1);
+
+        $pdf->Image('css/img/cabecera_pago.png', 8, 7, 199);
+
+        $pdf->SetY(40);
+  
+        $pdf->cell(100, 10, utf8_decode($data_payment->titulo), _x, 1, 'C', 1); #TITULO DE TABLA
+
+        $pdf->SetTextColor(0, 0, 0);
+
+        $pdf->cell(50, 10, utf8_decode('Nº de Control'), 'LB',  0, 'C');
+        $pdf->cell(50, 10, utf8_decode($data_payment->control), 'LBR', 1, 'C'); #NUMERO DE CONTROL
+
+        $pdf->cell(50, 10, 'Fecha', 'LB',  0, 'C');
+        $fecha = ($data_payment->date_compensate) ? $data_payment->date_compensate : $data_payment->created;
+        $pdf->cell(50, 10, date('d/m/Y', strtotime($fecha)), 'LBR', 1, 'C'); #FECHA
+
+        $pdf->cell(50, 10, utf8_decode('Nº de Planilla'), 'LB',  0, 'C');
+        $pdf->cell(50, 10, utf8_decode($data_payment->factura), 'LBR', 1, 'C'); #INVOICE NUMBER
+
+        $pdf->cell(50, 10, utf8_decode('Monto'), 'LB',  0, 'C');
+        $pdf->cell(50, 10, utf8_decode(number_format($data_payment->monto, 2, ',', '.')), 'LBR', 1, 'C'); #MONTO
+
+        $pdf->cell(50, 10, utf8_decode('Nº de Tarjeta'), 'LB',  0, 'C');
+        $pdf->cell(50, 10, utf8_decode($data_payment->tarjeta), 'LBR', 1, 'C'); #TARJETA
+
+        $pdf->SetFont('Arial', '', 9);
+
+        $pdf->SetXY(120, 40);
+        $pdf->MultiCell(100, 5 , preg_replace('/<[\/]?UT>/', '', $data_payment->voucher), 0, 'L'); #VOUCHER
+
+        $pdf->Output("Recibo de pago {$data_payment->control}.pdf", 'I');
+    }
+
 }
 

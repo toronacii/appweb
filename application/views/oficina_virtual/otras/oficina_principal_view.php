@@ -230,7 +230,7 @@ if(@$procedimientos[0]->tax_account_number!=''){ ?>
 		</tbody>
 		<tfoot>
 		<tr >
-		<td colspan="5" style="font-size:16px;"> ¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?=site_url()?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></td>
+		<td colspan="5" style="font-size:16px;"><div class="pie"> No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?=site_url()?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></div></td>
 		</tr>
 		</tfoot>
 		</table>

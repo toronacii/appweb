@@ -57,7 +57,7 @@
                 <?php else: ?>
                     <div class="center">No hay declaraciones anteriores</div>
                 <?php endif; ?>
-                <div class="panel-footer center">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?php echo site_url('oficina_principal/nuc') ?>">Presiona aquí</a></strong></div>
+                <div class="panel-footer center"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?php echo site_url('oficina_principal/nuc') ?>">Presiona aquí</a></strong></div></div>
             </div>
         </div>
     </div>

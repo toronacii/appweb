@@ -127,7 +127,7 @@
 </div>
 <?php if ($this->session->userdata('usuario_appweb')): ?>
 <div class="alert alert-success hidden-sm hidden-xs">
-    <p id="contacto">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?= site_url() ?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></p>
+    <p id="contacto"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?= site_url() ?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></div></p>
 </div>
 <?php endif;?>
 

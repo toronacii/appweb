@@ -3,6 +3,7 @@
         </div><!-- end contenido -->
     </div><!-- end wrapper -->
     <div id="footer">
+        <?php if (ENVIRONMENT != 'production') echo ENVIRONMENT; ?>
         <div class="row">
             <div class="col-md-12">
                  <address class="rentas">
