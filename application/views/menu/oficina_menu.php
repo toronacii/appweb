@@ -97,6 +97,7 @@
         </div>
     </div>
     <?php #endif; ?>
+    <?php if ($this->session->userdata('usuario_appweb')): ?>
     <div class="panel panel-default no-collapse">
         <div class="panel-heading">
             <h4 class="panel-title">
@@ -104,6 +105,7 @@
             </h4>
         </div>
     </div>
+    <?php endif; ?>
     <?php if (! $this->session->userdata('usuario_appweb')): ?>
     <div class="panel panel-default no-collapse">
         <div class="panel-heading">
@@ -126,7 +128,7 @@
     <p id="contacto">Para soporte comun&iacute;cate al:<br /> <strong>0800-MISUCRE</strong> <br>o escribe a <small><a href="#">registro.rentas@alcaldiasucre.net</a> o a nuestra cuenta de twitter <a href="#"> @recaudasucre </a></small></p>
 </div>
 <?php if ($this->session->userdata('usuario_appweb')): ?>
-<div class="alert alert-success hidden-sm hidden-xs">
+<div class="alert alert-success hide">
     <p id="contacto"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?= site_url() ?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></div></p>
 </div>
 <?php endif;?>
