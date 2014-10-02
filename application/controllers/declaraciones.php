@@ -320,7 +320,7 @@ class Declaraciones extends MY_Controller {
                 $return[] = 'TRUE_' . ($year - 1);
             }
 
-            if ($year + 1 == (int)date('Y') || ($year == (int)date('Y') && $month_now >= 10)){
+            if ($year + 1 < 2015 && ($year + 1 == (int)date('Y') || ($year == (int)date('Y') && $month_now >= 10))){
                 $return[] = 'FALSE_' . ($year + 1);
             }
         }
