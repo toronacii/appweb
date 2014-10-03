@@ -24,7 +24,7 @@
 <title>Oficina Virtual | Dirección de Rentas Municipales - Alcaldía del Municipio Sucre · Estado Miranda</title>
 </head>
 
-<body class="edocuenta soloForm" <?php if (ENVIRONMENT == 'production'){ ?>ondragstart="return false" oncontextmenu="return false" onselectstart="return false" <?php }?> >
+<body class="edocuenta soloForm">
 	<div id="wrapper">
 		<div id="header">
 			<?php $this->load->view('menu/top_menu') ?>

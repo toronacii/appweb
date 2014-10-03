@@ -67,8 +67,9 @@
 				</ul>
 			</li>
 			<?php endif; ?>
+			<?php if ($info_user): ?>
 			<li><a href="<?php echo site_url('fiscales'); ?>">Reconoce a tus fiscales</a></li>
-			<?php #if  ?>
+			<?php endif;  ?>
 		</ul>
 
 		<ul class="nav navbar-nav navbar-right">
