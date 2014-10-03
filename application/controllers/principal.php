@@ -22,6 +22,12 @@ class Principal extends MY_Controller {
     }
 
     public function index() {
+        /* AÑADIDO HASTA QUE GIANCARLO CAMBIE EL FORMULARIO */
+        if (isset($_GET['express_desde_alcaldia']))
+            redirect(site_url('eventual/express'));
+        if (isset($_GET['eventual_desde_alcaldia']))
+            redirect(site_url('eventual'));
+        /*-------------------------------------------------*/
         $header['arrayJs'] = array('principal.js');
         $header['sidebar'] = "menu/oficina_menu";
         $this->load->view('header', $header);
