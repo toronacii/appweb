@@ -10,7 +10,7 @@
 </div>
 
 	<div class="navbar-header">
-		<button type="button" data-toggle="collapse" data-target=".navbar-ex1-collapse" class="navbar-toggle <?php if (! $info_user) : ?> visible-sm visible-xs <?php endif; ?>">
+		<button type="button" data-toggle="collapse" data-target=".navbar-ex1-collapse" class="navbar-toggle <?php if (! $info_user) : ?> hidden-md hidden-lg <?php endif; ?>">
 			<span class="sr-only">Desplegar navegación</span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -19,7 +19,7 @@
 		<a class="navbar-brand" href="<?php echo site_url('oficina_principal') ?>">Oficina Virtual</a>
 	</div>
 	<div class="collapse navbar-collapse navbar-ex1-collapse">
-		<ul class="nav navbar-nav visible-sm visible-xs">
+		<ul class="nav navbar-nav hidden-md hidden-lg">
 			<li><a href="<?php echo site_url(); ?>">Inicio</a></li>
 			<?php if ($info_user): ?>
 				<li><a href="<?php echo site_url('oficina_principal/edocuenta'); ?>">Estados de cuenta</a></li>
