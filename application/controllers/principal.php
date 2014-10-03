@@ -187,8 +187,9 @@ class Principal extends MY_Controller {
 
     public function salir(){
         session_destroy();
-        redirect("http://www.alcaldiamunicipiosucre.gov.ve/contenido/alcaldia/organigrama/direccion-de-rentas/");
-        #redirect(site_url());
+        $url = (ENVIRONMENT == 'production') ? "http://www.alcaldiamunicipiosucre.gov.ve/contenido/alcaldia/organigrama/direccion-de-rentas/" : site_url();
+        redirect($url);
+        #redirect();
     }
 
     public function probar_email() {

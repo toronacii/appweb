@@ -1,4 +1,5 @@
 <div id="contentDeclaraciones">
+<?php #d($declaraciones) ?>
 
 <div class="well well-sm">
     <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar declaraciones de actividades económicas
@@ -34,6 +35,15 @@
                 </tr>
             </thead>
             <tbody>
+                <?php /* $declaraciones = [
+                    '030017007_1000583_0' => [
+                        'error 1',
+                        'error 2'
+                    ],
+                    '030017008_1000583_0' => [],
+                    '030017007_1000583_1' => []
+                ] */
+                ?>
                 <?php if(count($declaraciones) > 0): ?>
                     <?php foreach($declaraciones as $tan => $arrErrors): $index = explode('_', $tan);?>
                     <tr class="<?php echo (@$c++ % 2) ? "trpar odd": "" ?>">
@@ -45,13 +55,32 @@
                                     $errores .= ((count($arrErrors) > 1) ? ($i+1).": " : "") . "$error\n";
                                 }
                             ?>
-                                <li class="cancel" title="<?php echo $errores ?>"></li>
+                                <span class="document_delete" title="<?php echo $errores ?>"></span>
+                                <!--
+                                <button type="button" class="btn btn-danger" title="<?php echo $errores ?>">
+                                    <span class="fa fa-info-circle" style="font-size:1.5em"></span>
+                                </button>
+                                -->
                             <?php else : ?>
                                 <?php $_SESSION['sttm_tax']['tax'][$index[0]] = (object)array('id_tax' => $index[1], 'id_sttm_form' => $index[2])?>
                                 <?php if ($index[2] == 0): ?>
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_add" title="Iniciar Declaración"></a>
+                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_add" title="Iniciar Declaración">
+                                        <span class=""></span>
+                                    </a>
+                                    <!--
+                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="btn btn-info" title="Iniciar Declaración">
+                                        <span class="fa fa-file-o" style="font-size:1.5em"></span>
+                                    </a>
+                                    -->
                                 <?php else: ?>
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_edit" title="Modificar Declaración"></a>
+                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_edit" title="Modificar Declaración">
+                                        <span></span>
+                                    </a>
+                                    <!--
+                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="btn btn-success" title="Modificar Declaración">
+                                        <span class="fa fa-pencil" style="font-size:1.5em"></span>
+                                    </a>
+                                    -->
                                 <?php endif; ?>
                             <?php endif; ?>
 
