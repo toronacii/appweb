@@ -224,6 +224,7 @@ class Planilla {
     ///Comienzo de la funcion como tal.-.......///////////////////////////////////////////////////////
     function Generar_edocuenta($data) {
         extract($data);
+        d($data);
         $CI = & get_instance();
         $CI->load->library('fpdf/pdf');
         define('FPDF_FONTPATH', 'application/libraries/fpdf/font');
@@ -1453,7 +1454,7 @@ class Planilla {
 
     public function show_invoice($id_invoice){
         
-        #var_dump($id_invoice); 
+        #d($id_invoice); 
 
         $CI = & get_instance();
         $CI->load->library('fpdf/PDF_Code128');
@@ -1466,7 +1467,7 @@ class Planilla {
         $data = (array)$CI->planillas->data_pdf_invoice($id_invoice);
         extract($data);
         
-        
+        #d($data);
 
         #PLANILLA DE TASA DESDE CONTRIBUYENTE EVENTUAL
 
@@ -1573,14 +1574,19 @@ class Planilla {
             $pdf->SetX(175);
             $pdf->cell(31, 8, number_format($amount_per_page, 2, ',', '.'), _x, 0, 'C'); # MONTO TOTAL
 
-            if (@$reimprimir == 'p') {
+            #d($data);
+            if (in_array($metadata->status, [4, 6, 7])) {
                 //marca de pagado-----------
                 $pdf->SetXY(29, 60);
+                $pdf->SetTextColor(215, 215, 215);
+
                 $pdf->SetFont('Arial', '', 25);
                 $pdf->Rotate(20);
                 $pdf->Text(0, 150, 'PLANILLA PAGADA - OFICINA VIRTUAL');
                 $pdf->Rotate(0);
                 $pdf->SetFont('Arial', '', 9);
+
+                $pdf->SetTextColor(0, 0, 0);
                 //marca de pagado-----------------------------
             }
             $pdf->SetXY(9, 160);

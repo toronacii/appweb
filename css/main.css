@@ -224,6 +224,14 @@ p#contacto a{
   word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
+span.separator{
+  bottom: 1px;
+  position: relative;
+  font-size: 1.4em;
+  margin-left: 3px;
+  color: #f47b20;
+}
+
 @media (min-width : 768px) {
   .panel-tabs > li {
       float: left;
