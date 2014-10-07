@@ -224,7 +224,7 @@ class Planilla {
     ///Comienzo de la funcion como tal.-.......///////////////////////////////////////////////////////
     function Generar_edocuenta($data) {
         extract($data);
-        d($data);
+        #d($data);
         $CI = & get_instance();
         $CI->load->library('fpdf/pdf');
         define('FPDF_FONTPATH', 'application/libraries/fpdf/font');
