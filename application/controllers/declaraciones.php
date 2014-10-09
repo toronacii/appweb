@@ -251,7 +251,7 @@ class Declaraciones extends MY_Controller {
                     }
                     $this->messages->add_message($message);
                 }
-                dd($id_sttm, $this->declaraciones);
+                #dd($id_sttm, $this->declaraciones);
             }else{
                 $this->messages->add_message("Declaración guardada exitosamente", "success");
             }
