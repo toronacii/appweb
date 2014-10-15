@@ -405,6 +405,14 @@ class Planilla {
                 $pdf->Ln();
             }
         }
+
+        if ($result[0]->hechoimponible == 3)
+        {
+            $pdf->SetXY(15, $y);
+            $pdf->Cell(120, $tam, utf8_decode('Nº de Calcomanía'), 1, 'C');
+            $pdf->Cell(50, $tam, ($result[0]->calcomania) ? $result[0]->calcomania : 'N/A' , 1, 'C');
+            $pdf->Ln();
+        }
         ////////////////////////////////////
         //FIn de los cambios
         $y+=3;

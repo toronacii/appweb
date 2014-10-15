@@ -63,7 +63,7 @@ class Oficina_principal extends MY_Controller {
     {
         $news = $this->news->get_news($this->taxpayer->id_taxpayer);
 
-        #var_dump($this->news,$news);
+        #d($this->news,$news);
 
         foreach ($news as $i => $new) {
             $news[$i]->message_strip_tags = strip_tags($new->message);
