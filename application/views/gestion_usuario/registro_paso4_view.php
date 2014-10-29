@@ -55,7 +55,7 @@
 
                 <div class="form-group">
 
-                    <!-- NUMERO DE PLANILLA DE PAGO--> <?php var_dump($ultima_planilla_pagada, $ultimo_numero_declaracion) ?>                
+                    <!-- NUMERO DE PLANILLA DE PAGO--> <?php #var_dump($ultima_planilla_pagada, $ultimo_numero_declaracion) ?>                
                     
                     <div class="col-md-6 <?php if (form_error('ult_planilla')) echo "has-error" ?>">
                         <label>Planilla de pago de <strong><?php echo $ultima_planilla_pagada->tax_account_number?></strong></label>
