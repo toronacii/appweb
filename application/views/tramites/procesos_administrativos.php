@@ -7,7 +7,7 @@
         	<li><a href="#"><h3 class="panel-title"><?php echo $taxpayer->firm_name?></h3></a></li>
 
             <?php if ($count_f = count($procedimientos['fiscalizacion'])): ?>
-                <li class="pull-right"><a href="#fiscalizacion" data-toggle="tab">Procedimientos <span class="badge"><?php echo $count_f ?></span></a></li>
+                <li class="pull-right"><a href="#fiscalizacion" data-toggle="tab">Fiscalizaciones <span class="badge"><?php echo $count_f ?></span></a></li>
             <?php endif; ?>
 
 			<?php if ($count_a = count($procedimientos['auditoria'])): ?>
