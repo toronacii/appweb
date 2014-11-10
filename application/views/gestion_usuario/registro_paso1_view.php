@@ -177,8 +177,8 @@
 				
 					<div class="checkbox <?php if (form_error('contrato')) echo "has-error" ?>">
 						<label>
-							<input type="checkbox" name="contrato" value='1' id="contrato" <?php echo set_checkbox('contrato','1')?> required/>
-							Acepto el <a target='blank' href="<?=site_url()?>/gestion_usuario/contrato">Contrato de Adhesión</a>
+							<input type="checkbox" name="contrato" value='1' id="contrato" <?php echo set_checkbox('contrato','1')?> required />
+							He leído y acepto el <a href="#" data-toggle="modal" data-target="#contrato_modal">Contrato de Adhesión</a>
 						</label>
 					</div>
 					<?php echo form_error('contrato') ?>
@@ -201,18 +201,57 @@
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Prueba que eres un humano</h4>
-    </div>
-    <div class="modal-body">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Prueba que eres un humano</h4>
+			</div>
+			<div class="modal-body">
 
-		<div id="myBootstrapCaptchaDiv"></div>
+				<div id="myBootstrapCaptchaDiv"></div>
 
-    </div>
+			</div>
 
-</div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<!-- contrato -->
+
+<div class="modal fade" id="contrato_modal">
+	<div class="modal-dialog large">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">Modal title</h4>
+			</div>
+			<div class="modal-body">
+				<?php $this->load->view('gestion_usuario/contrato') ?>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="no_acepto_contrato">No acepto</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" id="acepto_contrato">He leído y acepto el contrato</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<style>
+	.modal-dialog.large {
+	    width: 80%; /* respsonsive width */
+		margin:auto;
+	}
+</style>
+
+<script>
+	$(function(){
+		$('#acepto_contrato').click(function(){
+			$('#contrato').prop('checked', true);
+		});
+
+		$('#no_acepto_contrato').click(function(){
+			$('#contrato').prop('checked', false);
+		});
+	})
+</script>
