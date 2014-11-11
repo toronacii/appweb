@@ -235,7 +235,7 @@ class Planilla {
         else if ($tipo == 2)
             $edocuenta = $CI->planillas->estado_cuenta($id_tax);
 
-        #var_dump($CI->planillas, $CI->planillas->estado_cuenta($id_tax, date('Y-m-d')));
+        #d($CI->planillas, $CI->planillas->estado_cuenta($id_tax, date('Y-m-d')), $tipo);
 
         $pdf = new PDF();
         $pdf->AddPage();
