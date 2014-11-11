@@ -118,8 +118,8 @@ class MY_Exceptions extends CI_Exceptions {
 			'email' => 'toronacii@gmail.com',
 			'subject' => 'Error Oficina Virtual - [' . date('d/m/Y H:i:s') . ']',
 			'session' => [
-				'usuario' => $_SESSION['usuario_appweb'], 
-				'taxpayer' => $_SESSION['taxpayer']
+				'usuario' => @$_SESSION['usuario_appweb'], 
+				'taxpayer' => @$_SESSION['taxpayer']
 			],
 			'server' => $_SERVER['SERVER_ADDR'],
 			'view' => 'emails.errors-client'
