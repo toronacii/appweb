@@ -47,9 +47,9 @@ function get_html_select(obj){
 }
 
 function calcular_montos(){
-    var totalRows = $('.table-declaracion tbody tr').length;
+    
     var impuestoMayor = 0;
-    var iImpuestoMayor = 0;
+    var iImpuestoMayor = $('.table-declaracion tbody tr:eq(0)').attr('option-id');
     var total_impuesto = 0;
     var total_monto = 0;
     var sttm_old = original_number($('#sttm_old').text());
@@ -58,9 +58,10 @@ function calcular_montos(){
     var minimo_tributario = 0;
     var alicuota = 0;
 
-    for (i=0; i < totalRows; i++)
-    {
+    $('.table-declaracion tbody tr').each(function(){
+
         var impuesto = 0;
+        var i = $(this).attr('option-id');
         monto = original_number($('#monto_' + i).val());
         alicuota = original_number($('#ali_' + i).text());
         minimo_tributario = original_number($('#min_' + i).text());
@@ -82,7 +83,7 @@ function calcular_montos(){
         else if (impuesto < minimo_tributario) // LOGICA PARA DECLARACIONES HASTA 2010
         {
             impuesto = minimo_tributario;
-        }       
+        }      
 
         $('#ali_' + i).text(format(alicuota))
         $('#min_' + i).text(format(minimo_tributario))
@@ -90,7 +91,7 @@ function calcular_montos(){
 
         total_monto += monto;
         total_impuesto += impuesto;
-    }
+    });
 
     //LOGICA PARA DECLARACIONES DESDE A 2011
     if (GLOBAL_fiscal_year > 2010 && impuestoMayor < minimo_tributario){
@@ -128,7 +129,7 @@ function llenar_tabla_resumen(){
                    "<td>" + $td.filter(':eq(0)').html() + "</td>" +
                    "<td><span class='hidden-sm hidden-xs'>" + $td.filter(':eq(2)').html() + "</span></td>" +
                    "<td>" + $td.filter(':eq(3)').find('input').val() + "</td>" +
-                   "<td>" + $td.filter(':eq(5)').text() + "</td>" +
+                   "<td>" + $td.filter(':eq(6)').text() + "</td>" +
                "</tr>";
     });
 
@@ -147,16 +148,16 @@ function llenar_tabla_resumen(){
 
 function add_element($option, $actSpec, json_parent)
 {
-    var i = $('#activitiesTaxpayer').find('.list-group-item').length;
+    var i = $option.attr('id');
 
     $('.table-declaracion > tbody').append("<tr id='row" + $option.data('value') + "' option-id='" + $option.attr('id') + "' class='danger'>"+
     "<td class='hidden-sm hidden-xs'><strong>" + $option.data('value') + "</strong></td>\n"+
     "<td class='visible-sm visible-xs'><strong title='" + $option.data('original-title') + "'>" + $option.data('value') + "</strong></td>\n"+
     "<td><span title='" + $option.data('original-title') + "' class='hidden-sm hidden-xs'> + " + $option.data('original-title').substr(0,50) + "...</span></td>\n"+
-    "<td><input  type='text' class='float form-control text-center' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
-    "<td><strong><span id='ali_" + i + "'>" + format($option.data('alicuota')) + "</span></strong></td>\n"+
-    "<td><strong><span id='min_" + i + "'>" + format($option.data('minimun')) + "</span></strong></td>\n"+
-    "<td><span class='input-span' id='total_" + i + "'>0,00</span></td>"+
+    "<td><input  type='text' class='float form-control text-center montoActividad' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
+    "<td><strong><span class='alicuotaActividad' id='ali_" + i + "'>" + format($option.data('alicuota')) + "</span></strong></td>\n"+
+    "<td><strong><span class='minimoActividad' id='min_" + i + "'>" + format($option.data('minimun')) + "</span></strong></td>\n"+
+    "<td><span class='input-span totalActividad' id='total_" + i + "'>0,00</span></td>"+
     "</tr>");
 
     intercambiar_element($option, $("#activitiesTaxpayer"));
@@ -353,6 +354,7 @@ $(function(){
     });
 
     $(document).on('blur','.table-declaracion input[type=text]', function () {
+        console.log('entro');
         calcular_montos();
     });
 

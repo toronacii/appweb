@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($actividades_contribuyente as $iObj => $objActividad): ($description = ($fiscal_year > 2010) ? $objActividad->description : $objActividad->name) ?>
+            <?php foreach($actividades_contribuyente as $objActividad): ($description = ($fiscal_year > 2010) ? $objActividad->description : $objActividad->name); $iObj = $objActividad->id ?>
                 <tr id="row<?php echo str_replace('.', '_', $objActividad->code) ?>" option-id="<?php echo $objActividad->id ?>">
                     <td class="hidden-sm hidden-xs">
                         <strong><?php echo $objActividad->code ?></strong>

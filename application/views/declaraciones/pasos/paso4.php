@@ -6,7 +6,7 @@
     </div>
     <div id="activitiesSpecified" class="validate-paso-4">
         <?php $class = 12 / ((count($actividades_contribuyente) > 4) ? 4 : count($actividades_contribuyente))?>
-        <?php foreach ($actividades_contribuyente AS $i => $objAct): ?>
+        <?php foreach ($actividades_contribuyente AS $objAct): $i = $objAct->id ?>
         <div class="col-md-<?php echo $class ?> activitySpecified" <?php if (@$objAct->authorized == 'f') echo "option-id='{$objAct->id}'" ?>>           
             <div class="panel panel-<?php echo (@$objAct->authorized == 'f') ? 'danger' : 'primary' ?>">
                 <div class="panel-heading"><!--title="<?php echo $objAct->description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)"-->
