@@ -100,7 +100,14 @@ WHERE id_tax_type = 1
 AND attribute_classifier = 4
 AND parent_level = 689
 ORDER BY aliquot DESC, code
-,
+
+SELECT 
+*
+FROM tax_classifier 
+WHERE id_tax_type = 1
+AND attribute_classifier = 4
+AND parent_level = 689
+ORDER BY code, aliquot DESC
 	            
 
 

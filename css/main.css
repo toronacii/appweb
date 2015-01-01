@@ -232,6 +232,8 @@ span.separator{
   color: #f47b20;
 }
 
+.panel.tabs-primary{margin-bottom: none !important}
+
 @media (min-width : 768px) {
   .panel-tabs > li {
       float: left;

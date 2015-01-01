@@ -13,7 +13,7 @@
             <li class="active pull-right"><a href="#fija" data-toggle="tab">Publicidad fija<span class="badge"></span></a></li>
         </ul>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
             <div class="tab-pane active" id="fija">
             	<?php $this->load->view('publicidad/partials/calculadora', array('classifiers' => $classifiers->fija, 'type' => 'fija')) ?>
@@ -22,5 +22,5 @@
 				<?php $this->load->view('publicidad/partials/calculadora', array('classifiers' => $classifiers->eventual, 'type' => 'eventual')) ?>
             </div>
         </div>
-    </div>
+    <!--</div>-->
 </div>

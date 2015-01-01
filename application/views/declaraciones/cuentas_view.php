@@ -26,7 +26,7 @@
             </span>
         </h3>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <table id="crearDeclaracion" class="table"><!--crearDeclaracion-->
             <thead>
                 <tr>
@@ -35,15 +35,6 @@
                 </tr>
             </thead>
             <tbody>
-                <?php /* $declaraciones = [
-                    '030017007_1000583_0' => [
-                        'error 1',
-                        'error 2'
-                    ],
-                    '030017008_1000583_0' => [],
-                    '030017007_1000583_1' => []
-                ] */
-                ?>
                 <?php if(count($declaraciones) > 0): ?>
                     <?php foreach($declaraciones as $tan => $arrErrors): $index = explode('_', $tan);?>
                     <tr class="<?php echo (@$c++ % 2) ? "trpar odd": "" ?>">
@@ -93,7 +84,7 @@
             </tbody>
             <tfoot><tr><td colspan="2" style="font-size:16px;">&nbsp;</td></tr></tfoot>
         </table>
-    </div>
+    <!--</div>-->
 </div>
 
 <?php echo form_close() ?>

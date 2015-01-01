@@ -14,7 +14,7 @@
         </div>
 
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
 
             <div class="tab-pane active" id="solvencias">
@@ -62,5 +62,5 @@
             </div>
 
         </div>
-    </div>
+    <!--</div>-->
 </div>

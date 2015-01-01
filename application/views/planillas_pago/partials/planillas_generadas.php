@@ -38,9 +38,11 @@
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	<!--
 	<?php if (! $this->session->userdata('eventual')): ?>
 	<div class="panel-footer center"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?=site_url()?>/oficina_principal/nuc">Presiona aqu&iacute;</a></strong></div></div>
 	<?php endif; ?>
+	-->
 </div>
 
 <?php if ($this->session->userdata('eventual')): ?>

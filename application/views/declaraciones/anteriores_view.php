@@ -44,9 +44,9 @@
                             </h4>
                         </div>
                         <div id="collapse<?php echo $tax_account_number ?>" class="panel-collapse collapse">
-                            <div class="panel-body">
+                            <!--<div class="panel-body">-->
                                 <?php $this->load->view('declaraciones/table_anteriores_view', array('cuentas' => $cuentas)) ?>
-                            </div>
+                            <!--</div>-->
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -57,7 +57,7 @@
                 <?php else: ?>
                     <div class="center">No hay declaraciones anteriores</div>
                 <?php endif; ?>
-                <div class="panel-footer center"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?php echo site_url('oficina_principal/nuc') ?>">Presiona aquí</a></strong></div></div>
+                <!--<div class="panel-footer center"><div class="pie">¿No aparece alguna de tus cuentas en tu perfil ? <strong><a href="<?php echo site_url('oficina_principal/nuc') ?>">Presiona aquí</a></strong></div></div>-->
             </div>
         </div>
     </div>

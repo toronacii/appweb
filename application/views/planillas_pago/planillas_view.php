@@ -20,7 +20,7 @@
             
         </ul>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
             <?php if ($isset_pagadas): ?>
             <div class="tab-pane <?php if (! $isset_no_pagadas ) echo "active" ?>" id="pagadas">
@@ -33,7 +33,7 @@
             </div>
             <?php endif; ?>
         </div>
-    </div>
+    <!--</div>-->
 </div>
 <?php else: ?>
 <h4>No hay planillas cargadas</h4>

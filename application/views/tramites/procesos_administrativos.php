@@ -16,7 +16,7 @@
 
         </ul>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
 
             <?php if ($count_a): ?>
@@ -37,5 +37,5 @@
             <?php endif; ?>
 
         </div>
-    </div>
+    <!--</div>-->
 </div>

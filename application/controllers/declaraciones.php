@@ -189,9 +189,7 @@ class Declaraciones extends MY_Controller {
             $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax, $fiscal_year);
         }
 
-        #echo "<pre>"; var_dump($this->declaraciones, $paso3['actividades_contribuyente']); exit;
-
-        #var_dump($id_sttm_form, $this->declaraciones, $paso3); exit;
+        #dd($this->declaraciones, $paso3);
 
         $paso3['actividades_permisadas'] = $this->declaraciones->get_activities($fiscal_year);
 
@@ -240,18 +238,13 @@ class Declaraciones extends MY_Controller {
     public function declarar(){
 
         $sttm_tax = $this->session->userdata('sttm_tax');
-        #var_dump($sttm_tax, $_POST); exit;
 
         if (!$sttm_tax && (!(isset($_POST)) || empty($_POST))){
             $this->unset_userdata('sttm_tax');
             redirect (site_url ('declaraciones/cuentas'));
         }
 
-        #appweb.save_statement(bigint, boolean, integer, text[])
-        #[[id_tax_classifier,amount], ...]
-
-        #$arrayProccess = $this->_proccess_arrays(unserialize($_POST['cuentasPublicidad']), unserialize($_POST['activitiesDeleted']));
-        #var_dump($_POST); exit;
+        #dd($sttm_tax, $_POST);
 
         $tax_account_number = $sttm_tax['tax_account_number'];
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
@@ -270,7 +263,7 @@ class Declaraciones extends MY_Controller {
                 'long' => trim(@$latLong[1]),
                 'json_gm' => (empty($_POST['objGoogleMaps'])) ? '' : json_encode(unserialize($_POST['objGoogleMaps']))
             ),
-            'activities_specified' => $_POST['last_children']
+            'activities_specified' => isset($_POST['last_children']) ? $_POST['last_children'] : FALSE
         );
 
         if (isset($_POST['tax_discount'])){
@@ -278,11 +271,12 @@ class Declaraciones extends MY_Controller {
         }
 
         #echo serialize($data);
-        #var_dump($data);exit;
+
+        #dd($_POST, $data);
 
         $id_sttm_form = $this->declaraciones->save_statement($data);
 
-        #var_dump($this->declaraciones); echo "<a href='{$this->declaraciones->last_curl}' target='_blank'>click</a>"; exit;
+        #dd($this->declaraciones, $id_sttm_form);
 
         #var_dump($id_sttm_form); exit;
 

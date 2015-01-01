@@ -2,7 +2,7 @@
 
 -- DROP FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer);
 
-CREATE OR REPLACE FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer)
+CREATE OR REPLACE FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer DEFAULT NULL::integer)
   RETURNS SETOF appweb.type_errors_declare_taxpayer AS
 $BODY$ 
 DECLARE
@@ -32,7 +32,7 @@ DECLARE
 
 	_INITIAL_EVALUATE_YEAR int = 2009;
 	_TYPE_AFFIDAVIT_MONTHY int[] = '{4,7}';
-	NEW_ID_TRANSACTION_CREDIT int = 250;
+
 	-- ID TRANSACTIONS QUE SON EXCEPCIONES DE MONTOS ACCESORIOS
 	_EXCEPTIONS_MONTOS_ACCESORIOS bigint[] = '{52740,6927640,6927653,96380, 96381, 96382, 5963109, 5963110, 5963136, 5963113, 6245732, 6212269, 6212267, 6212236, 6212243, 6212249}';
 	_YEAR_NOW int := EXTRACT('YEAR' FROM now());
@@ -47,8 +47,9 @@ CREATE TEMPORARY TABLE TEMP_statement(id bigint, id_tax bigint, fiscal_year int,
 INSERT INTO TEMP_statement
 SELECT statement.id, id_tax, fiscal_year, type, estimated_sterile, tax_total, statement.month
 FROM statement
-INNER JOIN tax ON tax.id = id_tax
-WHERE id_taxpayer = _ID_TAXPAYER 
+INNER JOIN appweb.tax ON tax.id = id_tax
+WHERE id_taxpayer = _ID_TAXPAYER
+AND tax.id_tax_type = 1 
 AND statement.status = 2
 AND NOT statement.canceled;
 
@@ -57,14 +58,17 @@ FOR _ID_TAX, _INITIAL_YEAR IN
 	SELECT id, EXTRACT('YEAR' FROM real_initial_date)
 	FROM appweb.tax
 	WHERE id_taxpayer = _ID_TAXPAYER
+	AND tax.id_tax_type = 1
 
 LOOP	
 
+	RETURN;
 	-- INICIO DE VARIABLES
 
 	IF (_INITIAL_YEAR < _INITIAL_EVALUATE_YEAR) THEN _INITIAL_YEAR = _INITIAL_EVALUATE_YEAR; END IF; 
 
-	-- _I = 1;
+	RAISE NOTICE '_INITIAL_YEAR: %', _INITIAL_YEAR;
+
 	_RECORD_RETURN.id_tax = _ID_TAX;
 
 	-- DECLARACION EVALUADA DEBE SER CONSISTENTE CON SU FECHA DE INICIO DE ACTIVIDADES
@@ -96,7 +100,7 @@ LOOP
 		AND fiscal_year = _FISCAL_YEAR
 		AND CASE WHEN _TYPE THEN type IN (2,5) ELSE type IN (0,3) END;
 
-	-- DECLARACION JURADA MENSUAL
+	-- DECLARACIONES MENSUALES
 	
 	ELSE
 
@@ -124,10 +128,10 @@ LOOP
 	WHERE id_tax = _ID_TAX
 	AND NOT credit 
 	AND NOT canceled
-	AND id_transaction_type NOT IN (1, 8, 51, 16, NEW_ID_TRANSACTION_CREDIT)
+	AND id_transaction_type NOT IN (1, 8, 51, 16)
 	AND application_date BETWEEN '2011-01-01' AND now()
 	AND appweb.paid_transaction(transaction.id) < 0
-	AND transaction.id != ALL(_EXCEPTIONS_MONTOS_ACCESORIOS);
+	AND transaction.id != ALL('{52740,6927640,6927653,96380, 96381, 96382, 5963109, 5963110, 5963136, 5963113, 6245732, 6212269, 6212267, 6212236, 6212243, 6212249}'::bigint[]);
 
 	IF (FOUND) THEN
 
@@ -370,7 +374,7 @@ LOOP
 	IF (_TYPE) THEN
 
 		-- VERIFICAR QUE EL CONTRIBUYENTE NO ESTE SIENDO AUDITADO 
-		
+	/*	
 		PERFORM id FROM tecnologia.auditoria
 		WHERE id_tax = _ID_TAX
 		AND active = '1'
@@ -383,7 +387,7 @@ LOOP
 
 		    RETURN NEXT _RECORD_RETURN;
 		END IF;
-
+	*/
 		-- VALIDAR QUE NO SE DEBA UN CONVENIO O FRACCIONAMIENTO DE PAGO
 
 		PERFORM * FROM appweb.reparos_tax(_ID_TAX, '2011-01-01', NULL) WHERE active;

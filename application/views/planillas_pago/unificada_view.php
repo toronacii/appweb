@@ -8,7 +8,7 @@
             <li class="pull-right active"><a href="#cuentas" data-toggle="tab">Cuentas con cargos <span class="badge"><?php echo count($cargos) ?></span></a></li>
          </ul>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
             <div class="tab-pane active" id="cuentas">
                 <form action="<?php echo site_url('planillas_pago/generar_planilla_unificada') ?>" method="POST" target="_blank">
@@ -56,5 +56,5 @@
                 </form>
             </div>
         </div>
-    </div>
+    <!--</div>-->
 </div>

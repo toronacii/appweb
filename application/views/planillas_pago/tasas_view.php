@@ -28,7 +28,7 @@
             
         </ul>
     </div>
-    <div class="panel-body">
+    <!--<div class="panel-body">-->
         <div class="tab-content">
 
             <?php if ($tax_types[1]->total): ?>
@@ -56,7 +56,7 @@
             <?php endif; ?>
 
         </div>
-    </div>
+    <!--</div>-->
 </div>
 
 
