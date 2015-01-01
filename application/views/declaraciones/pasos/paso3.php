@@ -22,20 +22,20 @@
             <div style="max-height:300px; overflow-y: scroll;overflow-x: hidden">
 
                 <div class="list-group">
-                <?php foreach ($actividades_permisadas as $objActPerm): #$minimo = $objActPerm->minimun_taxable * $unidad_tributaria->value; ?>
+                <?php foreach ($actividades_permisadas as $objActPerm): ($description = ($fiscal_year > 2010) ? $objActPerm->description : $objActPerm->name) ?>
                     <a  href="#"
                         class="list-group-item"
                         style="white-space: nowrap"
-                        title="<?php echo ($showStepFour) ? $objActPerm->description : $objActPerm->name ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)" 
+                        title="<?php echo $description ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)" 
                         id="<?php echo $objActPerm->id ?>"
-                        data-minimun="<?php echo $objActPerm->minimun_taxable * $unidad_tributaria->value ?>"
                         data-alicuota="<?php echo $objActPerm->aliquot ?>"
+                        data-minimun="<?php echo $objActPerm->minimun_taxable * $unidad_tributaria->value ?>"
                         data-value="<?php echo $objActPerm->code ?>" 
                         <?php if ($showStepFour): ?>
                         data-converter="<?php echo $objActPerm->ids_specialized ?>"
                         <?php endif; ?>
                     >
-                            <strong><?php echo $objActPerm->code ?></strong> - <?php echo $objActPerm->name ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)
+                            <strong><?php echo $objActPerm->code ?></strong> - <?php echo $description  ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)
                     </a>
                 <?php endforeach; ?>
                 </div>
@@ -57,12 +57,12 @@
 
             <div style="max-height:300px; overflow-y: scroll; overflow-x: hidden">
                 <div class="list-group">
-                <?php foreach ($actividades_contribuyente as $objAct): ?>
+                <?php foreach ($actividades_contribuyente as $objAct): ($description = ($fiscal_year > 2010) ? $objAct->description : $objAct->name) ?>
                     <?php if (@$objAct->authorized == "f"): ?>
                     <a  href="#" 
                         class="list-group-item" 
                         id = "<?php echo $objAct->id ?>"
-                        title="<?php echo ($showStepFour) ? $objAct->description : $objAct->name ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)" 
+                        title="<?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)" 
                         style="white-space: nowrap"
                         data-minimun="<?php echo $objAct->minimun_taxable ?>"
                         data-alicuota="<?php echo $objAct->aliquot ?>"
@@ -72,16 +72,16 @@
                         <?php endif; ?>
                     >
                         
-                        <strong><?php echo $objAct->code ?></strong> - <?php echo $objAct->name ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
+                        <strong><?php echo $objAct->code ?></strong> - <?php echo $description  ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
                     </a>
                     <?php else: ?>
                     <div class="list-group-item" 
                          id = "<?php echo $objAct->id ?>"
-                         title="<?php echo $objAct->description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)"
+                         title="<?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)"
                          data-minimun="<?php echo $objAct->minimun_taxable ?>"
                          style="white-space: nowrap">
                         
-                        <strong><?php echo $objAct->code ?></strong> - <?php echo $objAct->name ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
+                        <strong><?php echo $objAct->code ?></strong> - <?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
                     </div>
                     <?php endif ?>
                     

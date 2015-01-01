@@ -31,24 +31,24 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($actividades_contribuyente as $iObj => $objActividad): ?>
+            <?php foreach($actividades_contribuyente as $iObj => $objActividad): ($description = ($fiscal_year > 2010) ? $objActividad->description : $objActividad->name) ?>
                 <tr id="row<?php echo str_replace('.', '_', $objActividad->code) ?>" option-id="<?php echo $objActividad->id ?>">
                     <td class="hidden-sm hidden-xs">
                         <strong><?php echo $objActividad->code ?></strong>
                     </td>
                     <td class="visible-sm visible-xs">
-                        <strong title="<?php echo "$objActividad->description (Alicuota: $objActividad->aliquot)" ?>">
+                        <strong title="<?php echo "$description (Alicuota: $objActividad->aliquot)" ?>">
                             <?php echo $objActividad->code ?>
                         </strong>
                     </td>
                     <td>
-                        <span class="hidden-sm hidden-xs" title="<?php echo "$objActividad->description (Alicuota: $objActividad->aliquot)" ?>">
-                            <?php if (@$objActividad->authorized == 'f') echo "+" ?> <?php echo substr($objActividad->description,0,50) ?>...
+                        <span class="hidden-sm hidden-xs" title="<?php echo "$description (Alicuota: $objActividad->aliquot)" ?>">
+                            <?php if (@$objActividad->authorized == 'f') echo "+" ?> <?php echo substr($description,0,50) ?>...
                         </span>
                     </td>
                     <td><input type="text" class="float form-control text-center" id="monto_<?php echo $iObj ?>" name="monto[<?php echo $objActividad->id ?>]" value="<?php echo (isset($objActividad->monto)) ? number_format($objActividad->monto,2,',','.') : '0,00' ?>" /></td>
-                    <td><strong><span id="ali_<?php echo $iObj ?>"><?php echo $objActividad->aliquot ?></span></strong></td>
-                    <td><strong><span id="min_<?php echo $iObj ?>"><?php echo $objActividad->minimun_taxable * $unidad_tributaria->value ?></span></strong></td>
+                    <td><strong><span id="ali_<?php echo $iObj ?>"><?php echo number_format($objActividad->aliquot,2,',','.') ?></span></strong></td>
+                    <td><strong><span id="min_<?php echo $iObj ?>"><?php echo number_format($objActividad->minimun_taxable * $unidad_tributaria->value,2,',','.') ?></span></strong></td>
                     <td><span id="total_<?php echo $iObj ?>" class="input-span">0,00</span></td>
                 </tr>
             <?php endforeach; ?>

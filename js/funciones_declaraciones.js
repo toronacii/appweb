@@ -1,4 +1,5 @@
 GLOBAL_showStepFour = GLOBAL_showStepFour == true;
+GLOBAL_fiscal_year  = parseInt(GLOBAL_fiscal_year);
 
 jQuery.expr[':'].contains = function(a,i,m){
      return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
@@ -54,34 +55,45 @@ function calcular_montos(){
     var sttm_old = original_number($('#sttm_old').text());
     var sttm_type = parseInt($('#sttm_type').val());
     var unidad_tributaria = parseFloat($('#unidad_tributaria').attr('value'));
-    var minimoTributarioMayor = 0;
-    var iminimoTributarioMayor = 0;
+    var minimo_tributario = 0;
+    var alicuota = 0;
 
     for (i=0; i < totalRows; i++)
     {
         var impuesto = 0;
         monto = original_number($('#monto_' + i).val());
-        minimo_tributario = parseFloat($('#min_' + i).text());
+        alicuota = original_number($('#ali_' + i).text());
+        minimo_tributario = original_number($('#min_' + i).text());
         //console.log($('#monto_' + i));
 
         if (isNaN(monto))
             monto = 0;
 
-        impuesto = monto * parseFloat($('#ali_' + i).text()) / 100;
+        impuesto = monto * alicuota / 100;
+        
+        //LOGICA PARA DECLARACIONES DESDE A 2011
+        if (GLOBAL_fiscal_year > 2010)
+        {
+            if (impuesto > impuestoMayor){
+                impuestoMayor = impuesto;
+                iImpuestoMayor = i;
+            }
+        } 
+        else if (impuesto < minimo_tributario) // LOGICA PARA DECLARACIONES HASTA 2010
+        {
+            impuesto = minimo_tributario;
+        }       
+
+        $('#ali_' + i).text(format(alicuota))
+        $('#min_' + i).text(format(minimo_tributario))
         $('#total_' + i).text(format(impuesto));
+
         total_monto += monto;
         total_impuesto += impuesto;
-
-        if (impuesto > impuestoMayor){
-            impuestoMayor = impuesto;
-            iImpuestoMayor = i;
-        }
     }
 
-    //console.log(minimo_tributario);
-
-
-    if (impuestoMayor < minimo_tributario){
+    //LOGICA PARA DECLARACIONES DESDE A 2011
+    if (GLOBAL_fiscal_year > 2010 && impuestoMayor < minimo_tributario){
         $('#total_' + iImpuestoMayor).text(format(minimo_tributario));
         total_impuesto = total_impuesto - impuestoMayor + minimo_tributario;
     }
@@ -125,7 +137,7 @@ function llenar_tabla_resumen(){
         foot += "<tr>" +
                    "<td colspan='2'>" + $td.filter(':eq(0)').html() + "</td>" +
                    "<td>" + (($td.filter(':eq(1) input').length == 0) ? $td.filter(':eq(1)').text() : $td.filter(':eq(1) input').val()) + "</td>" +
-                   "<td>" + $td.filter(':eq(3)').html() + "</td>" +
+                   "<td>" + $td.filter(':eq(4)').html() + "</td>" +
                 "</tr>";
     });
 
@@ -142,8 +154,8 @@ function add_element($option, $actSpec, json_parent)
     "<td class='visible-sm visible-xs'><strong title='" + $option.data('original-title') + "'>" + $option.data('value') + "</strong></td>\n"+
     "<td><span title='" + $option.data('original-title') + "' class='hidden-sm hidden-xs'> + " + $option.data('original-title').substr(0,50) + "...</span></td>\n"+
     "<td><input  type='text' class='float form-control text-center' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
-    "<td><strong><span id='ali_" + i + "'>" + $option.data('alicuota') + "</span></strong></td>\n"+
-    "<td><strong><span id='min_" + i + "'>" + $option.data('minimun') + "</span></strong></td>\n"+
+    "<td><strong><span id='ali_" + i + "'>" + format($option.data('alicuota')) + "</span></strong></td>\n"+
+    "<td><strong><span id='min_" + i + "'>" + format($option.data('minimun')) + "</span></strong></td>\n"+
     "<td><span class='input-span' id='total_" + i + "'>0,00</span></td>"+
     "</tr>");
 

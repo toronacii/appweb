@@ -83,8 +83,8 @@ class Declaraciones extends MY_Controller {
 
     private function showStepSpecifiedActivities($sttm)
     {
-        $year = $sttm[0];
-        $type = $sttm[1];
+        $year = $sttm[1];
+        $type = $sttm[0];
 
         if ($year >= 2013)
         {
@@ -114,16 +114,6 @@ class Declaraciones extends MY_Controller {
         return $steps;
     }
 
-    private function getMinimunTaxable($year)
-    {
-        if ($year > 2010)
-        {
-            return 25;
-        }
-
-        return 7;
-    }
-
     public function crear($tax_account_number = NULL)
     {
         $sttm_tax = $this->session->userdata('sttm_tax');
@@ -141,6 +131,8 @@ class Declaraciones extends MY_Controller {
         $sttm_tax['tax_account_number'] = $tax_account_number;
 
         $sttm_only = $sttm_tax['sttm'];
+
+        $fiscal_year = ($sttm_tax['sttm'][0] == 'TRUE') ? $sttm_tax['sttm'][1] : $sttm_tax['sttm'][1] - 1;
 
         #d($sttm_tax);
 
@@ -160,7 +152,10 @@ class Declaraciones extends MY_Controller {
         );
         $header['sidebar'] = 'menu/oficina_menu';
         $header['show_breadcrumbs'] = FALSE;
-        $header['arrayVarsJs'] = array('GLOBAL_showStepFour' => (int)$paso1['showStepFour']);
+        $header['arrayVarsJs'] = array(
+            'GLOBAL_showStepFour' => (int)$paso1['showStepFour'],
+            'GLOBAL_fiscal_year' => $fiscal_year
+        );
         $this->load->view('header', $header);
 
         #var_dump($sttm_tax);
@@ -169,7 +164,12 @@ class Declaraciones extends MY_Controller {
 
         #PASOS
 
-        $this->load->view('declaraciones/pasos/pasos', ['steps' => $this->getSteps($sttm_only)]);
+        $this->load->view('declaraciones/pasos/pasos', [
+            'steps' => $this->getSteps($sttm_only),
+            'fiscal_year' => $fiscal_year
+        ]);
+
+        #dd($this->getSteps($sttm_only), $fiscal_year, $sttm_only);
 
         #PASO 1
         $paso1['datos_contribuyente'] = $this->declaraciones->datos_taxpayer($id_tax);
@@ -182,8 +182,6 @@ class Declaraciones extends MY_Controller {
 
         #PASO 3
         $id_sttm_form = $sttm_tax['tax'][$sttm_tax['tax_account_number']]->id_sttm_form;
-
-        $fiscal_year = ($sttm_tax['sttm'][0] == 'TRUE') ? $sttm_tax['sttm'][1] : $sttm_tax['sttm'][1] - 1;
 
         if ($id_sttm_form > 0){
             $paso3['actividades_contribuyente'] = $this->declaraciones->get_data_statement($id_sttm_form);
