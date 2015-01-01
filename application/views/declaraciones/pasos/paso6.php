@@ -1,4 +1,4 @@
-<div class="row setup-content" id="paso-6">
+<div class="row setup-content" id="paso-<?php echo ($showStepFour) ? 6 : 5 ?>">
     <div class="panel panel-primary">
         <div class="panel-heading center">Resumen</div>
         <table class="table" id="table_resumen">

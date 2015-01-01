@@ -30,8 +30,10 @@
                         id="<?php echo $objActPerm->id ?>"
                         data-alicuota="<?php echo $objActPerm->aliquot ?>"
                         data-value="<?php echo $objActPerm->code ?>" 
-                        data-converter="<?php echo $objActPerm->ids_specialized ?>">
-
+                        <?php if ($showStepFour): ?>
+                        data-converter="<?php echo $objActPerm->ids_specialized ?>"
+                        <?php endif; ?>
+                    >
                             <strong><?php echo $objActPerm->code ?></strong> - <?php echo $objActPerm->description ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)
                     </a>
                 <?php endforeach; ?>
@@ -63,7 +65,10 @@
                         style="white-space: nowrap"
                         data-alicuota="<?php echo $objAct->aliquot ?>"
                         data-value="<?php echo $objAct->code ?>" 
-                        data-converter="<?php echo $objAct->ids_specialized ?>">
+                        <?php if ($showStepFour): ?>
+                        data-converter="<?php echo $objAct->ids_specialized ?>"
+                        <?php endif; ?>
+                    >
                         
                         <strong><?php echo $objAct->code ?></strong> - <?php echo $objAct->description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
                     </a>

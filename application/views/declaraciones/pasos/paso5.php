@@ -1,4 +1,4 @@
-<div class="row setup-content" id="paso-5">
+<div class="row setup-content" id="paso-<?php echo ($showStepFour) ? 5 : 4 ?>">
     <div class="well well-sm">
         <strong>Estimado contribuyente:</strong> A continuación usted podrá colocar los ingresos brutos que desea declarar. Pero primero lea lo siguiente: 
         <ol>

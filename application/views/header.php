@@ -1,7 +1,10 @@
 <?php if(!is_array(@$arrayJs)) $arrayJs=array();?>
 <?php if(!is_array(@$arrayCss)) $arrayCss=array(); ?>
+<?php if(!is_array(@$arrayVarsJs)) $arrayVarsJs=array(); ?>
 <?php array_unshift($arrayJs,'jquery-1.10.2.js','bootstrap/bootstrap.min.js','datatables/jquery.dataTables.min.js','datatables/datatables.js', 'base.js', 'bootstrap/bootbox.min.js'); ?>
 <?php array_unshift($arrayCss,'font-awesome/css/font-awesome.min.css', 'bootstrap.min.css','mybootstrap.css','main.css','datatables/datatables.css');?>
+<?php $arrayVarsJs = ['site_url' => site_url()] + $arrayVarsJs; ?>
+
 <?php $show_breadcrumbs = (isset($show_breadcrumbs))? $show_breadcrumbs: (bool)$this->session->userdata('usuario_appweb'); ?>
 <!DOCTYPE html>
 <html>
@@ -13,7 +16,11 @@
 	<link type="text/css" href=<?= base_url()."css/$dirCss" ?> rel="stylesheet"/>
 <? endforeach; ?>
 <?php endif; ?>
-<script>site_url='<?=site_url()?>';</script>
+<script>
+<?php foreach ($arrayVarsJs as $var => $value)
+	echo "var $var = '$value';\n";
+?>
+</script>
 <?php if (isset($arrayJs)):?>
 	<? foreach ($arrayJs as $dirJs):?>
 	<script type="text/javascript" src=<?=base_url()."js/$dirJs" ?>></script>

@@ -128,7 +128,7 @@ class MY_Exceptions extends CI_Exceptions {
 		#d($severity, $message, $filepath, $line);
 
 		$this->CI->load->model('api_model', 'gestion_usuario');
-		$this->CI->gestion_usuario->send_email_WS($data);
+		//$this->CI->gestion_usuario->send_email_WS($data);
 
 		echo $buffer;
 	}

@@ -143,7 +143,4 @@ $(document).ready(function(){
         $(href).addClass('active');
     }
 
-    //console.log($objects);
-
-    //$('.tabs-primary .panel-body .tab-content .panel-footer.center').empty();
 });

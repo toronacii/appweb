@@ -1,9 +1,14 @@
+GLOBAL_showStepFour = GLOBAL_showStepFour == true;
+
 jQuery.expr[':'].contains = function(a,i,m){
      return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
 };
 
 function changeClassActivitySpecified()
 {
+    if (! GLOBAL_showStepFour)
+        return false;
+
     var $elements = $('.activitySpecified');
     var count = $elements.length;
     if (count > 4)
@@ -42,7 +47,14 @@ function get_html_select(obj){
 
 function classifier_specialized_change(){
 
+    if (! GLOBAL_showStepFour)
+        return false;
+
     $('.activitySpecified select').change(function(){
+
+        console.log(this.value, '#s' + idchildren + idchildrenLast);
+
+        return;
 
         var idchildren = parseInt(this.id.substr(1,1)) + 1;
         var idchildrenLast = this.id.substr(2);
@@ -58,7 +70,7 @@ function classifier_specialized_change(){
                 $(this).empty().html(html).attr('disabled',true);
         });
 
-        //console.log(this.value);
+        
 
         if (parseInt(this.value) > -1)
         {
@@ -90,7 +102,8 @@ function calcular_montos(){
     var sttm_old = original_number($('#sttm_old').text());
     var sttm_type = parseInt($('#sttm_type').val());
 
-    for (i=0; i < totalRows; i++){
+    for (i=0; i < totalRows; i++)
+    {
         var impuesto = 0;
         monto = original_number($('#monto_' + i).val());
 
@@ -166,6 +179,77 @@ function llenar_tabla_resumen(){
     $('#table_resumen tfoot').append(foot);
 }
 
+function add_element($option, $actSpec, i, json_parent)
+{
+    $('.table-declaracion > tbody').append("<tr id='row" + $option.data('value').replace('.','_') + "' option-id='" + $option.attr('id') + "' class='danger'>"+
+    "<td class='hidden-sm hidden-xs'><strong>" + $option.data('value') + "</strong></td>\n"+
+    "<td class='visible-sm visible-xs'><strong title='" + $option.data('original-title') + "'>" + $option.data('value') + "</strong></td>\n"+
+    "<td><span title='" + $option.data('original-title') + "' class='hidden-sm hidden-xs'> + " + $option.data('original-title').substr(0,50) + "...</span></td>\n"+
+    "<td><input  type='text' class='float form-control text-center' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
+    "<td><strong><span id='ali_" + i + "'>" + $option.data('alicuota') + "</span></strong></td>\n"+
+    "<td><span class='input-span' id='total_" + i + "'>0,00</span></td>"+
+    "</tr>");
+
+    intercambiar_element($option, $("#activitiesTaxpayer"));
+
+    if (GLOBAL_showStepFour)
+    {
+        var html = '<div class="col-md-12 activitySpecified" option-id="' + $option.attr('id') + '"><div class="panel panel-danger">';
+        html += '<div class="panel-heading">'; 
+        html += '<strong>' + $option.data('value') + '</strong> (No permisada)<button type="button" class="close" aria-hidden="true">&times;</button></div><div class="list-group">';
+
+        for (var j = 0; j < 4; j++)
+        {
+            var name = '', disabled;
+            html +='<div class="list-group-item">';
+            if (j === 3) name = 'name = "last_children[' + $option.attr('id') + ']"';
+            (j===0) ? disabled = '' : disabled = 'disabled';
+            html += '<select ' + name + ' id="s' + j + '_' + i + '" class="form-control select validate" data-validate-rules="required[-1]" ' + disabled + '>';
+            html +='<option value="-1">Seleccione</option>';
+            if (j === 0) html += get_html_select(json_parent);
+            html +='</select></div>'
+        }
+
+        html += '</div></div></div>';
+
+        $actSpec.append(html);
+        changeClassActivitySpecified();
+        classifier_specialized_change();
+    }
+
+    calcular_montos();
+
+}
+
+function intercambiar_element($item, $destino)
+{
+   $destino.find('.list-group').append($item.removeClass('active'));
+   $('#allActivities').find('div.list-group a').sort(function(a,b){
+        return $(a).text() > $(b).text() ? 1 : -1;
+    });
+}
+
+function remove_element(id_option)
+{
+    $('.table-declaracion').find('tr[option-id="' + id_option + '"]').remove();
+    $item = $("#activitiesTaxpayer").find(".list-group-item#" + id_option);
+
+    intercambiar_element($item, $('#allActivities'));
+    
+    if (GLOBAL_showStepFour)
+    {
+        /*
+        var $parentEspecified = $(this).closest('.activitySpecified');
+        var id_option = $parent.attr('option-id');
+        $parent.remove();
+        */
+        changeClassActivitySpecified();
+        classifier_specialized_change();
+    }
+
+    calcular_montos();
+}
+
 $(function(){
 
 	$('#accordion_statement .collapse').on('show.bs.collapse', function(){
@@ -228,46 +312,25 @@ $(function(){
             $allA.each(function(){
 
                 var $option = $(this);
-                //console.log($option);
 
-                $.getJSON(site_url + '/declaraciones/ajax_get_children_tax_classifier_specialized',{'ids_specialized':$option.data("converter"),'field':'id'},function(json_parent){
+                if (GLOBAL_showStepFour)
+                {
+                    var data = {
+                        'ids_specialized': $option.data("converter"),
+                        'field':'id'
+                    };
 
-                    $('.table-declaracion > tbody').append("<tr id='row" + $option.data('value').replace('.','_') + "' option-id='" + $option.attr('id') + "' class='danger'>"+
-                        "<td class='hidden-sm hidden-xs'><strong>" + $option.data('value') + "</strong></td>\n"+
-                        "<td class='visible-sm visible-xs'><strong title='" + $option.data('original-title') + "'>" + $option.data('value') + "</strong></td>\n"+
-                        "<td><span title='" + $option.data('original-title') + "' class='hidden-sm hidden-xs'> + " + $option.data('original-title').substr(0,50) + "...</span></td>\n"+
-                        "<td><input  type='text' class='float form-control text-center' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
-                        "<td><strong><span id='ali_" + i + "'>" + $option.data('alicuota') + "</span></strong></td>\n"+
-                        "<td><span class='input-span' id='total_" + i + "'>0,00</span></td>"+
-                    "</tr>");
+                    $.getJSON(site_url + '/declaraciones/ajax_get_children_tax_classifier_specialized',data,function(json_parent){
+                        add_element($option, $actSpec, i, json_parent);
+                    });
+                }
+                else
+                {
+                    add_element($option, $actSpec);
+                }
 
-                    var html = '<div class="col-md-12 activitySpecified" option-id="' + $option.attr('id') + '"><div class="panel panel-danger">';
-                    html += '<div class="panel-heading">'; //title="' + $option.data('original-title') + ')"
-                    html += '<strong>' + $option.data('value') + '</strong> (No permisada)<button type="button" class="close" aria-hidden="true">&times;</button></div><div class="list-group">';
+                i++;
 
-                    for (var j = 0; j < 4; j++)
-                    {
-                        var name = '', disabled;
-                        html +='<div class="list-group-item">';
-                        if (j === 3) name = 'name = "last_children[' + $option.attr('id') + ']"';
-                        (j===0) ? disabled = '' : disabled = 'disabled';
-                        html += '<select ' + name + ' id="s' + j + '_' + i + '" class="form-control select validate" data-validate-rules="required[-1]" ' + disabled + '>';
-                        html +='<option value="-1">Seleccione</option>';
-                        if (j === 0) html += get_html_select(json_parent);
-                        html +='</select></div>'
-                    }
-
-                    html += '</div></div></div>';
-
-                    $actSpec.append(html);
-                    changeClassActivitySpecified();
-                    classifier_specialized_change();
-                    calcular_montos();
-                    i++;
-                });
-
-
-                /**/
             });
 
         }
@@ -275,24 +338,18 @@ $(function(){
         {
             var $other = $('#allActivities');
             $allA.each(function(){
-                $('.activitySpecified').filter('[option-id="' + this.id + '"]').find('.close').trigger('click');
+                remove_element(this.id);
+                //$('.activitySpecified').filter('[option-id="' + this.id + '"]').find('.close').trigger('click');
             });
-
-
         }
-
-        $other.find('.list-group').append($allA.removeClass('active'));
-
-        //console.log($other.find('div.list-group a'));
-
-        $other.find('div.list-group a').sort(function(a,b){
-            return $(a).text() > $(b).text() ? 1 : -1;
-        });
 
         $('.tooltip').hide();
     });
 
     $(document).on('click', '.panel .close' ,function(){
+        if (! GLOBAL_showStepFour)
+            return false;
+
         var $parent = $(this).closest('.activitySpecified');
         var id_option = $parent.attr('option-id');
         $parent.remove();

@@ -73,12 +73,55 @@ class Declaraciones extends MY_Controller {
 
         #var_dump($_SESSION['sttm_tax']);
 
-        $data['declaraciones'] = objectToArray($this->declaraciones->get_errors_declare($this->id_taxpayer, $params[0], $params[1]));
+        $data['declaraciones'] = objectToArray($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, $params[0], $params[1]));
 
         #var_dump($data['declaraciones'], $this->declaraciones); exit;
 
         $this->load->view('declaraciones/cuentas_view', $data);
         $this->load->view('footer');
+    }
+
+    private function showStepSpecifiedActivities($sttm)
+    {
+        $year = $sttm[0];
+        $type = $sttm[1];
+
+        if ($year < 2013)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function getSteps($sttm)
+    {
+        $steps = [
+            "Actualice sus datos",
+            "Ubicación geográfica",
+            "Añadir actividades",
+            "Especificar actividades",
+            "Realizar declaración",
+            "Finalizar proceso"
+        ];
+
+        if (! $this->showStepSpecifiedActivities($sttm))
+        {
+            unset($steps[3]);
+            return array_values($steps);
+        }
+
+        return $steps;
+    }
+
+    private function getMinimunTaxable($year)
+    {
+        if ($year > 2010)
+        {
+            return 25;
+        }
+
+        return 7;
     }
 
     public function crear($tax_account_number = NULL)
@@ -97,8 +140,12 @@ class Declaraciones extends MY_Controller {
         $sttm_tax['tax'] = array($tax_account_number => $sttm_tax['tax'][$tax_account_number]);
         $sttm_tax['tax_account_number'] = $tax_account_number;
 
-        #var_dump($sttm_tax);
+        $sttm_only = $sttm_tax['sttm'];
 
+        #d($sttm_tax);
+
+        $paso1['showStepFour'] = $this->showStepSpecifiedActivities($sttm_only);
+        
         $this->session->set_userdata('sttm_tax', $sttm_tax);
 
         $header['arrayCss'] = array('declaraciones.css');
@@ -113,6 +160,7 @@ class Declaraciones extends MY_Controller {
         );
         $header['sidebar'] = 'menu/oficina_menu';
         $header['show_breadcrumbs'] = FALSE;
+        $header['arrayVarsJs'] = array('GLOBAL_showStepFour' => (int)$paso1['showStepFour']);
         $this->load->view('header', $header);
 
         #var_dump($sttm_tax);
@@ -120,7 +168,8 @@ class Declaraciones extends MY_Controller {
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
 
         #PASOS
-        $this->load->view('declaraciones/pasos/pasos');
+
+        $this->load->view('declaraciones/pasos/pasos', ['steps' => $this->getSteps($sttm_only)]);
 
         #PASO 1
         $paso1['datos_contribuyente'] = $this->declaraciones->datos_taxpayer($id_tax);
@@ -155,17 +204,21 @@ class Declaraciones extends MY_Controller {
         #var_dump($this->declaraciones, $paso3); exit;
 
         #PASO 4
-        foreach ($paso3['actividades_contribuyente'] AS $i => $act)
+
+        if ($paso1['showStepFour'])
         {
-            $paso3['actividades_contribuyente'][$i]->parent_specialized = $this->declaraciones->get_children_tax_classifier_specialized($act->ids_specialized);
+            foreach ($paso3['actividades_contribuyente'] AS $i => $act)
+            {
+                $paso3['actividades_contribuyente'][$i]->parent_specialized = $this->declaraciones->get_children_tax_classifier_specialized($act->ids_specialized);
+            }
+
+            #d($this->declaraciones, $paso3['actividades_contribuyente']); exit;
+
+            $this->load->view('declaraciones/pasos/paso4');
         }
 
-        #var_dump($this->declaraciones, $paso3['actividades_contribuyente']); exit;
-
-        $this->load->view('declaraciones/pasos/paso4');
-
         #PASO 5
-        $paso5['minimo_tributario'] =  round($paso3['unidad_tributaria']->value * 25, 2);
+        $paso5['minimo_tributario'] =  round($paso3['unidad_tributaria']->value * $this->getMinimunTaxable($fiscal_year), 2);
         $paso5['sttm'] = $sttm_tax['sttm'];
         $paso5['sttm_old'] = $this->declaraciones->get_total_sttm($id_tax, $paso5['sttm'][0], $paso5['sttm'][1]);
 
@@ -315,12 +368,15 @@ class Declaraciones extends MY_Controller {
     private function _select_statements(){
         $year_now = (int)date('Y');
         $month_now = (int)date('m');
-        for ($year = 2011; $year <= $year_now; $year++){
-            if ($year > 2011){
+
+        $yearIni = 2009;
+
+        for ($year = $yearIni; $year <= $year_now; $year++){
+            if ($year > $yearIni){
                 $return[] = 'TRUE_' . ($year - 1);
             }
 
-            if ($year + 1 < 2015 && ($year + 1 == (int)date('Y') || ($year == (int)date('Y') && $month_now >= 10))){
+            if ($year + 1 < 2015 && ($year + 1 == $year_now || ($year == $year_now && $month_now >= 10))){
                 $return[] = 'FALSE_' . ($year + 1);
             }
         }

@@ -103,8 +103,6 @@ $(document).ready(function() {
 
     function doStep(humanStepNextOrBack)
     {
-        var totalSteps = $('ul.pasos li').length + 1;
-
         //console.log(humanStep, humanStepNextOrBack);
 
         //click a suiguiente o anterior
@@ -118,14 +116,14 @@ $(document).ready(function() {
                 break;
             }
 
-            case 5:
+            case totalSteps - 1:
                 var validForm = validate();
                 //console.log(validForm);
                 if (! validForm) return false;
             break;
-            case 6:
+            case totalSteps:
             {
-                if ($('#sttm_type').val() === '0' && stepsActives.indexOf(5) !== -1)
+                if ($('#sttm_type').val() === '0' && stepsActives.indexOf(totalSteps - 1) !== -1)
                 {
                     //console.log($('#sttm_type').val(), original_number($('#sttm_old').text()));
                     if (original_number($('#sttm_old').text()) > original_number($('#total_monto').text())){
@@ -151,6 +149,9 @@ $(document).ready(function() {
     var humanStep = idxStepAct + 1;
     var stepMap = 2;
     var stepsActives = [];
+    var totalSteps = $('ul.setup-panel.pasos li').length; 
+
+    //console.log(totalSteps);
 
     allWells.hide();
 
@@ -199,7 +200,7 @@ $(document).ready(function() {
     $('.finalize').click(function(event){
 
         event.preventDefault();
-        for (var step = 1; step < 5; step++)
+        for (var step = 1; step < totalSteps - 1; step++)
         {
             if (! validate(step)){
                 //console.log(validate(step));
@@ -208,7 +209,7 @@ $(document).ready(function() {
             }
         }
 
-        if ($('#sttm_type').val() === '0' && stepsActives.indexOf(5) !== -1)
+        if ($('#sttm_type').val() === '0' && stepsActives.indexOf(totalSteps - 1) !== -1)
         {
             //console.log($('#sttm_type').val(), original_number($('#sttm_old').text()));
             if (original_number($('#sttm_old').text()) > original_number($('#total_monto').text())){

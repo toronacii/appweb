@@ -1,0 +1,1 @@
+ALTER TABLE statement ADD month smallint
