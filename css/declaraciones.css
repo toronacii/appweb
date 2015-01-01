@@ -2,7 +2,6 @@
 #accordion_statement h4.panel-title a{text-decoration: none; display: block; padding: 10px 15px; font-size: 0.9em}
 #accordion_statement .panel-heading{padding: 0}
 #actividades_economicas .panel-group .panel-heading+.panel-collapse .panel-body{border-top:0px solid; }
-
 #actividades_economicas table td, 
 #actividades_economicas table th,
 #crearDeclaracion td,
@@ -10,6 +9,6 @@
 .table-declaracion td,
 .table-declaracion th, 
 .table-declaracion .text-center{text-align: center}
-#crearDeclaracion .tooltip-inner{text-align: left}
+#crearDeclaracion .tooltip-inner{text-align: left; white-space: pre}
 .gmap3{width: 100%; height: 400px;}
 .input-span{font-weight: bold}

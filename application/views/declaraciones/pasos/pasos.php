@@ -3,7 +3,7 @@
 <div class="row form-group">
     <ul class="nav nav-pills nav-justified thumbnail setup-panel pasos">
         <?php foreach($steps as $index => $description): ?>
-        <li class="<?php echo ($index == 2) ? 'active' : 'disabled' ?>"><a href="#paso-<?php echo $index + 1 ?>">
+        <li class="<?php echo ($index == 0) ? 'active' : 'disabled' ?>"><a href="#paso-<?php echo $index + 1 ?>">
             <h4 class="list-group-item-heading">Paso <?php echo $index + 1 ?></h4>
             <p class="list-group-item-text"><?php echo $description ?></p>
         </a></li>

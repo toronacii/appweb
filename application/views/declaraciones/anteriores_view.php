@@ -2,7 +2,7 @@
 
 <div class="well well-sm">
     <strong>Estimado contribuyente:</strong> esta funcionalidad le permitirá visualizar todas las declaraciones realizadas desde que inició actividades económicas en nuestro municipio.
-    <em>Nota: </em>A partir del periodo fiscal 2012 podrá imprimir la declaración que haya realizado por el sistema web en formato PDF. Las declaraciones anteriores a ese año aparecerá una X, porque sólo  podrán ser consultadas.
+    <strong><em>Nota: </em></strong>Algunas declaraciones anteriores al periodo fiscal del año 2012 no se podrán reimprimir, pero si podrá visualizarlas con el botón que tiene el icono de lupa.
 </div>
 
 <div class="panel panel-primary tabs-primary">
@@ -40,9 +40,9 @@
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion_statement" href="#collapse<?php echo $tax_account_number ?>">
                                     <?php echo $tax_account_number ?>
-                                </a>
-                            </h4>
-                        </div>
+                             >
+   </a>
+                            </h4                        </div>
                         <div id="collapse<?php echo $tax_account_number ?>" class="panel-collapse collapse">
                             <!--<div class="panel-body">-->
                                 <?php $this->load->view('declaraciones/table_anteriores_view', array('cuentas' => $cuentas)) ?>
@@ -70,7 +70,9 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">Detalle de declaración número: <span></span></h4>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body">
+                <div class="content-declaraciones"></div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
             </div>

@@ -4,8 +4,9 @@
 <div class="well well-sm">
     <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar declaraciones de actividades económicas
     <ol>
-        <li>Para ello, debe haber pagado el primer trimestre de 2014, y haber realizado la Declaración Estimada 2014</li>
-        <li>Realizar declaraciones en línea de periodos omitidos a partir de la Declaración Definitiva 2011. Recuerda que si necesita declarar años anteriores al 2011 deberá presentarse en nuestras oficinas.</li>
+        <li>Para ello, debe estar solvente, ademas de no tener declaraciones de años anteriores sin realizar</li>
+        <li><strong>Ya puedes realizar tus declaraciones para los periodos fiscales 2009 y 2010</strong></li>
+        <li>Realizar declaraciones en línea de periodos omitidos a partir de la Declaración Definitiva 2009. Recuerda que si necesita declarar años anteriores al 2009 deberá presentarse en nuestras oficinas.</li>
     </ol>
 </div>
 <?php echo form_open(site_url('declaraciones/cuentas')) ?>

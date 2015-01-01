@@ -145,7 +145,7 @@ class Declaraciones extends MY_Controller {
             'number_format.js',
             'round.js',
             'validacionesToro.js',
-            'funciones_declaraciones.js',
+            'funciones_declaraciones_logica.js',
             'serialize.js',
             'bootstrap/bootstrap-steps.js',
             'jqueryui/core-effects.js'
