@@ -9,7 +9,7 @@
             <li class="texto">Verifique que los montos colocados estén en los códigos correspondientes. Evite errores.</li>
             <li>Al finalizar, presione el botón <a href="#" class="label label-primary activate next">Siguiente</a></li>
         </ol>
-        <strong id="minimo_tributario" value="<?php echo $minimo_tributario ?>">Mínimo tributario = <?php echo number_format($minimo_tributario, 2, ',', '.') ?></strong>
+        <strong id="unidad_tributaria" value="<?php echo $unidad_tributaria->value ?>">Unidad tributaria = <?php echo number_format($unidad_tributaria->value, 2, ',', '.') ?></strong>
         <input type="hidden" id="sttm_type" value="<?php echo (int)($sttm[0] == 'TRUE') ?>" />
         <input type="hidden" id="fiscal_year" value="<?php echo $sttm[1] ?>" />
         <input type="hidden" name="textSubmit" id="textSubmit"/>
@@ -26,6 +26,7 @@
                     <th><span class="hidden-sm hidden-xs">Actividad</span></th>
                     <th>Monto Declarado</th>
                     <th>Alícuota (%)</th>
+                    <th>Mínimo Tributario</th>
                     <th>Impuesto</th>
                 </tr>
             </thead>
@@ -47,6 +48,7 @@
                     </td>
                     <td><input type="text" class="float form-control text-center" id="monto_<?php echo $iObj ?>" name="monto[<?php echo $objActividad->id ?>]" value="<?php echo (isset($objActividad->monto)) ? number_format($objActividad->monto,2,',','.') : '0,00' ?>" /></td>
                     <td><strong><span id="ali_<?php echo $iObj ?>"><?php echo $objActividad->aliquot ?></span></strong></td>
+                    <td><strong><span id="min_<?php echo $iObj ?>"><?php echo $objActividad->minimun_taxable * $unidad_tributaria->value ?></span></strong></td>
                     <td><span id="total_<?php echo $iObj ?>" class="input-span">0,00</span></td>
                 </tr>
             <?php endforeach; ?>
@@ -55,6 +57,7 @@
                 <tr>
                     <td colspan="2"><strong style="font-size:0.9em">TOTAL DE INGRESOS BRUTOS DECLARADOS Bs:</strong></td>
                     <td><span id="total_monto" class="input-span">0,00</span></td>
+                    <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td align="center">
                         <strong class="titulillo"><?php if ($tax_discount) echo "SUB-" ?>TOTAL IMPUESTO</strong><br>
@@ -65,6 +68,7 @@
                 <tr>
                     <td colspan="2"><strong style="font-size:0.9em">MONTO DE DESCUENTO POR ART. 219</strong></td>
                     <td><input type="text" class="float form-control text-center text-primary" id="tax_discount" name="tax_discount[<?php echo $tax_discount->id ?>]" value="<?php echo $tax_discount->amount ?>"></td>
+                    <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td align="center">
                         <strong class="titulillo">TOTAL IMPUESTO - DESCUENTO</strong><br>
@@ -77,6 +81,7 @@
                     <td colspan="2"><strong style="font-size:0.9em">INGRESOS DEFINITIVOS <?php echo $sttm[1] - 2 ?> Bs:</strong></td>
                     <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold" class="text-success"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
                     <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                     <td>
                         <strong class="titulillo">IMPUESTO TRIMESTRAL</strong><br>
                         <span id="total_final" class="input-span">0,00</span>
@@ -86,6 +91,7 @@
                 <tr>
                     <td colspan="2"><strong style="font-size:0.9em">IMPUESTO ESTIMADO <?php echo $sttm[1] ?> Bs:</strong></td>
                     <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
+                    <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>
                         <strong class="titulillo">COMPLEMENTO</strong><br>

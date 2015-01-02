@@ -45,54 +45,6 @@ function get_html_select(obj){
     return html;
 }
 
-function classifier_specialized_change(){
-
-    if (! GLOBAL_showStepFour)
-        return false;
-
-    $('.activitySpecified select').change(function(){
-
-        console.log(this.value, '#s' + idchildren + idchildrenLast);
-
-        return;
-
-        var idchildren = parseInt(this.id.substr(1,1)) + 1;
-        var idchildrenLast = this.id.substr(2);
-        var $parent = $(this).closest('.activitySpecified');
-
-        //console.log(idchildren, idchildrenLast);
-
-        var html = '<option value="-1">Seleccione</option>';
-
-
-        $parent.find('.select').not(this).each(function(index){
-            if (parseInt(this.id.substr(1,1)) >= idchildren)
-                $(this).empty().html(html).attr('disabled',true);
-        });
-
-        
-
-        if (parseInt(this.value) > -1)
-        {
-            $children = $('#s' + idchildren + idchildrenLast);
-
-            $.getJSON(site_url + '/declaraciones/ajax_get_children_tax_classifier_specialized',{'ids_specialized':this.value},function(data){
-
-                $children.html(html + get_html_select(data));
-
-            });
-
-            $(document).ajaxStart(function(){
-
-            }).ajaxStop(function () {
-                $children.removeAttr('disabled');
-            });
-
-        }
-    });
-
-}
-
 function calcular_montos(){
     var totalRows = $('.table-declaracion tbody tr').length;
     var impuestoMayor = 0;
@@ -101,12 +53,15 @@ function calcular_montos(){
     var total_monto = 0;
     var sttm_old = original_number($('#sttm_old').text());
     var sttm_type = parseInt($('#sttm_type').val());
+    var unidad_tributaria = parseFloat($('#unidad_tributaria').attr('value'));
+    var minimoTributarioMayor = 0;
+    var iminimoTributarioMayor = 0;
 
     for (i=0; i < totalRows; i++)
     {
         var impuesto = 0;
         monto = original_number($('#monto_' + i).val());
-
+        minimo_tributario = parseFloat($('#min_' + i).text());
         //console.log($('#monto_' + i));
 
         if (isNaN(monto))
@@ -122,7 +77,6 @@ function calcular_montos(){
             iImpuestoMayor = i;
         }
     }
-    var minimo_tributario = parseFloat($('#minimo_tributario').attr('value'));
 
     //console.log(minimo_tributario);
 
@@ -179,14 +133,17 @@ function llenar_tabla_resumen(){
     $('#table_resumen tfoot').append(foot);
 }
 
-function add_element($option, $actSpec, i, json_parent)
+function add_element($option, $actSpec, json_parent)
 {
-    $('.table-declaracion > tbody').append("<tr id='row" + $option.data('value').replace('.','_') + "' option-id='" + $option.attr('id') + "' class='danger'>"+
+    var i = $('#activitiesTaxpayer').find('.list-group-item').length;
+
+    $('.table-declaracion > tbody').append("<tr id='row" + $option.data('value') + "' option-id='" + $option.attr('id') + "' class='danger'>"+
     "<td class='hidden-sm hidden-xs'><strong>" + $option.data('value') + "</strong></td>\n"+
     "<td class='visible-sm visible-xs'><strong title='" + $option.data('original-title') + "'>" + $option.data('value') + "</strong></td>\n"+
     "<td><span title='" + $option.data('original-title') + "' class='hidden-sm hidden-xs'> + " + $option.data('original-title').substr(0,50) + "...</span></td>\n"+
     "<td><input  type='text' class='float form-control text-center' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
     "<td><strong><span id='ali_" + i + "'>" + $option.data('alicuota') + "</span></strong></td>\n"+
+    "<td><strong><span id='min_" + i + "'>" + $option.data('minimun') + "</span></strong></td>\n"+
     "<td><span class='input-span' id='total_" + i + "'>0,00</span></td>"+
     "</tr>");
 
@@ -214,10 +171,11 @@ function add_element($option, $actSpec, i, json_parent)
 
         $actSpec.append(html);
         changeClassActivitySpecified();
-        classifier_specialized_change();
     }
 
     calcular_montos();
+    $('[title]').not('[data-toggle="popover"]').attr('rel','tooltip');
+    $("[rel=tooltip]").tooltip({ placement: 'top'});
 
 }
 
@@ -238,19 +196,51 @@ function remove_element(id_option)
     
     if (GLOBAL_showStepFour)
     {
-        /*
-        var $parentEspecified = $(this).closest('.activitySpecified');
-        var id_option = $parent.attr('option-id');
-        $parent.remove();
-        */
+        $('.activitySpecified[option-id=' + id_option + "]").remove();
         changeClassActivitySpecified();
-        classifier_specialized_change();
     }
 
     calcular_montos();
 }
 
 $(function(){
+
+    $('body').on("change", ".activitySpecified select", function(){
+
+        var idchildren = parseInt(this.id.substr(1,1)) + 1;
+        var idchildrenLast = this.id.substr(2);
+        var $parent = $(this).closest('.activitySpecified');
+
+        //console.log(idchildren, idchildrenLast);
+
+        var html = '<option value="-1">Seleccione</option>';
+
+
+        $parent.find('.select').not(this).each(function(index){
+            if (parseInt(this.id.substr(1,1)) >= idchildren)
+                $(this).empty().html(html).attr('disabled',true);
+        });
+
+        //console.log(this.value, '#s' + idchildren + idchildrenLast);
+
+        if (parseInt(this.value) > -1)
+        {
+            $children = $('#s' + idchildren + idchildrenLast);
+
+            $.getJSON(site_url + '/declaraciones/ajax_get_children_tax_classifier_specialized',{'ids_specialized':this.value},function(data){
+
+                $children.html(html + get_html_select(data));
+
+            });
+
+            $(document).ajaxStart(function(){
+
+            }).ajaxStop(function () {
+                $children.removeAttr('disabled');
+            });
+
+        }
+    });
 
 	$('#accordion_statement .collapse').on('show.bs.collapse', function(){
         $('#accordion_statement .panel-primary').removeClass('panel-primary active').addClass('panel-default');
@@ -308,7 +298,6 @@ $(function(){
         if (($(this).hasClass('add'))) //AÑADIR ELEMENTO
         {
             var $other = $('#activitiesTaxpayer');
-            var i = $actSpec.find('.activitySpecified').length;
             $allA.each(function(){
 
                 var $option = $(this);
@@ -321,15 +310,13 @@ $(function(){
                     };
 
                     $.getJSON(site_url + '/declaraciones/ajax_get_children_tax_classifier_specialized',data,function(json_parent){
-                        add_element($option, $actSpec, i, json_parent);
+                        add_element($option, $actSpec, json_parent);
                     });
                 }
                 else
                 {
                     add_element($option, $actSpec);
                 }
-
-                i++;
 
             });
 
@@ -339,7 +326,6 @@ $(function(){
             var $other = $('#allActivities');
             $allA.each(function(){
                 remove_element(this.id);
-                //$('.activitySpecified').filter('[option-id="' + this.id + '"]').find('.close').trigger('click');
             });
         }
 
@@ -350,19 +336,8 @@ $(function(){
         if (! GLOBAL_showStepFour)
             return false;
 
-        var $parent = $(this).closest('.activitySpecified');
-        var id_option = $parent.attr('option-id');
-        $parent.remove();
-        var $option = $('#activitiesTaxpayer').find('a[id="' + id_option + '"]');
-        $('#allActivities').find('.list-group').append($option.removeClass('active'));
-        $('#allActivities').find('div.list-group a').sort(function(a,b){
-            return $(a).text() > $(b).text() ? 1 : -1;
-        });
-        $('.table-declaracion').find('tr[option-id="' + id_option + '"]').remove();
-
-        changeClassActivitySpecified();
-        classifier_specialized_change();
-        calcular_montos();
+        var id_option = $(this).closest('.activitySpecified').attr('option-id');
+        remove_element(id_option);
     });
 
     $(document).on('blur','.table-declaracion input[type=text]', function () {
@@ -370,7 +345,6 @@ $(function(){
     });
 
     //changeClassActivitySpecified();
-    classifier_specialized_change();
     calcular_montos();
 
 });

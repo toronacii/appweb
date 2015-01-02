@@ -50,6 +50,7 @@ $(document).ready(function() {
 
                 switch (rule)
                 {
+                    /*
                     case 'required' : 
                         //console.log(params);
                         var notEqualChar = params && (params.split(',')[0] || "");
@@ -58,7 +59,7 @@ $(document).ready(function() {
                         if ($input.is('select'))
                             msj = "Elija una opción";
                     break;
-
+                    */
                     case 'texto' : 
                         var regExp = /^[a-zA-ZÁÉÍÓÚÜáéíóúü\s]+$/g;
                         validField &= regExp.test($input.val());

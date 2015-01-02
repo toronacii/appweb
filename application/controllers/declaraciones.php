@@ -86,7 +86,7 @@ class Declaraciones extends MY_Controller {
         $year = $sttm[0];
         $type = $sttm[1];
 
-        if ($year < 2013)
+        if ($year >= 2013)
         {
             return true;
         }
@@ -183,21 +183,22 @@ class Declaraciones extends MY_Controller {
         #PASO 3
         $id_sttm_form = $sttm_tax['tax'][$sttm_tax['tax_account_number']]->id_sttm_form;
 
+        $fiscal_year = ($sttm_tax['sttm'][0] == 'TRUE') ? $sttm_tax['sttm'][1] : $sttm_tax['sttm'][1] - 1;
+
         if ($id_sttm_form > 0){
             $paso3['actividades_contribuyente'] = $this->declaraciones->get_data_statement($id_sttm_form);
         }else{
-            $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax);
+            $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax, $fiscal_year);
         }
 
         #echo "<pre>"; var_dump($this->declaraciones, $paso3['actividades_contribuyente']); exit;
 
         #var_dump($id_sttm_form, $this->declaraciones, $paso3); exit;
 
-        $paso3['actividades_permisadas'] = $this->declaraciones->get_activities();
+        $paso3['actividades_permisadas'] = $this->declaraciones->get_activities($fiscal_year);
 
-        #var_dump($this->declaraciones, $paso3['actividades_permisadas']); exit;
+        #dd($this->declaraciones, $paso3['actividades_permisadas']);
 
-        $fiscal_year = ($sttm_tax['sttm'][0] == 'TRUE') ? $sttm_tax['sttm'][1] : $sttm_tax['sttm'][1] - 1;
         $paso3['unidad_tributaria'] = $this->declaraciones->get_tax_unit($fiscal_year);
         $this->load->view('declaraciones/pasos/paso3', $paso3);
 
@@ -218,7 +219,7 @@ class Declaraciones extends MY_Controller {
         }
 
         #PASO 5
-        $paso5['minimo_tributario'] =  round($paso3['unidad_tributaria']->value * $this->getMinimunTaxable($fiscal_year), 2);
+        //$paso5['tax_unit'] =  round($paso3['unidad_tributaria']->value axab* $this->getMinimunTle($fiscal_year), 2);
         $paso5['sttm'] = $sttm_tax['sttm'];
         $paso5['sttm_old'] = $this->declaraciones->get_total_sttm($id_tax, $paso5['sttm'][0], $paso5['sttm'][1]);
 
