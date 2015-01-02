@@ -40,9 +40,9 @@
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion_statement" href="#collapse<?php echo $tax_account_number ?>">
                                     <?php echo $tax_account_number ?>
-                             >
-   </a>
-                            </h4                        </div>
+                               </a>
+                            </h4>
+                        </div>
                         <div id="collapse<?php echo $tax_account_number ?>" class="panel-collapse collapse">
                             <!--<div class="panel-body">-->
                                 <?php $this->load->view('declaraciones/table_anteriores_view', array('cuentas' => $cuentas)) ?>
