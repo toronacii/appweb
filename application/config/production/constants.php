@@ -41,9 +41,5 @@ define('API_DIR'                            , 	'http://localhost/appweb_server/p
 define('ONLINE_PAYMENT', "http://localhost/online_payment/api/");
 define('BANESCO_ONLINE', "https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control=");
 
-/*RECAPTCHA*/
-define('RECAPTCHA_API_SERVER'                , 'http://www.google.com/recaptcha/api');
-define('RECAPTCHA_API_SECURE_SERVER'         , 'https://www.google.com/recaptcha/api');
-define('RECAPTCHA_VERIFY_SERVER'             , 'www.google.com');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
