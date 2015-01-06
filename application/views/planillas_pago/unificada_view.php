@@ -32,9 +32,9 @@
                                     <tr>
                                         <td><span><?php echo $tax->tax_account_number?></span></td>
                                         <td class="hidden-sm hidden-xs"><?php echo $tax_types[$tax->id_tax_type]->name ?></td>
-                                        <th><input class="fecha" type="radio" name="cuentas[<?php echo $id_tax ?>]" value="1" monto="<?php echo $cargo->fecha_actual ?>" title="<?php echo number_format($cargo->fecha_actual, 2, ',', '.') ?>"></th>
+                                        <th><input class="fecha" type="checkbox" name="cuentas[<?php echo $id_tax ?>]" value="1" monto="<?php echo $cargo->fecha_actual ?>" title="<?php echo number_format($cargo->fecha_actual, 2, ',', '.') ?>"></th>
                                         <td><?php echo number_format($cargo->fecha_actual, 2, ',', '.') ?></td>
-                                        <th><input class="completo" type="radio" name="cuentas[<?php echo $id_tax ?>]"  value="0"  monto="<?php echo $cargo->fecha_completa ?>" title="<?php echo number_format($cargo->fecha_completa, 2, ',', '.') ?>"></th>
+                                        <th><input class="completo" type="checkbox" name="cuentas[<?php echo $id_tax ?>]"  value="0"  monto="<?php echo $cargo->fecha_completa ?>" title="<?php echo number_format($cargo->fecha_completa, 2, ',', '.') ?>"></th>
                                         <td><?php echo number_format($cargo->fecha_completa, 2, ',', '.') ?></td>
                                     </tr>
                                 <?php endforeach; ?>

@@ -62,7 +62,7 @@ FOR _ID_TAX, _INITIAL_YEAR IN
 
 LOOP	
 
-	RETURN;
+	-- RETURN;
 	-- INICIO DE VARIABLES
 
 	IF (_INITIAL_YEAR < _INITIAL_EVALUATE_YEAR) THEN _INITIAL_YEAR = _INITIAL_EVALUATE_YEAR; END IF; 
@@ -190,7 +190,7 @@ LOOP
 
 			END LOOP;
 
-			IF (_I < 5) THEN
+			IF (_I < 4) THEN
 				_RECORD_RETURN.id_message := 2;
 				_RECORD_RETURN.message := 'Adeuda algún aforo trimestral del año ' || 2014;
 			
@@ -224,7 +224,7 @@ LOOP
 
 		-- VALIDAR PAGO DE COMPLEMENTO
 
-		IF (_YEAR_EVALUATE > _INITIAL_EVALUATE_YEAR) THEN
+		IF (_YEAR_EVALUATE >= _INITIAL_EVALUATE_YEAR) THEN
 			
 			SELECT INTO _PAID appweb.paid_transaction(transaction.id)
 			FROM transaction
@@ -236,24 +236,28 @@ LOOP
 
 			IF (NOT FOUND) THEN
 
-				SELECT INTO _COMPLEMENTO
-				ROUND(SUM(CASE WHEN type IN (2,5) THEN tax_total ELSE -1 * tax_total END)::numeric, 2)
-				FROM TEMP_statement
-				WHERE id_tax = _ID_TAX
-				AND fiscal_year = _YEAR_EVALUATE;
+				IF (_YEAR_EVALUATE > 2010) THEN
 
-				_COMPLEMENTO = CASE WHEN _ID_TAX || '_' || _YEAR_EVALUATE IN ('1001609_2011', '144402_2011') THEN 0 ELSE _COMPLEMENTO END; 
+					SELECT INTO _COMPLEMENTO
+					ROUND(SUM(CASE WHEN type IN (2,5) THEN tax_total ELSE -1 * tax_total END)::numeric, 2)
+					FROM TEMP_statement
+					WHERE id_tax = _ID_TAX
+					AND fiscal_year = _YEAR_EVALUATE;
 
-				-- VALIDAR COMPLEMENTO PARA DEFINITIVA 2014 EXIGIBLE EN MARZO 2015
+					_COMPLEMENTO = CASE WHEN _ID_TAX || '_' || _YEAR_EVALUATE IN ('1001609_2011', '144402_2011') THEN 0 ELSE _COMPLEMENTO END; 
 
-				_COMPLEMENTO = CASE WHEN _YEAR_EVALUATE = 2014 AND COALESCE(_MONTH, 1) < 3 THEN 0 ELSE _COMPLEMENTO END;
+					-- VALIDAR COMPLEMENTO PARA DEFINITIVA 2014 EXIGIBLE EN MARZO 2015
 
-				IF (_COMPLEMENTO ISNULL OR _COMPLEMENTO != 0) THEN
-				
-					_RECORD_RETURN.id_message := 2;
-					_RECORD_RETURN.message := 'Adeuda el complemento de la declaracion definitiva del año ' || _YEAR_EVALUATE;
+					_COMPLEMENTO = CASE WHEN _YEAR_EVALUATE = 2014 AND COALESCE(_MONTH, 1) < 3 THEN 0 ELSE _COMPLEMENTO END;
 
-					RETURN NEXT _RECORD_RETURN;
+					IF (_COMPLEMENTO ISNULL OR _COMPLEMENTO != 0) THEN
+					
+						_RECORD_RETURN.id_message := 2;
+						_RECORD_RETURN.message := 'Adeuda el complemento de la declaracion definitiva del año ' || _YEAR_EVALUATE;
+
+						RETURN NEXT _RECORD_RETURN;
+					END IF;
+
 				END IF;
 
 			ELSIF (_PAID < 0) THEN
