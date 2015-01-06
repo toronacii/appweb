@@ -108,6 +108,8 @@ $(document).ready(function(){
 
 			$form.submit();
 
+			$('#div_unificada .panel-footer :submit.btn').prop('disabled', true);
+
 			setTimeout("location.href='" + site_url + "/planillas_pago/unificada'", 1);
 		}
 
