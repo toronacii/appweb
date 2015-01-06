@@ -74,7 +74,12 @@ $(document).ready(function(){
 
 	calcular_unificada();
 
-	$('#div_unificada tbody :radio').click(function(){
+	$('#div_unificada tbody :checkbox').click(function(){
+
+		if ($(this).is(':checked'))
+		{
+			$("input[name='" + this.name +"']").not(this).prop("checked", false);
+		}
 		
 		calcular_unificada();
 
@@ -89,8 +94,8 @@ $(document).ready(function(){
 	});
 
 	$('#div_unificada thead :checkbox').click(function(){
-		$('#div_unificada :radio, #div_unificada :checkbox').not(this).prop('checked', false);
-		$('#div_unificada tbody .' + this.id + ':radio').prop('checked', $(this).is(':checked'));
+		$('#div_unificada :checkbox').not(this).prop('checked', false);
+		$('#div_unificada tbody .' + this.id + ':checkbox').prop('checked', $(this).is(':checked'));
 		calcular_unificada();
 	});
 
