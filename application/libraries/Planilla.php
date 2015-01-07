@@ -1557,7 +1557,7 @@ class Planilla {
             $pdf->SetFont('Arial', '', 7.5);
 
             $i = 0;
-            $amount_per_page = 0;
+            #$amount_per_page = 0;
 
             foreach ($cargos as $cargo){
                 $expiry_date = ($cargo->expiry_date) ? date('d/m/Y', strtotime($cargo->expiry_date)) : date('d/m/Y', strtotime($metadata->expiry_date));
@@ -1566,7 +1566,7 @@ class Planilla {
                 $pdf->cell(113, 4, utf8_decode($cargo->concept), "R", 0, 'L'); # CONCEPTO 
                 $pdf->cell(26,  4, $expiry_date, "R", 0, 'C');  # FECHA DE VENCIMIENTO 
                 $pdf->cell(31,  4, number_format($cargo->amount, 2, ',', '.'), "R", 1, 'C');  # MONTO 
-                $amount_per_page += $cargo->amount;
+                #$amount_per_page += $cargo->amount;
                 $i++;
             }
 
@@ -1580,7 +1580,8 @@ class Planilla {
             $pdf->SetFont('Arial', '', 9);
             $pdf->Image('css/img/pieTabla.png', $pdf->GetX(), $pdf->GetY(), 198);
             $pdf->SetX(175);
-            $pdf->cell(31, 8, number_format($amount_per_page, 2, ',', '.'), _x, 0, 'C'); # MONTO TOTAL
+            #$pdf->cell(31, 8, number_format($amount_per_page, 2, ',', '.'), _x, 0, 'C'); # MONTO TOTAL
+            $pdf->cell(31, 8, number_format($metadata->total_amount, 2, ',', '.'), _x, 0, 'C'); # MONTO TOTAL
 
             #d($data);
             if (in_array($metadata->status, [4, 6, 7])) {
