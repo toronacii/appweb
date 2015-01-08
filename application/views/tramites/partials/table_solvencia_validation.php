@@ -52,7 +52,7 @@
         </td>
         <?php if (! $cedula_catastral): ?>
         <td class="text-center">
-            <a href="#" class="btn btn-default" title="Para actualizar su cédula catastral debe...">
+            <a href="https://alcaldiamunicipiosucre.gob.ve/ciudadano_sucre/ciudadano_sucre/catalogo/requisitos/Tramite/174" target="_blank" class="btn btn-default" title="Presione para saber como actualizar su cédula catastral">
                 <span class="fa fa-question"></span>
             </a>
         </td>
