@@ -17,6 +17,6 @@
     <div class="pull-right">
         <a class="btn btn-primary btn-lg activate">Anterior</a>
         <a class="btn btn-primary btn-lg finalize guardar">Guardar</a>
-        <a class="btn btn-primary btn-lg finalize liquidar">Liquidar</a>
+        <a class="btn btn-primary btn-lg finalize liquidar">Declarar</a>
     </div>
 </div>
