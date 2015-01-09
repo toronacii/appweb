@@ -31,6 +31,9 @@ class Tramites extends MY_Controller {
 
         if (isset($_POST['id_tax']))
         {
+            $taxes = (array)$this->taxes;
+            $id_tax = $_POST['id_tax'];
+
             $id_request = $this->tramites->insert_request_solvencia($_POST['id_tax']);
 
             #dd($id_request, $this->tramites);
@@ -42,7 +45,14 @@ class Tramites extends MY_Controller {
                     break;
                 #DEBE ALGÚN TRIMESTRE
                 case -2:
-                    $this->messages->add_message("Usted debe algún trimestre exigible, por ello no puede realizar este trámite");
+                    if ($taxes[$id_tax]->id_tax_type == 1) #ACTIVIDADES ECONOMICAS
+                    {
+                        $this->messages->add_message("Usted debe algún aforo mensual exigible, por ello no puede realizar este trámite");
+                    }
+                    else #INMUEBLES URBANOS
+                    {
+                        $this->messages->add_message("Usted debe algún trimestre exigible, por ello no puede realizar este trámite");
+                    }
                     break;
                 #NO ESTÁ SOLVENTE A LA DEUDA EXIGIBLE
                 case 0:
