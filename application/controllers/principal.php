@@ -65,7 +65,10 @@ class Principal extends MY_Controller {
     private function init_session_vars($valid_user)
     {
         $this->session->set_userdata('taxpayer', $this->principal->taxpayer($valid_user->id_taxpayer));
-        $taxes = objectToArray($this->principal->taxes($valid_user->id_taxpayer));
+        $taxes = $this->proccess_taxes($this->principal->taxes($valid_user->id_taxpayer));
+
+         #dd($taxes);
+
         $this->session->set_userdata('taxes', $taxes);
 
         $this->init_tax_types($taxes);
@@ -78,6 +81,18 @@ class Principal extends MY_Controller {
         #guardar datos de la sesion en base de datos
 
         $this->principal->save_user_login($valid_user->id, getClientIP());
+    }
+
+    private function proccess_taxes($taxes)
+    {
+        $taxes_return = $taxes;
+
+        foreach ($taxes_return as $key => $tax) 
+        {
+            $taxes_return->$key = proccess_tax_information_condensed($tax)
+        }
+
+        return $taxes_return;
     }
 
     private function init_tax_types($taxes){

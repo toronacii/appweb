@@ -86,36 +86,66 @@ if(!function_exists('create_breadcrumb')){
 		return $link;
 	}
 
-	function objectToArray($object)
+}
+
+function proccess_tax_information_condensed($tax)
+{
+    if ($tax->tax_information_condensed)
     {
-    	$r = array();
-    	if ($object)
-	        foreach ($object as $i => $result)
-	        	$r[$i] = $result;
-        return $r;
+        $tax->tax_information_condensed = json_decode($tax->tax_information_condensed);
+    }
+    else
+    {
+        $tax->tax_information_condensed = strtolower($tax->name);
     }
 
-    function getClientIP() {
+    return $tax;
+}
 
-    	if (isset($_SERVER)) {
+function getHtmlTaxInformationCondensed($tax_information_condensed)
+{
+	$html = "";
 
-    		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-    			return $_SERVER["HTTP_X_FORWARDED_FOR"];
+	if ($tax_information_condensed)
+	{
+		if (is_object($tax_information_condensed))
+		{
+			foreach ($tax_information_condensed as $name => $value)
+			{
+				$html.= ucfirst($name) . ": $value, <br>";
+			}
+			return substr($html, 0, -6);
+		}
+		else
+		{
+			return $tax_information_condensed;
+		}
+		
+	}
 
-    		if (isset($_SERVER["HTTP_CLIENT_IP"]))
-    			return $_SERVER["HTTP_CLIENT_IP"];
+	return $html;
+}
 
-    		return $_SERVER["REMOTE_ADDR"];
-    	}
+function getClientIP() {
 
-    	if ($ip = getenv('HTTP_X_FORWARDED_FOR'))
-    		return $ip;
+	if (isset($_SERVER)) {
 
-    	if ($ip = getenv('HTTP_CLIENT_IP'))
-    		return $ip;
+		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+			return $_SERVER["HTTP_X_FORWARDED_FOR"];
 
-    	return getenv('REMOTE_ADDR');
-    }
+		if (isset($_SERVER["HTTP_CLIENT_IP"]))
+			return $_SERVER["HTTP_CLIENT_IP"];
+
+		return $_SERVER["REMOTE_ADDR"];
+	}
+
+	if ($ip = getenv('HTTP_X_FORWARDED_FOR'))
+		return $ip;
+
+	if ($ip = getenv('HTTP_CLIENT_IP'))
+		return $ip;
+
+	return getenv('REMOTE_ADDR');
 }
 
 
