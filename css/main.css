@@ -231,6 +231,8 @@ span.separator{
   color: #f47b20;
 }
 
+.tooltip-breakline .tooltip-inner{text-align: left; white-space: pre}
+
 /*.panel.tabs-primary{margin-bottom: 50px !important; height: 50px !important} */
 
 @media (min-width : 768px) {

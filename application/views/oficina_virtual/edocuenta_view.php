@@ -1,5 +1,15 @@
 <h3>Estados de cuenta</h3> 
 
+<?php 
+
+        foreach($cuentas as $account)
+        {
+            #$account = proccess_tax_information_condensed($account);
+            #echo get_html_tax_information_condensed($account->tax_information_condensed), "<br>";
+        }
+        #exit;
+?>
+
 <div class="panel panel-primary tabs-primary">
     <div class="panel-heading">
         <!-- Tabs -->

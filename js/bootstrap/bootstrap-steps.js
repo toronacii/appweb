@@ -236,7 +236,7 @@ $(document).ready(function() {
             var html = "A continuación su declaración será liquidada. Recomendamos que guarde este documento digital como comprobante de su declaración fiscal. <br>Recuerde que <strong>NO</strong> es necesario  traerlo a nuestras oficinas.";
             var options = {
                 'message' : html,
-                'title' : 'Liquidar declaración',
+                'title' : 'Declarar Impuestos',
                 'success' : function (){
                     $('#textSubmit').val('liquidar');
                     $('#fDeclaraciones').attr('target', '_blank').submit();

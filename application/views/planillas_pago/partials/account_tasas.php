@@ -11,8 +11,8 @@
 			<?php foreach($cuentas as $account): ?> 
 				<?php $pass = (is_array($id_tax_type)) ? in_array($account->id_tax_type, $id_tax_type) : $account->id_tax_type == $id_tax_type; ?>
 				<?php if ($pass): ?>
-				<tr>
-					<td><span title="<?php echo strtolower($account->name) ?>"><?php echo $account->tax_account_number?></span></td>
+				<tr class="tooltip-breakline">
+					<td><span title="<?php echo $account->html_tax_information_condensed ?>"><?php echo $account->tax_account_number?></span></td>
 					<td>
 						<button type="button" class="btn btn-default btn-md" data-toggle="modal" title="Elegir tipo de tasa">
 							<span class="glyphicon glyphicon-new-window" id_tax_type="<?php echo $account->id_tax_type ?>" id_tax="<?php echo $account->id_tax ?>"></span>
