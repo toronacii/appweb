@@ -86,37 +86,79 @@ if(!function_exists('create_breadcrumb')){
 		return $link;
 	}
 
-	function objectToArray($object)
-    {
-    	$r = array();
-    	if ($object)
-	        foreach ($object as $i => $result)
-	        	$r[$i] = $result;
-        return $r;
-    }
-
-    function getClientIP() {
-
-    	if (isset($_SERVER)) {
-
-    		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-    			return $_SERVER["HTTP_X_FORWARDED_FOR"];
-
-    		if (isset($_SERVER["HTTP_CLIENT_IP"]))
-    			return $_SERVER["HTTP_CLIENT_IP"];
-
-    		return $_SERVER["REMOTE_ADDR"];
-    	}
-
-    	if ($ip = getenv('HTTP_X_FORWARDED_FOR'))
-    		return $ip;
-
-    	if ($ip = getenv('HTTP_CLIENT_IP'))
-    		return $ip;
-
-    	return getenv('REMOTE_ADDR');
-    }
 }
+
+function get_html_tax_information_condensed($tax_information_condensed, $sep = "\n")
+{
+	$html = "";
+
+	if ($tax_information_condensed)
+	{
+		if (is_object($tax_information_condensed))
+		{
+			foreach ($tax_information_condensed as $name => $value)
+			{
+				$html.= ucfirst($name) . ": $value" . $sep;
+			}
+			return substr($html, 0, -1 * count($sep));
+		}
+		else
+		{
+			return $tax_information_condensed;
+		}
+		
+	}
+
+	return $html;
+}
+
+function proccess_tax_information_condensed($tax)
+{
+    if ($tax->tax_information_condensed)
+    {
+        $tax->tax_information_condensed = json_decode($tax->tax_information_condensed);
+    }
+    else
+    {
+        $tax->tax_information_condensed = strtolower($tax->name);
+    }
+
+    $tax->html_tax_information_condensed = get_html_tax_information_condensed($tax->tax_information_condensed);
+
+    return $tax;
+}
+
+function getClientIP() {
+
+	if (isset($_SERVER)) {
+
+		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+			return $_SERVER["HTTP_X_FORWARDED_FOR"];
+
+		if (isset($_SERVER["HTTP_CLIENT_IP"]))
+			return $_SERVER["HTTP_CLIENT_IP"];
+
+		return $_SERVER["REMOTE_ADDR"];
+	}
+
+	if ($ip = getenv('HTTP_X_FORWARDED_FOR'))
+		return $ip;
+
+	if ($ip = getenv('HTTP_CLIENT_IP'))
+		return $ip;
+
+	return getenv('REMOTE_ADDR');
+}
+
+function objectToArray($object)
+{
+	$r = array();
+	if ($object)
+        foreach ($object as $i => $result)
+        	$r[$i] = $result;
+    return $r;
+}
+
 
 
 /* End of file MY_url_helper.php */

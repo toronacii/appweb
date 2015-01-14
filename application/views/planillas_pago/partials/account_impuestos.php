@@ -11,8 +11,8 @@
 			<?php foreach($cuentas as $account): ?>
 				<?php $pass = (is_array($id_tax_type)) ? in_array($account->id_tax_type, $id_tax_type) : $account->id_tax_type == $id_tax_type; ?>
 				<?php if ($pass): ?>
-				<tr>
-					<td><span title="<?php echo strtolower($account->name) ?>"><?php echo $account->tax_account_number?></span></td>
+				<tr class="tooltip-breakline">
+					<td><span title="<?php echo $account->html_tax_information_condensed ?>"><?php echo $account->tax_account_number?></span></td>
 					<td>
 						<?php if (isset($cargos[$account->id_tax])): ?>
 						<a class="btn btn-default btn-md" title="Elegir cargos" href="<?php echo site_url("planillas_pago/impuestos_confirmation/$account->id_tax") ?>">

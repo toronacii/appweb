@@ -16,8 +16,12 @@
 		<tbody>
 		<?php foreach($planillas as $planilla): ?> 
 			<tr class="<?php echo ($planilla->status == "no pagada" && $planilla->vencida) ? "danger" : "" ?>">
-				<?php if (! $this->session->userdata('eventual')): #CONTRIBUYENTE LOGUEADO?>
-				<td><?php echo $planilla->tax_account_number ?></td>
+				<?php if (! $this->session->userdata('eventual')): $tax = @$this->session->userdata('taxes')[$planilla->id_tax]?>
+				<td class="tooltip-breakline">
+					<span title="<?php echo @$tax->html_tax_information_condensed ?>">
+						<?php echo $planilla->tax_account_number?>
+					</span>
+				</td>
 				<?php endif; ?>
 				<td><?php echo $planilla->invoice_number ?></td>
 				<td><?php echo $planilla->tipo ?></td>

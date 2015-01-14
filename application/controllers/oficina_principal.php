@@ -79,8 +79,6 @@ class Oficina_principal extends MY_Controller {
         $data['tax_types'] = $this->session->userdata('tax_types');
         $data['taxpayer'] = $this->session->userdata('taxpayer');
         $data['cuentas'] = $this->principal->edo_cuenta($data['taxpayer']->id_taxpayer);
-
-        #dd($data, $this->principal);
         $this->load->view('oficina_virtual/edocuenta_view', $data);
         $this->load->view('footer');
     }

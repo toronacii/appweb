@@ -33,9 +33,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach($tramites as $tramite): ?> 
+                            <?php foreach($tramites as $tramite): $tax = $this->session->userdata('taxes')[$tramite->id_tax]?> 
                             <tr>
-                                <td><span title="<?php echo strtolower($tax_types[$tramite->id_tax_type]->name) ?>"><?php echo $tramite->tax_account_number?></span></td>
+                                <td class="tooltip-breakline"><span title="<?php echo $tax->html_tax_information_condensed ?>"><?php echo $tramite->tax_account_number?></span></td>
                                 <td><?php echo $tramite->request_code ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($tramite->request_date)) ?></td>
                                 <td>
