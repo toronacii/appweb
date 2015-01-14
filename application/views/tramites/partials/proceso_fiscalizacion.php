@@ -11,9 +11,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($procedimientos as $procedimiento): ?> 
+			<?php foreach($procedimientos as $procedimiento):  $tax = $this->session->userdata('taxes')[$procedimiento->id_tax]?> 
 			<tr>
-				<td><span title="<?php echo strtolower($tax_types[$procedimiento->id_tax_type]->name) ?>"><?php echo $procedimiento->tax_account_number?></span></td>
+				<td class="tooltip-breakline"><span title="<?php echo $tax->html_tax_information_condensed ?>"><?php echo $procedimiento->tax_account_number?></span></td>
 				<td><?php echo $procedimiento->n_procedimiento ?></td>
 				<td><?php echo $procedimiento->tipo ?></td>
 				<td><?php echo date('d/m/Y', strtotime($procedimiento->fecha)) ?></td>

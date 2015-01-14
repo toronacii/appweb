@@ -88,6 +88,30 @@ if(!function_exists('create_breadcrumb')){
 
 }
 
+function get_html_tax_information_condensed($tax_information_condensed, $sep = "\n")
+{
+	$html = "";
+
+	if ($tax_information_condensed)
+	{
+		if (is_object($tax_information_condensed))
+		{
+			foreach ($tax_information_condensed as $name => $value)
+			{
+				$html.= ucfirst($name) . ": $value" . $sep;
+			}
+			return substr($html, 0, -1 * count($sep));
+		}
+		else
+		{
+			return $tax_information_condensed;
+		}
+		
+	}
+
+	return $html;
+}
+
 function proccess_tax_information_condensed($tax)
 {
     if ($tax->tax_information_condensed)
@@ -99,31 +123,9 @@ function proccess_tax_information_condensed($tax)
         $tax->tax_information_condensed = strtolower($tax->name);
     }
 
+    $tax->html_tax_information_condensed = get_html_tax_information_condensed($tax->tax_information_condensed);
+
     return $tax;
-}
-
-function getHtmlTaxInformationCondensed($tax_information_condensed)
-{
-	$html = "";
-
-	if ($tax_information_condensed)
-	{
-		if (is_object($tax_information_condensed))
-		{
-			foreach ($tax_information_condensed as $name => $value)
-			{
-				$html.= ucfirst($name) . ": $value, <br>";
-			}
-			return substr($html, 0, -6);
-		}
-		else
-		{
-			return $tax_information_condensed;
-		}
-		
-	}
-
-	return $html;
 }
 
 function getClientIP() {
@@ -147,6 +149,16 @@ function getClientIP() {
 
 	return getenv('REMOTE_ADDR');
 }
+
+function objectToArray($object)
+{
+	$r = array();
+	if ($object)
+        foreach ($object as $i => $result)
+        	$r[$i] = $result;
+    return $r;
+}
+
 
 
 /* End of file MY_url_helper.php */

@@ -89,10 +89,10 @@ class Principal extends MY_Controller {
 
         foreach ($taxes_return as $key => $tax) 
         {
-            $taxes_return->$key = proccess_tax_information_condensed($tax)
+            $taxes_return->$key = proccess_tax_information_condensed($tax);
         }
 
-        return $taxes_return;
+        return objectToArray($taxes_return);
     }
 
     private function init_tax_types($taxes){

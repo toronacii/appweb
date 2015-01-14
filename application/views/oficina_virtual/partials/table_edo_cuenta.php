@@ -8,24 +8,11 @@
 			</tr>
 		</thead>
 		<tbody>
-
-			<?php 
-			dd($cuentas);
-			if ($id_tax_type == 3)
-			{
-				foreach($cuentas as $account)
-				{
-					d($account);
-				}
-				exit;
-			}
-			?>
-
-			<?php foreach($cuentas as $account):?> 
+			<?php foreach($cuentas as $account): ?> 
 				<?php $pass = (is_array($id_tax_type)) ? in_array($account->id_tax_type, $id_tax_type) : $account->id_tax_type == $id_tax_type; ?>
-				<?php if ($pass):  ?>
-				<tr>
-					<td><span title="<?php echo getHtmlTaxInformationCondensed($account->tax_information_condensed) ?>"><?php echo $account->tax_account_number?></span></td>
+				<?php if ($pass):  $account = proccess_tax_information_condensed($account)?>
+				<tr class="tooltip-breakline">
+					<td><span title="<?php echo $account->html_tax_information_condensed ?>"><?php echo $account->tax_account_number?></span></td>
 					<td><a href='<?php echo site_url("edocuenta/right/$account->tax_account_number/1")?>' rel="tooltip" title="Verifique su Estado de Cuenta hasta la fecha" target="_blank"><?php echo number_format($account->total_edocuenta,2,',','.')?></a></td>
 					<td><a href='<?php echo site_url("edocuenta/right/$account->tax_account_number/2")?>' rel="tooltip" title="Verifique su Estado de Cuenta del año" target="_blank"><?php echo number_format($account->total_edocuenta2,2,',','.')?></a></td>
 				</tr>

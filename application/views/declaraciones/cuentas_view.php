@@ -37,9 +37,11 @@
             </thead>
             <tbody>
                 <?php if(count($declaraciones) > 0): ?>
-                    <?php foreach($declaraciones as $tan => $arrErrors): $index = explode('_', $tan);?>
-                    <tr class="<?php echo (@$c++ % 2) ? "trpar odd": "" ?>">
-                        <td><?php echo $index[0] ?></td>
+                    <?php foreach($declaraciones as $tan => $arrErrors): 
+                        $index = explode('_', $tan); 
+                        $tax = $this->session->userdata('taxes')[$index[1]]?>
+                    <tr class="tooltip-breakline <?php echo (@$c++ % 2) ? "trpar odd": "" ?>">
+                        <td><span title="<?php echo $tax->html_tax_information_condensed ?>"><?php echo $index[0] ?></span></td>
                         <td>
                             <?php if (count($arrErrors) > 0):
                                 $errores = "Ud. no puede declarar porque:\n";

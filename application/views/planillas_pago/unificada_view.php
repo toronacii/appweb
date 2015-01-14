@@ -30,7 +30,7 @@
                                 
                                 <?php foreach($cargos as $id_tax => $cargo): $tax = $cuentas[$id_tax]; #var_dump($cuentas[$id_tax]) ; exit;?> 
                                     <tr>
-                                        <td><span><?php echo $tax->tax_account_number?></span></td>
+                                        <td class="tooltip-breakline"><span title="<?php echo $tax->html_tax_information_condensed ?>"><?php echo $tax->tax_account_number?></span></td>
                                         <td class="hidden-sm hidden-xs"><?php echo $tax_types[$tax->id_tax_type]->name ?></td>
                                         <th><input class="fecha" type="checkbox" name="cuentas[<?php echo $id_tax ?>]" value="1" monto="<?php echo $cargo->fecha_actual ?>" title="<?php echo number_format($cargo->fecha_actual, 2, ',', '.') ?>"></th>
                                         <td><?php echo number_format($cargo->fecha_actual, 2, ',', '.') ?></td>
