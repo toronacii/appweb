@@ -1,4 +1,4 @@
--- Function: appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer)
+﻿-- Function: appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer)
 
 -- DROP FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer);
 
@@ -147,7 +147,7 @@ LOOP
 	IF (_MONTH ISNULL AND _TYPE AND _FISCAL_YEAR = 2014 AND _YEAR_NOW = 2015) THEN
 
 		-- FALTA ESTIMADA 2014
-		
+	/*	
 		IF (appweb.have_statement(_ID_TAX, FALSE, 2014, TRUE) = 0) THEN
 
 			_RECORD_RETURN.id_message := 3;
@@ -156,8 +156,9 @@ LOOP
 			RETURN NEXT _RECORD_RETURN;
 
 		-- VALIDAR PAGO DE AFOROS TRIMESTRALES
+	*/
 		
-		ELSE
+		IF (appweb.have_statement(_ID_TAX, FALSE, 2014, TRUE) > 0) THEN
 
 			FOR _RECORD_AFOROS IN
 				SELECT concept, appweb.paid_transaction(id) AS paid
@@ -414,4 +415,23 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100
   ROWS 1000;
-ALTER FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer) OWNER TO postgres;
+ALTER FUNCTION appweb.errors_declare_taxpayer_monthly(bigint, boolean, integer, integer)
+  OWNER TO postgres;
+
+  
+/*
+
+
+
+SELECT tax_account_number, appweb.have_statement(1026186,:type,:fiscal_year,FALSE) AS id_sttm_form, 
+tax.id AS id_tax, id_message, message FROM 
+tax
+LEFT JOIN appweb.errors_declare_taxpayer_monthly(:id_taxpayer,:type,:fiscal_year) AS errors ON tax.id = id_tax
+WHERE id_taxpayer = :id_taxpayer
+AND id_tax_type = 1
+AND id_tax_status = 1
+AND NOT tax.canceled
+AND NOT tax.removed
+ORDER BY tax_account_number, message DESC
+
+*/
