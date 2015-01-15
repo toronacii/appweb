@@ -18,7 +18,7 @@ $BODY$
 
 	UNION 
 
-	SELECT news.id::bigint, news.id_taxpayer, news.id_tax, news.type, news.title, news.message, news.created, news.authomatic, news_users_web.read_date, '', ''
+	SELECT DISTINCT news.id::bigint, news.id_taxpayer, news.id_tax, news.type, news.title, news.message, news.created, news.authomatic, news_users_web.read_date, '', ''
 	FROM appweb.news
 	INNER JOIN appweb.tax ON tax.id_tax_type = ANY(news.id_tax_types) AND tax.id_taxpayer = _ID_TAXPAYER
 	LEFT JOIN appweb.news_users_web ON news_users_web.id_news = news.id AND news_users_web.id_taxpayer = tax.id_taxpayer
@@ -33,3 +33,4 @@ $BODY$
   ROWS 1000;
 ALTER FUNCTION appweb.get_news_taxpayer(bigint)
   OWNER TO postgres;
+
