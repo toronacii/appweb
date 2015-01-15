@@ -233,6 +233,18 @@ span.separator{
 
 .tooltip-breakline .tooltip-inner{text-align: left; white-space: pre}
 
+div.tabs-primary .panel-heading li.pull-right a {
+  font-weight: bold; 
+  border-radius: 2px; 
+  border: 1px solid rgba(255, 255, 255, .6);
+}
+div.tabs-primary .panel-heading li.pull-right a:hover{
+  background-color: rgba(255,255,255, .23);
+}
+div.tabs-primary .panel-heading li.pull-right a:hover .badge {
+  background-color: #f47b20;
+}
+
 /*.panel.tabs-primary{margin-bottom: 50px !important; height: 50px !important} */
 
 @media (min-width : 768px) {
