@@ -16,11 +16,58 @@ class Declaraciones extends MY_Controller {
         $this->load->model('api_model','declaraciones');
         $this->load->library("MessageSession");
         $this->messages = new MessageSession();
+        $this->load->library("Statement");
+        $this->statement = new Statement();
     }
 
     public function index()
     {
         redirect(site_url('declaraciones/historico'));
+    }
+
+    public function cuentas(){
+        $header['arrayCss'] = array('declaraciones.css','sprites/32.css');
+        $header['arrayJs'] = array(
+            'number_format.js',
+            'round.js',
+            'validacionesToro.js',
+            'funciones_declaraciones.js'
+        );
+        $header['sidebar'] = 'menu/oficina_menu';
+        $this->load->view('header',$header);
+
+        $this->statement->get_select_statement();
+
+        $data['select'] = $this->statement->get_select_statement();
+
+        $params = explode('_', $data['select'][0]);
+
+        #d($data, $params);
+
+        unset($_SESSION['sttm_tax']);
+
+        if (isset($_POST) && !empty($_POST)){
+            $params = explode('_', $_POST['statement_filter']);
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('statement_filter', 'Filtro', 'trim');
+            $this->form_validation->run();
+        }
+
+        $_SESSION['sttm_tax']['sttm'] = $params;
+
+        #var_dump($_SESSION['sttm_tax']);
+        #DECLARACIONES SIMPLES
+        if ($params[0] == 'SIMPLE')
+        {
+            $params[0] == NULL;
+        }
+        
+        $data['declaraciones'] = objectToArray($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1]), $params[0]); 
+
+        #var_dump($data['declaraciones'], $this->declaraciones); exit;
+
+        $this->load->view('declaraciones/cuentas_view', $data);
+        $this->load->view('footer');
     }
 
     public function historico() {
@@ -44,41 +91,6 @@ class Declaraciones extends MY_Controller {
     {
         $data['declaracion'] = $this->declaraciones->get_declaracion($id_statement);
         $this->load->view('declaraciones/detalle_view',$data);
-    }
-
-    public function cuentas(){
-        $header['arrayCss'] = array('declaraciones.css','sprites/32.css');
-        $header['arrayJs'] = array(
-            'number_format.js',
-            'round.js',
-            'validacionesToro.js',
-            'funciones_declaraciones.js'
-        );
-        $header['sidebar'] = 'menu/oficina_menu';
-        $this->load->view('header',$header);
-
-        $data['select'] = $this->_select_statements();
-        $params = explode('_', $data['select'][0]);
-
-        unset($_SESSION['sttm_tax']);
-
-        if (isset($_POST) && !empty($_POST)){
-            $params = explode('_', $_POST['statement_filter']);
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('statement_filter', 'Filtro', 'trim');
-            $this->form_validation->run();
-        }
-
-        $_SESSION['sttm_tax']['sttm'] = $params;
-
-        #var_dump($_SESSION['sttm_tax']);
-
-        $data['declaraciones'] = objectToArray($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, $params[0], $params[1]));
-
-        #var_dump($data['declaraciones'], $this->declaraciones); exit;
-
-        $this->load->view('declaraciones/cuentas_view', $data);
-        $this->load->view('footer');
     }
 
     private function showStepSpecifiedActivities($sttm)
@@ -356,24 +368,6 @@ class Declaraciones extends MY_Controller {
         }
         #var_dump($tan, $data, strlen($tan));
 		echo json_encode($data);
-    }
-
-    private function _select_statements(){
-        $year_now = (int)date('Y');
-        $month_now = (int)date('m');
-
-        $yearIni = 2009;
-
-        for ($year = $yearIni; $year <= $year_now; $year++){
-            if ($year > $yearIni){
-                $return[] = 'TRUE_' . ($year - 1);
-            }
-
-            if ($year + 1 < 2015 && ($year + 1 == $year_now || ($year == $year_now && $month_now >= 10))){
-                $return[] = 'FALSE_' . ($year + 1);
-            }
-        }
-        return array_reverse($return);
     }
 
     private function _get_array_pgsql($arr){
