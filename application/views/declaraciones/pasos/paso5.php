@@ -67,7 +67,7 @@
                 <?php if ($tax_discount): #DESCUENTO POR ARTICULO 219 ?>
                 <tr>
                     <td colspan="2"><strong style="font-size:0.9em">MONTO DE DESCUENTO POR ART. 219</strong></td>
-                    <td><input type="text" class="float form-control text-center text-primary" id="tax_discount" name="tax_discount[<?php echo $tax_discount->id ?>]" value="<?php echo ($tax_discount->amount) ? $tax_discount->amount : '0,00' ?>"></td>
+                    <td><input type="text" class="float form-control text-center text-primary" id="tax_discount" name="tax_discount[<?php echo $tax_discount->id ?>]" value="<?php echo ($tax_discount->amount) ? number_format($tax_discount->amount, 2, ',', '.') : '0,00' ?>"></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td align="center">
