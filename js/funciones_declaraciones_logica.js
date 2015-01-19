@@ -133,7 +133,7 @@ function llenar_tabla_resumen(){
         $td = $(this).find('td');
         foot += "<tr>" +
                    "<td colspan='2'>" + $td.filter(':eq(0)').html() + "</td>" +
-                   "<td>" + (($td.filter(':eq(1) input').length == 0) ? $td.filter(':eq(1)').text() : $td.filter(':eq(1) input').val()) + "</td>" +
+                   "<td>" + (($td.filter(':eq(1)').find('input').length == 0) ? $td.filter(':eq(1)').text() : $td.filter(':eq(1)').find('input').val()) + "</td>" +
                    "<td>" + $td.filter(':eq(4)').html() + "</td>" +
                 "</tr>";
     });
@@ -335,7 +335,7 @@ $(function(){
     });
 
     $(document).on('blur','.table-declaracion input[type=text]', function () {
-        console.log('entro');
+        //console.log('entro');
         calcular_montos();
     });
 
