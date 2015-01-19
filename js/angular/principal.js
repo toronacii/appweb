@@ -69,7 +69,7 @@ function ($scope, $http, Pagination, filterFilter) {
 	    // Then calculate noOfPages
 	    //console.log($scope.news);
 	    // 
-	    console.log($scope.pagination);
+	    //console.log($scope.pagination);
 	    //console.log();
 	});
 
@@ -120,7 +120,7 @@ function ($scope, $http, Pagination, filterFilter) {
     			$scope.pagination.numPages = Math.ceil($scope.news.length/$scope.pagination.perPage);
     			$scope.pagination.totalElements = $scope.news.length;
     			$scope.loading = false;
-    			console.log(data);
+    			//console.log(data);
     		})
     		.error(function(data){
     			console.log('Error: ' + data);
