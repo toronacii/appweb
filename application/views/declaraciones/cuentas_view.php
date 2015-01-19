@@ -19,7 +19,7 @@
                     <?php foreach($select as $i => $sttm): $p = explode('_', $sttm);  ?>
                     <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>
                         <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>
-                        <?php echo (($p[0] == 'FALSE') ? 'Estimada ' : 'Definitiva ') . $p[1] ?>
+                        <?php echo (($p[0] == 'SIMPLE') ? 'Definitiva ' : ('DJM ' . $this->statement->months_names[$p[0] - 1]) . " ") . $p[1] ?>
                     </option>
                     <?php endforeach; ?>
                     </optgroup>
