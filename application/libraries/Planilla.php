@@ -1422,14 +1422,20 @@ class Planilla {
         $pdf->SetXY(-34, $pdf->GetY() + 2);
         $pdf->Cell(28, 7, number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
         
+        $pdf->SetY($pdf->GetY() + 2);
+
         if ($data_planilla[0]->type == 'TRUE'){ #COMPLEMENTO
             $comp_aforo = round($total_impuesto_reb - $total_old, 2);
+            $pdf->SetX(-51);
+            $pdf->SetFont('Arial', '', 6);
+            $pdf->Cell(6, 4, $data_planilla[0]->fiscal_year, x_, 0, 'R'); # AÑO COMPLEMENTO  
+            $pdf->SetFont('Arial', '', 8);
+
         }else{ # AFOROS TRIMESTRALES
             $comp_aforo = round($total_impuesto_reb / 4, 2);
         }
-        
-        
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
+
+        $pdf->SetX(-34);
         $pdf->Cell(28, 8, number_format($comp_aforo, 2, ',', '.') , x_, 1, 'R'); # TOTAL COMPLEMENTO
 
         $pdf->SetXY(70, $pdf->GetY() + 15);
