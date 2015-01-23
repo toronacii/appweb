@@ -48,7 +48,7 @@ function calcular_montos(){
     var iImpuestoMayor = $('.table-declaracion tbody tr:eq(0)').attr('option-id');
     var total_impuesto = 0;
     var total_monto = 0;
-    var sttm_old = original_number($('#sttm_old').text());
+    var sttm_old = original_number($('#sttm_old').text()) || 0;
     var sttm_type = parseInt($('#sttm_type').val());
     var unidad_tributaria = parseFloat($('#unidad_tributaria').attr('value'));
     var minimo_tributario = 0;

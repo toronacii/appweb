@@ -1,6 +1,6 @@
--- Function: appweb.save_statement(bigint, boolean, integer, text[], integer)
+﻿-- Function: appweb.save_statement(bigint, boolean, integer, text[], integer)
 
-DROP FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer);
+-- DROP FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer);
 
 CREATE OR REPLACE FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer DEFAULT NULL::integer)
   RETURNS bigint AS
@@ -26,6 +26,7 @@ DECLARE
 	_CAUSED_TOTAL_FORM double precision = 0;
 	_TAX_TOTAL_FORM double precision = 0;
 	_DIFERENCE double precision;
+	_SUBSTR_NUMBER_STATEMENT character varying;
 	
 BEGIN
 	-- BUSCAR _ID_TAXPAYER
@@ -33,12 +34,12 @@ BEGIN
 	SELECT INTO _ID_TAXPAYER id_taxpayer FROM tax WHERE id = _ID_TAX;
 
 	-- VERIFICAR SI HAY ERRORES DE VALIDACION: ERROR_CODE -1
-	PERFORM * FROM appweb.errors_declare_taxpayer_monthly(_ID_TAXPAYER, _TYPE, _FISCAL_YEAR)
+	PERFORM * FROM appweb.errors_declare_taxpayer_monthly(_ID_TAXPAYER, _TYPE, _FISCAL_YEAR, _MONTH)
 	WHERE id_tax = _ID_TAX;
 
 	IF (FOUND) THEN RETURN -1; END IF;
 
-	_ID_STATEMENT_FORM = appweb.have_statement(_ID_TAX, _TYPE, _FISCAL_YEAR, FALSE); -- OTRA FORMA DE LLENAR UNA VARIABLE
+	_ID_STATEMENT_FORM = appweb.have_statement(_ID_TAX, _TYPE, _FISCAL_YEAR, FALSE, _MONTH); -- OTRA FORMA DE LLENAR UNA VARIABLE
 
 	-- VERIFICAMOS SI NO HAY OTRA DECLARACION
 
@@ -119,11 +120,16 @@ BEGIN
 	FROM statement_form_detail
 	WHERE id_statement_form = _ID_STATEMENT_FORM;
 
+	-- DECLARACIONES MENSUALES
+
+	_SUBSTR_NUMBER_STATEMENT = CASE WHEN _MONTH ISNULL THEN substr(_NUMBER_STATEMENT, 5) ELSE substr(_NUMBER_STATEMENT, 7, 6) END;
+
+	-- RAISE NOTICE '_NUMBER_STATEMENT: %, _SUBSTR_NUMBER_STATEMENT: %', _NUMBER_STATEMENT, _SUBSTR_NUMBER_STATEMENT;
+
 	UPDATE statement_form_ae 
 	SET tax_total_form = _TAX_TOTAL_FORM,
-	codval = appweb.codval(NOW()::date::text, substr(_NUMBER_STATEMENT,5), _TAX_TOTAL_FORM::text)
+	codval = appweb.codval(NOW()::date::text, _SUBSTR_NUMBER_STATEMENT, _TAX_TOTAL_FORM::text)
 	WHERE id = _ID_STATEMENT_FORM;
-
 
 	
 	-- VERIFICAR QUE EL MONTO DE LA ESTIMADA NO SEA MENOR A LA DEFINITIVA ANTERIOR

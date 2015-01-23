@@ -10,7 +10,7 @@
             <li>Al finalizar, presione el botón <a href="#" class="label label-primary activate next">Siguiente</a></li>
         </ol>
         <strong id="unidad_tributaria" value="<?php echo $unidad_tributaria->value ?>">Unidad tributaria = <?php echo number_format($unidad_tributaria->value, 2, ',', '.') ?></strong>
-        <input type="hidden" id="sttm_type" value="<?php echo (int)($sttm[0] == 'TRUE') ?>" />
+        <input type="hidden" id="sttm_type" value="<?php echo (int)($sttm[0] != 'FALSE') ?>" />
         <input type="hidden" id="fiscal_year" value="<?php echo $sttm[1] ?>" />
         <input type="hidden" name="textSubmit" id="textSubmit"/>
         <input type="hidden" name="objGoogleMaps" id="objGoogleMaps"/>
@@ -89,10 +89,17 @@
                 </tr>
                 <?php else: #DEFINITIVA ?>
                 <tr>
+                    <?php if ($sttm[0] != 'TRUE'): #MENSUALES ?>
+                    <td colspan="2"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <?php else: ?>
                     <td colspan="2"><strong style="font-size:0.9em">IMPUESTO ESTIMADO <?php echo $sttm[1] ?> Bs:</strong></td>
                     <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
+                    <?php endif; ?>
                     <td>
                         <strong class="titulillo">COMPLEMENTO</strong><br>
                         <span id="total_final" class="input-span">0</span>

@@ -1,4 +1,4 @@
--- Function: appweb.liquid_statement(bigint)
+﻿-- Function: appweb.liquid_statement(bigint)
 
 -- DROP FUNCTION appweb.liquid_statement(bigint);
 
@@ -32,9 +32,11 @@ DECLARE
 	_TOTAL_REPETITION smallint;
 	_ID_INTEREST bigint;
 	_DEBT_AMOUNT double precision;
-	_STATEMENT_DATE date := now()::date;
+	_STATEMENT_DATE date := CURRENT_DATE;
 	_IS_STATEMENT_ACTUAL boolean;
 	_ID_TAX_DISCOUNT bigint;
+	_YEAR_STTM_COMPARE smallint;
+	_DATE_COMPARE_STTM date;
 	
 BEGIN
 
@@ -52,25 +54,41 @@ BEGIN
 
 -- VERIFICAR SI HAY ERRORES DE VALIDACION: ERROR_CODE -1
 
-	PERFORM * FROM appweb.errors_declare_taxpayer_monthly(_ID_TAXPAYER, _STTM_FORM.statement_type, _STTM_FORM.fiscal_year)
+	PERFORM * FROM appweb.errors_declare_taxpayer_monthly(_ID_TAXPAYER, _STTM_FORM.statement_type, _STTM_FORM.fiscal_year, _STTM_FORM.month)
 	WHERE id_tax = _STTM_FORM.id_tax;
 
 	IF (FOUND) THEN RETURN -1; END IF;
 
 
 	IF (_STTM_FORM.statement_type) THEN -- DECLARACION DEFINITIVA
+	
 		_TYPE = 2;
-		_DATE_LIMIT = ((_STTM_FORM.fiscal_year + 1) || '-01-31')::date; -- + CAST(_DAYS_EXTENSION || ' days' AS INTERVAL)
-		_IS_STATEMENT_ACTUAL = (_STTM_FORM.fiscal_year + 1 = EXTRACT('YEAR' FROM now()));
+		_YEAR_STTM_COMPARE = CASE WHEN _STTM_FORM.month ISNULL THEN _STTM_FORM.fiscal_year + 1 ELSE _STTM_FORM.fiscal_year END;
+		_DATE_COMPARE_STTM = (_YEAR_STTM_COMPARE || '-' || COALESCE(_STTM_FORM.month, 1) || '-01')::date;
+		_IS_STATEMENT_ACTUAL = ((_STTM_FORM.fiscal_year || '-' || COALESCE(_STTM_FORM.month, 1) || '-' || EXTRACT('DAY' FROM CURRENT_DATE))::date  = CURRENT_DATE);
+		_DATE_LIMIT = (_DATE_COMPARE_STTM + '1 month'::interval - '1 days'::interval)::date;
+
+		-- DECLARACION ANUAL
+		IF (_STTM_FORM.month ISNULL) THEN
+
+			_STATEMENT_DATE = _DATE_LIMIT;
+			_DATE_LIMIT = _DATE_LIMIT + (_DAYS_EXTENSION || ' days')::interval;
+
+		ELSE
+			_STATEMENT_DATE = _DATE_LIMIT;
+			_DATE_LIMIT = _DATE_LIMIT + (_DAYS_EXTENSION || ' days')::interval;
+		END IF;
+
+		
 	ELSE -- DECLARACION ESTIMADA
 		_TYPE = 0;
 		_DATE_LIMIT = ((_STTM_FORM.fiscal_year - 1) || '-10-31')::date;
-		_IS_STATEMENT_ACTUAL = (_STTM_FORM.fiscal_year - 1 = EXTRACT('YEAR' FROM now()));
+		_IS_STATEMENT_ACTUAL = (_STTM_FORM.fiscal_year - 1 = EXTRACT('YEAR' FROM CURRENT_DATE));
 	END IF;
 
 -- TIEMPO DE PRORROGA SI SE PAGÓ EL 4TO TRIMESTRE A TIEMPO
-
-	IF (_IS_STATEMENT_ACTUAL AND now()::date > _DATE_LIMIT) THEN
+/*
+	IF (_IS_STATEMENT_ACTUAL AND CURRENT_DATE > _DATE_LIMIT) THEN
 
 		SELECT INTO _DEBT_AMOUNT
 		round((t.original_amount - CASE WHEN SUM(t2.original_amount) ISNULL THEN 0 ELSE SUM(t2.original_amount) END)::numeric, 2)
@@ -92,11 +110,10 @@ BEGIN
 	END IF;
 	
 	_DATE_LIMIT = (_DATE_LIMIT + CAST(_DAYS_EXTENSION || ' days' AS INTERVAL))::date;
-
+*/
 -- VALIDAR EXTEMPORANEA
 
-	IF (now()::date > _DATE_LIMIT) THEN 
-		_STATEMENT_DATE = now()::date; 
+	IF (CURRENT_DATE > _DATE_LIMIT) THEN 
 		_EXTEMP = TRUE;
 	END IF;
 	
@@ -144,24 +161,36 @@ BEGIN
 		AND type IN (0,3)
 		AND NOT canceled
 		AND status = 2
-		AND fiscal_year = _STTM_FORM.fiscal_year;
+		AND fiscal_year = _STTM_FORM.fiscal_year
+		AND _STTM_FORM.month ISNULL;
 
 		IF (NOT FOUND) THEN _AMOUNT = 0; END IF;
 
 		_AMOUNT = ROUND((_STTM_FORM.tax_total_form - _AMOUNT)::numeric, 2);
+
+		-- DECLARACION ANUAL
+		IF (_STTM_FORM.month ISNULL) THEN
 		
-		_CONCEPT = 'Complementario por Declaración Definitiva Año ' || _STTM_FORM.fiscal_year;
+			_CONCEPT = 'Complementario por Declaración Definitiva Año ' || _STTM_FORM.fiscal_year;
+			_APPLICATION_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-01')::date;
+			_EXPIRY_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-31')::date;
+
+		-- DECLARACION MENSUAL
+		ELSE
+			_APPLICATION_DATE = CURRENT_DATE;
+			_EXPIRY_DATE = _DATE_LIMIT - (_DAYS_EXTENSION || ' days')::interval;
+			_CONCEPT = 'Impuesto por Declaración Jurada Mensual de ' || TO_CHAR(_DATE_COMPARE_STTM, 'TMMonth') || ' del Año ' || _STTM_FORM.fiscal_year;
+ 
+		END IF;
 
 		IF (_AMOUNT < 0) THEN -- CREDITO PARA EL CONTRIBUYENTE
 			_AMOUNT = -1 * _AMOUNT;
 			_ID_TRANSACTION_TYPE = 17;
-			_APPLICATION_DATE = now()::date;
-			_EXPIRY_DATE = now()::date;
+			_APPLICATION_DATE = CURRENT_DATE;
+			_EXPIRY_DATE = CURRENT_DATE;
 			_DEBT_STATUS = NULL;
 		ELSE -- DEBITO PARA EL CONTRIBUYENTE
 			_ID_TRANSACTION_TYPE = 8;
-			_APPLICATION_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-01')::date;
-			_EXPIRY_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-31')::date;
 			_DEBT_STATUS = 1;
 		END IF;
 
