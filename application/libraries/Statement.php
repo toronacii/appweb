@@ -10,7 +10,7 @@ class Statement {
     const MONTH_INIT_MONTHLY = 1;
 
     private $CI;
-    public $months_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    private $months_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     
     function __construct() {
@@ -23,12 +23,34 @@ class Statement {
         return array_merge($this->_select_monthly(), $this->_select_simple());
     }
 
+    public function get_month($number)
+    {
+        return $this->months_names[$number - 1];
+    }
+
+    public function get_title_statement($data_sttm, $short = false)
+    {
+        $year = $data_sttm[1];
+        $type_month = $data_sttm[0];
+
+        if ($type_month == 'TRUE')
+        {
+            $title = ($short) ? 'Definitiva' : 'Declaracion definitiva de ingresos brutos';
+        }
+        else
+        {
+            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos') . $this->get_month($type_month);
+        }
+
+        return $title . " " . $year;
+    }
+
     private function _select_simple(){
         $year_now = (int)date('Y');
 
         for ($year = self::YEAR_INI; $year < self::YEAR_INIT_MONTHLY; $year++)
         {
-            $return[] = "SIMPLE_" . $year;
+            $return[] = "TRUE_" . $year;
 /*
             if ($year + 1 < 2015 && ($year + 1 == $year_now || ($year == $year_now && $month_now >= 10))){
                 $return[] = 'FALSE_' . ($year + 1);
@@ -36,6 +58,83 @@ class Statement {
 */
         }
         return array_reverse($return);
+    }
+
+    public function order_errors_declare_taxpayer_monthly($r)
+    {
+        $final = array();
+        if ($r) 
+        {
+            foreach ($r as $obj) {
+                $return[$obj->tax_account_number][] = $obj;
+            }
+            foreach ($return as $tan => $array) {
+                foreach ($array as $obj) {
+                    $index = $tan . "_" . $obj->id_tax . "_" . $obj->id_sttm_form;
+                    if (! isset($final[$index]))
+                        $final[$index] = array();
+                    $id_message = ($obj->id_message === NULL) ? -1 : $obj->id_message;
+                    if (in_array($id_message, array(0, 1))) { # inconsistencia, existe declaracion
+                        unset($final[$index]);
+                        break;
+                    } else if ($obj->message) {
+                        $final[$index][] = $obj->message;
+                    }
+                }
+            }
+        }
+
+        return $final;
+    }
+
+    public function show_step_specified_activities($sttm)
+    {
+        $year = $sttm[1];
+        $type = $sttm[0];
+
+        if ($year >= 2013 && $type == 'TRUE')
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function to_array_pgsql_data($obj, $index = true)
+    {
+        $return = '{';
+        foreach ($obj as $key => $value) {
+            
+            if (is_array($value) || is_object($value))
+            {
+                $value = $this->to_array_pgsql_data($value, $index);
+            }
+
+            $value = trim($value);
+
+            if (preg_match_all('/[\d+\.?]+,\d+/', $value))
+            {
+                $value = $this->my_format_number($value);
+            }
+
+            if (empty($value))
+            {
+                $value = "null";
+            }
+
+            $return .= "{" . ((!$index) ?: "$key, ") . "$value". "}, ";
+        }
+        return substr($return, 0, -2) . "}";
+    }
+
+    public function my_format_number($number, $toEnglish = true)
+    {
+        if ($toEnglish)
+        {
+            return str_replace(',','.',str_replace('.', '', $number));
+        }
+
+        return number_format($number, 2, ',', '.');
     }
 
     private function _select_monthly()
@@ -56,4 +155,5 @@ class Statement {
 
         return array_reverse($return);
     }
+
 }

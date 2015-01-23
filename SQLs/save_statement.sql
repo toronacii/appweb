@@ -1,23 +1,24 @@
--- Function: appweb.save_statement(bigint, boolean, integer, text[])
+-- Function: appweb.save_statement(bigint, boolean, integer, text[], integer)
 
--- DROP FUNCTION appweb.save_statement(bigint, boolean, integer, text[]);
+DROP FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer);
 
-CREATE OR REPLACE FUNCTION appweb.save_statement(bigint, boolean, integer, text[])
+CREATE OR REPLACE FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer DEFAULT NULL::integer)
   RETURNS bigint AS
 $BODY$
 DECLARE
 -- PARAMETROS
 	_ID_TAX ALIAS FOR $1;
-	_TYPE ALIAS FOR $2; -- FALSE: estimada; TRUE: definitiva
+	_TYPE ALIAS FOR $2; -- FALSE: estimada; TRUE: definitiva;
 	_FISCAL_YEAR ALIAS FOR $3;
 	_ACTIVITIES ALIAS FOR $4; -- [[id_tax_classifier,amount], ...]
+	_MONTH ALIAS FOR $5;
 
 -- VARIABLES LOCALES
 
 	_ID_TAXPAYER bigint;
 	_ID_STATEMENT_FORM bigint;
 	_NEW_STATEMENT boolean = TRUE;
-	_NUMBER_STATEMENT character varying(12);
+	_NUMBER_STATEMENT character varying(15);
 	_RECORD_TAX_CLASSIFIER record;
 	_TAX_UNIT double precision;
 	_MINIMUN_TAXABLE smallint = 25;
@@ -47,12 +48,12 @@ BEGIN
 
 	-- BUSCAMOS EL PROXIMO NUMERO DE DECLARACION
 
-	_NUMBER_STATEMENT = appweb.get_number_statement(_TYPE, _FISCAL_YEAR);
+	_NUMBER_STATEMENT = appweb.get_number_statement(_TYPE, _FISCAL_YEAR, _MONTH);
 
 	-- INSERTAMOS EL NUEVO REGISTRO
 	
-	INSERT INTO statement_form_ae (id_user, id_tax, statement_type, code, fiscal_year, canceled)
-	VALUES (198,_ID_TAX,_TYPE,_NUMBER_STATEMENT,_FISCAL_YEAR, false)
+	INSERT INTO statement_form_ae (id_user, id_tax, statement_type, code, fiscal_year, canceled, month)
+	VALUES (198,_ID_TAX,_TYPE,_NUMBER_STATEMENT,_FISCAL_YEAR, false, _MONTH)
 	RETURNING id INTO _ID_STATEMENT_FORM;
 
 	-- BUSCAR UNIDAD TRIBUTARIA
@@ -157,4 +158,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION appweb.save_statement(bigint, boolean, integer, text[]) OWNER TO postgres;
+ALTER FUNCTION appweb.save_statement(bigint, boolean, integer, text[], integer)
+  OWNER TO postgres;

@@ -18,7 +18,7 @@
         <input type="hidden" name="activitiesDeleted" id="hiddenActivitiesDeleted"/>
     </div>
     <div class="panel panel-primary">
-        <div class="panel-heading center">Declaracion <?php echo (($sttm[0] == 'TRUE') ? 'definitiva ' : 'estimada '),"de ingresos brutos año ", $sttm[1] ?></div>
+        <div class="panel-heading center"><?php echo $this->statement->get_title_statement($sttm) ?></div>
         <table class="table table-declaracion">
             <thead>
                 <tr>

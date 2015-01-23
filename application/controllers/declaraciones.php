@@ -57,14 +57,14 @@ class Declaraciones extends MY_Controller {
 
         #var_dump($_SESSION['sttm_tax']);
         #DECLARACIONES SIMPLES
-        if ($params[0] == 'SIMPLE')
+        if ($params[0] == 'TRUE')
         {
-            $params[0] == NULL;
+            $params[0] = NULL;
         }
         
-        $data['declaraciones'] = objectToArray($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1]), $params[0]); 
+        $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0])); 
 
-        #var_dump($data['declaraciones'], $this->declaraciones); exit;
+        #d($data['declaraciones'], $params, $this->declaraciones);
 
         $this->load->view('declaraciones/cuentas_view', $data);
         $this->load->view('footer');
@@ -93,19 +93,6 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/detalle_view',$data);
     }
 
-    private function showStepSpecifiedActivities($sttm)
-    {
-        $year = $sttm[1];
-        $type = $sttm[0];
-
-        if ($year >= 2013)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     private function getSteps($sttm)
     {
         $steps = [
@@ -117,7 +104,7 @@ class Declaraciones extends MY_Controller {
             "Finalizar proceso"
         ];
 
-        if (! $this->showStepSpecifiedActivities($sttm))
+        if (! $this->statement->show_step_specified_activities($sttm))
         {
             unset($steps[3]);
             return array_values($steps);
@@ -144,11 +131,11 @@ class Declaraciones extends MY_Controller {
 
         $sttm_only = $sttm_tax['sttm'];
 
-        $fiscal_year = ($sttm_tax['sttm'][0] == 'TRUE') ? $sttm_tax['sttm'][1] : $sttm_tax['sttm'][1] - 1;
+        $fiscal_year = $sttm_tax['sttm'][1];
 
-        #d($sttm_tax);
+        #d($sttm_only);
 
-        $paso1['showStepFour'] = $this->showStepSpecifiedActivities($sttm_only);
+        $paso1['showStepFour'] = $this->statement->show_step_specified_activities($sttm_only);
         
         $this->session->set_userdata('sttm_tax', $sttm_tax);
 
@@ -265,9 +252,10 @@ class Declaraciones extends MY_Controller {
         $data = array(
             'function' => array(
                 'id_tax' => $id_tax,
-                'type' => $sttm_tax['sttm'][0],
+                'type' => 'TRUE',
                 'fiscal_year' => $sttm_tax['sttm'][1],
-                'activities' => $this->_get_array_pgsql($_POST['monto'])
+                'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
+                'month' => ($sttm_tax['sttm'][0] == 'TRUE') ? 'NULL' :  $sttm_tax['sttm'][0]
             ),
             'toolbar' => $_POST['toolbar'] + array('id_taxpayer' => $this->id_taxpayer),
             'maps' => array(
@@ -279,7 +267,7 @@ class Declaraciones extends MY_Controller {
         );
 
         if (isset($_POST['tax_discount'])){
-            $data['tax_discount'] = str_replace(',','.',str_replace('.', '', $_POST['tax_discount']));
+            $data['tax_discount'] = $this->statement->my_format_number($_POST['tax_discount']);
         }
 
         #echo serialize($data);
@@ -368,17 +356,6 @@ class Declaraciones extends MY_Controller {
         }
         #var_dump($tan, $data, strlen($tan));
 		echo json_encode($data);
-    }
-
-    private function _get_array_pgsql($arr){
-
-        $obj_amount = "{";
-        foreach ($arr as $id_tax_classifier => $amount){
-            $amount = str_replace('.', '', $amount);
-            $amount = str_replace(',', '.', $amount);
-            $obj_amount .= '{' . "$id_tax_classifier,$amount" . '},';
-        }
-        return substr($obj_amount, 0, -1) . "}";
     }
 
     function _proccess_arrays($cuentasPub, $activitiesDeleted){

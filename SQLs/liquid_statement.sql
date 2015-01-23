@@ -116,8 +116,8 @@ BEGIN
 
 -- INSERTAR DATOS EN STATEMENT
 
-	INSERT INTO statement(id_user, id_receive_user, id_tax, form_number,statement_date, tax_total, type, status, extemp, fiscal_year, canceled, id_statement_form, id_tax_discount)
-	VALUES(198, 198, _STTM_FORM.id_tax, _STTM_FORM.code, _STATEMENT_DATE, _STTM_FORM.tax_total_form, _TYPE, 2, _EXTEMP, _STTM_FORM.fiscal_year, false, _ID_STTM_FORM, _ID_TAX_DISCOUNT) 
+	INSERT INTO statement(id_user, id_receive_user, id_tax, form_number,statement_date, tax_total, type, status, extemp, fiscal_year, canceled, id_statement_form, id_tax_discount, month)
+	VALUES(198, 198, _STTM_FORM.id_tax, _STTM_FORM.code, _STATEMENT_DATE, _STTM_FORM.tax_total_form, _TYPE, 2, _EXTEMP, _STTM_FORM.fiscal_year, false, _ID_STTM_FORM, _ID_TAX_DISCOUNT, _STTM_FORM.month) 
 	RETURNING id INTO _ID_STTM;
 
 -- INSERTAR EN TABLA STATEMENT_DETAIL
@@ -213,7 +213,7 @@ BEGIN
 
 -- ESTIMADA ESTERIL
 
-	IF (_STTM_FORM.statement_type) THEN
+	IF (_STTM_FORM.month ISNULL AND _STTM_FORM.statement_type) THEN
 
 		PERFORM appweb.generate_estimated_sterile(_STTM_FORM.id_tax, _STTM_FORM.fiscal_year);
 		
@@ -237,4 +237,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION appweb.liquid_statement(bigint) OWNER TO postgres;
+ALTER FUNCTION appweb.liquid_statement(bigint)
+  OWNER TO postgres;
