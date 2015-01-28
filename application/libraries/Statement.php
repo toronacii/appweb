@@ -5,7 +5,7 @@ if (!defined('BASEPATH'))
 
 class Statement {
     
-    const YEAR_INI = 2010;
+    const YEAR_INI = 2009;
     const YEAR_INIT_MONTHLY = 2015;
     const MONTH_INIT_MONTHLY = 1;
 

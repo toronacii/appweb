@@ -33,13 +33,13 @@ DECLARE
 	_INITIAL_EVALUATE_YEAR int = 2009;
 	_END_EVALUATE_YEAR int = 2014;
 	_INITIAL_EVALUATE_YEAR_MONTHLY int = _END_EVALUATE_YEAR + 1;
-	_TYPE_AFFIDAVIT_MONTHY int[] = '{4,7}';
+	_TYPE_AFFIDAVIT_MONTHLY int[] = '{2,5}';
 
 	-- ID TRANSACTIONS QUE SON EXCEPCIONES DE MONTOS ACCESORIOS
 	_EXCEPTIONS_MONTOS_ACCESORIOS bigint[] = '{52740,6927640,6927653,96380, 96381, 96382, 5963109, 5963110, 5963136, 5963113, 6245732, 6212269, 6212267, 6212236, 6212243, 6212249}';
 	_YEAR_NOW int := EXTRACT('YEAR' FROM now());
 	_NAME_MONTHS character varying[] = '{enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre}';
-	_TYPE_NEW_ID_TRANSACTION int[] = '{150, 25}';
+	_TYPE_NEW_ID_TRANSACTION int[] = '{1}';
 BEGIN
 
 -- CREAR Y LLENAR TABLA TEMPORAL DE DECLARACIONES PARA ESTE TAXPAYER
@@ -69,7 +69,7 @@ LOOP
 
 	IF (_INITIAL_YEAR < _INITIAL_EVALUATE_YEAR) THEN _INITIAL_YEAR = _INITIAL_EVALUATE_YEAR; END IF; 
 
-	RAISE NOTICE '_INITIAL_YEAR: %', _INITIAL_YEAR;
+	-- RAISE NOTICE '_INITIAL_YEAR: %', _INITIAL_YEAR;
 
 	_RECORD_RETURN.id_tax = _ID_TAX;
 
@@ -279,21 +279,11 @@ LOOP
 
 		-- RECORRER AÑOS
 
-		_TOTAL_MONTHS = EXTRACT('YEAR' FROM age(CURRENT_DATE, '2015-01-01')) * 12  + EXTRACT('MONTH' FROM age(CURRENT_DATE, '2015-01-01'));
-
-		FOR _MONTH_YEAR IN 1 .. _TOTAL_MONTHS LOOP
-
-			
-
-		END LOOP;
-
-		FOR _YEAR_EVALUATE IN _INITIAL_EVALUATE_YEAR_MONTHLY .. _FISCAL_YEAR LOOP
+		FOR _YEAR_EVALUATE IN REVERSE _FISCAL_YEAR .. _INITIAL_EVALUATE_YEAR_MONTHLY LOOP
 
 			-- RECORRER MESES
 
-
-
-			FOR _MONTH_YEAR IN 1 .. _MONTH LOOP
+			FOR _MONTH_YEAR IN REVERSE (CASE WHEN _YEAR_EVALUATE = _FISCAL_YEAR THEN _MONTH ELSE 12 END) .. 1  LOOP
 
 				_AFFIDAVIT_EVALUATE_DATE = ((_YEAR_EVALUATE || '-' || _MONTH_YEAR || '-01')::date - '1 MONTH'::interval)::date;
 
@@ -301,19 +291,19 @@ LOOP
 
 				_MONTH_EVALUATE_LOOP = EXTRACT('MONTH' FROM _AFFIDAVIT_EVALUATE_DATE)::int;
 
-				IF (EXTRACT('YEAR' FROM _AFFIDAVIT_EVALUATE) >= _INITIAL_EVALUATE_YEAR_MONTHLY) THEN
+				IF (_YEAR_EVALUATE_LOOP >= _INITIAL_EVALUATE_YEAR_MONTHLY) THEN
 				
 					PERFORM id FROM TEMP_statement
 					WHERE id_tax = _ID_TAX
 					AND fiscal_year = _YEAR_EVALUATE_LOOP
-					AND statement.month = _MONTH_EVALUATE_LOOP
-					AND type = ANY(_TYPE_AFFIDAVIT_MONTHY);
+					AND month = _MONTH_EVALUATE_LOOP
+					AND type = ANY(_TYPE_AFFIDAVIT_MONTHLY);
 
 					-- VERIFICAR DECLARACION
 
 					IF (NOT FOUND) THEN
 
-						_RECORD_RETURN.id_message := 3;
+						_RECORD_RETURN.id_message := 6;
 						_RECORD_RETURN.message := 'Falta la declaración jurada mensual de ' || _NAME_MONTHS[_MONTH_EVALUATE_LOOP] || ' del año ' || _YEAR_EVALUATE_LOOP;
 
 						RETURN NEXT _RECORD_RETURN;
@@ -330,6 +320,8 @@ LOOP
 						AND TEMP_statement.month = _MONTH_EVALUATE_LOOP
 						AND appweb.paid_transaction(transaction.id) != -4;
 
+						-- RAISE NOTICE '_PAID: %', _PAID;
+
 						IF (NOT FOUND) THEN
 
 							SELECT INTO _COMPLEMENTO
@@ -341,16 +333,16 @@ LOOP
 
 							IF (_COMPLEMENTO ISNULL OR _COMPLEMENTO != 0) THEN
 				
-								_RECORD_RETURN.id_message := 2;
-								_RECORD_RETURN.message := 'Adeuda el complemento de la declaracion jurada mensual de ' || _NAME_MONTHS[_MONTH_EVALUATE_LOOP] || ' del año ' || _YEAR_EVALUATE_LOOP;
+								_RECORD_RETURN.id_message := 6;
+								_RECORD_RETURN.message := 'Adeuda el impuesto de la declaracion jurada mensual de ' || _NAME_MONTHS[_MONTH_EVALUATE_LOOP] || ' del año ' || _YEAR_EVALUATE_LOOP;
 
 								RETURN NEXT _RECORD_RETURN;
 							END IF;
 
 						ELSIF (_PAID < 0) THEN
 
-							_RECORD_RETURN.id_message := 2;
-							_RECORD_RETURN.message := 'Adeuda el complemento de la declaracion jurada mensual de ' || _NAME_MONTHS[_MONTH_EVALUATE_LOOP] || ' del año ' || _YEAR_EVALUATE_LOOP;
+							_RECORD_RETURN.id_message := 6;
+							_RECORD_RETURN.message := 'Adeuda el impuesto de la declaracion jurada mensual de ' || _NAME_MONTHS[_MONTH_EVALUATE_LOOP] || ' del año ' || _YEAR_EVALUATE_LOOP;
 
 							IF (_PAID = -1) THEN
 

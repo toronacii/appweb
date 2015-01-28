@@ -68,19 +68,16 @@ BEGIN
 		_YEAR_STTM_COMPARE = CASE WHEN _STTM_FORM.month ISNULL THEN _STTM_FORM.fiscal_year + 1 ELSE _STTM_FORM.fiscal_year END;
 		_DATE_COMPARE_STTM = (_YEAR_STTM_COMPARE || '-' || COALESCE(_STTM_FORM.month, 1) || '-01')::date;
 		_IS_STATEMENT_ACTUAL = ((_STTM_FORM.fiscal_year || '-' || COALESCE(_STTM_FORM.month, 1) || '-' || EXTRACT('DAY' FROM CURRENT_DATE))::date  = CURRENT_DATE);
-		_DATE_LIMIT = (_DATE_COMPARE_STTM + '2 month'::interval - '1 days'::interval)::date;
-/*
-		-- DECLARACION ANUAL
-		IF (_STTM_FORM.month ISNULL) THEN
+		_DATE_LIMIT = (_DATE_COMPARE_STTM + '1 month'::interval - '1 days'::interval)::date;
 
-			_STATEMENT_DATE = _DATE_LIMIT;
+-- DECLARACION MENSUAL
 
-		ELSE
+		IF (_STTM_FORM.month IS NOT NULL) THEN
 
-			_STATEMENT_DATE = _DATE_LIMIT;
+			_DATE_LIMIT = (_DATE_COMPARE_STTM + '2 month'::interval - '1 days'::interval)::date;
 
 		END IF;
-*/
+
 		
 	ELSE -- DECLARACION ESTIMADA
 		_TYPE = 0;
@@ -117,7 +114,7 @@ BEGIN
 
 -- VALIDAR EXTEMPORANEA
 
-	-- RAISE EXCEPTION '_DATE_LIMIT: %', _DATE_LIMIT;
+	RAISE NOTICE '_DATE_LIMIT: %', _DATE_LIMIT;
 	
 	IF (CURRENT_DATE > _DATE_LIMIT) THEN 
 		_EXTEMP = TRUE;
@@ -274,10 +271,6 @@ BEGIN
 
 		END IF;
 		
-		-- MULTAS
-
-		PERFORM appweb.liquid_fine_statement(_ID_STTM);
-
 		-- INTERESES
 
 		PERFORM generate_statement_interest(_ID_STTM);
@@ -286,15 +279,15 @@ BEGIN
 
 	ELSE
 
-		-- MULTAS
-
-		PERFORM appweb.liquid_fine_statement_monthly(_ID_STTM, _STTM_FORM.month);
-
 		-- INTERESES
 
 		-- PERFORM generate_statement_interest(_ID_STTM);
 		
 	END IF;
+
+-- MULTAS
+
+	PERFORM appweb.liquid_fine_statement(_ID_STTM);
 
 	RETURN _ID_STTM;
 	

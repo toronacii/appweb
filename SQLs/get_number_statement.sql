@@ -1,6 +1,6 @@
--- Function: appweb.get_number_statement(boolean, integer, integer)
+﻿-- Function: appweb.get_number_statement(boolean, integer, integer)
 
-DROP FUNCTION appweb.get_number_statement(boolean, integer);
+-- DROP FUNCTION appweb.get_number_statement(boolean, integer, integer);
 
 CREATE OR REPLACE FUNCTION appweb.get_number_statement(boolean, integer, integer DEFAULT NULL::integer)
   RETURNS text AS
@@ -27,13 +27,13 @@ BEGIN
 		IF (_MONTH ISNULL) THEN
 			_NAME_SEQUENCE = 'D' || SUBSTRING(_FISCAL_YEAR::text, 3);
 		ELSE
-			_NAME_SEQUENCE = 'DJM_' || UPPER(SUBSTR(TO_CHAR(('2000-' || _MONTH || '-01')::date, 'TMMonth'), 1, 3)) || '_' || SUBSTRING(_FISCAL_YEAR::text, 3); 
+			_NAME_SEQUENCE = 'DJM_' || SUBSTR(TO_CHAR(('2000-' || _MONTH || '-01')::date, 'TMMonth'), 1, 3) || '_' || SUBSTRING(_FISCAL_YEAR::text, 3); 
 		END IF;
 	END IF;
 
-	-- RAISE NOTICE '%', quote_ident(LOWER(_NAME_SEQUENCE));
+	-- RAISE NOTICE '_NAME_SEQUENCE: %', _NAME_SEQUENCE;
 	
-	IF NOT EXISTS (SELECT * FROM pg_class WHERE relkind = 'S' AND oid::regclass::text = 'appweb.' || quote_ident(LOWER(_NAME_SEQUENCE))) THEN
+	IF NOT EXISTS (SELECT 0 FROM pg_class WHERE relkind = 'S' AND oid::regclass::text = 'appweb.' || quote_ident(LOWER(_NAME_SEQUENCE))) THEN
 
 		SELECT INTO _START t.start FROM (
 			SELECT LOWER(substring(form_number,1,3)) AS prefix, MAX(substring(form_number,6)::bigint) + 1 AS start
@@ -56,9 +56,9 @@ BEGIN
 	IF (_MONTH IS NOT NULL) THEN
 
 		SELECT INTO _NUMBER_STATEMENT 
-		'DJM' || LPAD(_MONTH::text, 2, '0') || '-1' || 
-		LPAD(NEXTVAL(('appweb.' || LOWER(_NAME_SEQUENCE))::regclass)::character varying, 5, '0')
-		|| '-' || SUBSTRING(_FISCAL_YEAR::text, 3);
+		'DM' || SUBSTRING(_FISCAL_YEAR::text, 3) || '-1' || 
+		LPAD(NEXTVAL(('appweb.' || LOWER(_NAME_SEQUENCE))::regclass)::character varying, 6, '0')
+		|| '-' || LPAD(_MONTH::text, 2, '0');
 	ELSE
 		SELECT INTO _NUMBER_STATEMENT 
 		_NAME_SEQUENCE || '-1' || 
@@ -74,3 +74,4 @@ $BODY$
   COST 100;
 ALTER FUNCTION appweb.get_number_statement(boolean, integer, integer)
   OWNER TO postgres;
+
