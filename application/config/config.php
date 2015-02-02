@@ -91,7 +91,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 
 /*
@@ -356,6 +356,10 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
+
+//$config['offline_allowed_ips'] = array('xxx.xxx.xxx','xxx.xxx.xxx.xxx);
+//Posee un arreglo con las IP's con acceso permitido al sitio
+$config['offline_allowed_ips'] = array('127.0.0.2');
 
 
 /* End of file config.php */

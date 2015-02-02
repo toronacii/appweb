@@ -10,7 +10,12 @@
 |
 */
 
-
+$hook['pre_system'] = array(
+    'class' => 'SiteOffline',
+    'function' => 'offline',
+    'filename' => 'SiteOffline.php',
+    'filepath' => 'hooks'
+);
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */
