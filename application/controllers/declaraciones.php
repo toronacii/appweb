@@ -349,7 +349,7 @@ class Declaraciones extends MY_Controller {
 
         $data_planilla = $this->declaraciones->get_statement($this->id_taxpayer, $id_sttm);
 
-        #var_dump($data_planilla, $this->declaraciones); exit;
+        #d($data_planilla, $this->declaraciones);
 
         $referer = @$_SERVER['HTTP_REFERER'];
 
