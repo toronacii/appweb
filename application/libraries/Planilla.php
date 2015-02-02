@@ -1203,8 +1203,9 @@ class Planilla {
         $CI = & get_instance();
         $CI->load->library('fpdf/PDF_Code128');
         $CI->load->model('api_model', 'declaraciones');
+        $CI->load->library('Statement');
 
-        #var_dump($data_planilla); exit;
+        #d($data_planilla);
 
         $pdf = new PDF_Code128('P', 'mm', 'Letter');
         $cant_celdas = 14;
@@ -1215,21 +1216,43 @@ class Planilla {
 
         $rebajas = array();
 
+        extract($CI->statement->get_init_vars($data_planilla));
+
+        $total_old = number_format(round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year), 2), 2, ',', '.');
+
         if ($data_planilla[0]->type == 'TRUE'){ #DEFINITIVA
             $dirImageHeader = "css/img/cabecera_declaracion_DEF.png";
             $dirImageFooter = "css/img/pie_declaracion_DEF.png";
             $name_sttm = "DEFINITIVA";
-            $year_tax_unit = $data_planilla[0]->fiscal_year;
-            if (strtotime($data_planilla[0]->statement_date) < strtotime('2013-09-27') && $data_planilla[0]->fiscal_year == 2012)
+            $year_tax_unit = $fiscal_year;
+            if (strtotime($data_planilla[0]->statement_date) < strtotime('2013-09-27') && $fiscal_year == 2012)
                 $rebajas = $CI->declaraciones->get_rebajas($data_planilla[0]->id_tax);
-            $textSttmOld = "17. IMPUESTO ESTIMADO {$data_planilla[0]->fiscal_year}";
+            $textSttmOld = "17. IMPUESTO ESTIMADO {$fiscal_year}";
+
+            if ($is_monthly) 
+            {
+                 $name_sttm = "JURADA MENSUAL";
+                 $month_text = strtoupper($CI->statement->get_month($month));
+                 $periodo_declarado = (object)[
+                    'init_month' => str_pad($month, 2, "0", STR_PAD_LEFT),
+                    'last_month' => str_pad($month, 2, "0", STR_PAD_LEFT),
+                    'last_day' => date("t", strtotime("{$fiscal_year}-{$month}-01"))
+                ];
+                $dirImageHeader = "css/img/cabecera_declaracion_MEN.png";
+                $dirImageFooter = "css/img/pie_declaracion_MEN.png";
+                $textSttmOld = "";
+                $total_old = "";
+
+                #d($periodo_declarado);
+
+            }
 
         }else if ($data_planilla[0]->type == 'FALSE'){ #ESTIMADA
             $dirImageHeader = "css/img/cabecera_declaracion.png";
             $dirImageFooter = "css/img/pie_declaracion.png";
             $name_sttm = "ESTIMADA";
-            $year_tax_unit = $data_planilla[0]->fiscal_year - 1;
-            $textSttmOld = "17. INGRESOS DEFINITIVOS ". ($data_planilla[0]->fiscal_year - 2);
+            $year_tax_unit = $fiscal_year - 1;
+            $textSttmOld = "17. INGRESOS DEFINITIVOS ". ($fiscal_year - 2);
         }
 
         #CABECERA
@@ -1246,8 +1269,9 @@ class Planilla {
             $pdf->SetFont('Arial', '', 35);
             $pdf->Text(0, 150, utf8_decode("DECLARACIÓN EXTEMPORÁNEA"));
         } else {
-            $pdf->SetFont('Arial', '', 40);
-            $pdf->Text(15, 150, utf8_decode("DECLARACION $name_sttm"));
+
+            $pdf->SetFont('Arial', '', ($is_monthly) ? 35 : 40);
+            $pdf->Text(0, 150, utf8_decode("DECLARACION $name_sttm"));
         }
 
         if ($data_planilla[0]->change_audit == 't'){ #MONTOS MODIFICADOS POR AUDITORIA
@@ -1261,7 +1285,7 @@ class Planilla {
 
         $pdf->setXY(6, 5);
         $pdf->Cell(0, 3, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE"), 0, 1, 'C');
-        $pdf->Cell(0, 3, utf8_decode("DETERMINACIÓN DE IMPUESTO AÑO {$data_planilla[0]->fiscal_year}"), 0, 0, 'C');
+        $pdf->Cell(0, 3, utf8_decode("DETERMINACIÓN DE IMPUESTO " . strtoupper($month_text) . " {$fiscal_year}"), 0, 0, 'C');
 
         $pdf->SetFont('Arial', '', 7);
         $pdf->SetY(22);
@@ -1285,11 +1309,11 @@ class Planilla {
         $pdf->SetY($pdf->GetY() - 3);
 
         $pdf->Cell(11, 4, '01', x_, 0, 'C'); #DESDE DIA
-        $pdf->Cell(10, 4, '01', x_, 0, 'C'); #DESDE MES
-        $pdf->Cell(11, 4, $data_planilla[0]->fiscal_year, x_, 0, 'C'); #DESDE AÑO
-        $pdf->Cell(12, 4, '31', x_, 0, 'C'); #HASTA DIA
-        $pdf->Cell(10, 4, '12', x_, 0, 'C'); #HASTA MES
-        $pdf->Cell(12, 4, $data_planilla[0]->fiscal_year, x_, 0, 'C'); #HASTA AÑO
+        $pdf->Cell(10, 4, $periodo_declarado->init_month, x_, 0, 'C'); #DESDE MES
+        $pdf->Cell(11, 4, $fiscal_year, x_, 0, 'C'); #DESDE AÑO
+        $pdf->Cell(12, 4, $periodo_declarado->last_day, x_, 0, 'C'); #HASTA DIA
+        $pdf->Cell(10, 4, $periodo_declarado->last_month, x_, 0, 'C'); #HASTA MES
+        $pdf->Cell(12, 4, $fiscal_year, x_, 0, 'C'); #HASTA AÑO
         $pdf->Cell(49, 4, $data_taxpayer->numero_cuenta, x_, 1, 'C'); #CUENTA NUEVA
 
         $pdf->SetY($pdf->GetY() + 3);
@@ -1401,12 +1425,10 @@ class Planilla {
         $pdf->Cell(16, 8, number_format(round($total_rebaja, 2), 2, ',', '.'), 'BR', 1, 'R'); #TOTAL REBAJA
         $pdf->SetFont('Arial', '', 8);
 
-        $total_old = $CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $data_planilla[0]->fiscal_year);
-
-        #var_dump(array($data_planilla[0]->id_tax, $data_planilla[0]->type, $data_planilla[0]->fiscal_year));exit;
+        #var_dump(array($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year));exit;
         
         $pdf->Cell(91, 8, $textSttmOld, 'LBR', 0, 'R');
-        $pdf->Cell(40, 8,  number_format(round($total_old, 2), 2, ',', '.'), 'BR', ($data_planilla[0]->id_tax_discount == ''), 'R'); #INGRESO ANTERIOR
+        $pdf->Cell(40, 8, $total_old, 'BR', ($data_planilla[0]->id_tax_discount == ''), 'R'); #INGRESO ANTERIOR
 
 
         if ($data_planilla[0]->id_tax_discount > 0){ #DESCUENTO POR ARTICULO 219
@@ -1420,16 +1442,19 @@ class Planilla {
         }
         
         $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 7, number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
+        $pdf->Cell(28, 7, ($is_monthly) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
         
         $pdf->SetY($pdf->GetY() + 2);
 
         if ($data_planilla[0]->type == 'TRUE'){ #COMPLEMENTO
             $comp_aforo = round($total_impuesto_reb - $total_old, 2);
-            $pdf->SetX(-51);
-            $pdf->SetFont('Arial', '', 6);
-            $pdf->Cell(6, 4, $data_planilla[0]->fiscal_year, x_, 0, 'R'); # AÑO COMPLEMENTO  
-            $pdf->SetFont('Arial', '', 8);
+            if (! $is_monthly)
+            {
+                $pdf->SetX(-51);
+                $pdf->SetFont('Arial', '', 6);
+                $pdf->Cell(6, 4, $fiscal_year, x_, 0, 'R'); # AÑO COMPLEMENTO  
+                $pdf->SetFont('Arial', '', 8);
+            }
 
         }else{ # AFOROS TRIMESTRALES
             $comp_aforo = round($total_impuesto_reb / 4, 2);
@@ -1460,7 +1485,7 @@ class Planilla {
 
         @$pdf->SetY($pdf->GetY() + 10);
 
-        $pdf->Cell(190, 4, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO AÑO {$data_planilla[0]->fiscal_year}"), x_, 0, 'C');
+        $pdf->Cell(190, 4, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO {$month_text} {$fiscal_year}"), x_, 0, 'C');
         $pdf->Cell(0, 4, "CONTRIBUYENTE", x_, 1, 'C');
 
         $pdf->Output("DDI_{$CI->uri->segment(3)}.pdf", 'I');

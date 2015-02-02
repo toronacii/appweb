@@ -165,4 +165,22 @@ class Statement {
         return array_reverse($return);
     }
 
+    public function get_init_vars($data_planilla)
+    {
+        $r = new StdClass();
+
+        $r->fiscal_year = $data_planilla[0]->fiscal_year;
+        $r->month = $data_planilla[0]->month;
+        $r->is_monthly = is_numeric($r->month);
+        $r->subtitulo = "DETERMINACIÓN DE IMPUESTO AÑO {$r->fiscal_year}";
+        $r->month_text = "AÑO";
+        $r->periodo_declarado = (object)[
+            'init_month' => '01',
+            'last_month' => '12',
+            'last_day' => '31'
+        ];
+
+        return (array)$r;
+    }
+
 }
