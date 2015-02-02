@@ -16,6 +16,10 @@
 */
 $config['base_url']	= '';
 
+//$config['offline_allowed_ips'] = array('xxx.xxx.xxx','xxx.xxx.xxx.xxx);
+//Posee un arreglo con las IP's con acceso permitido al sitio
+$config['offline_allowed_ips'] = array('127.0.0.1', '192.168.102.7', '10.0.1.10');
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -356,10 +360,6 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-//$config['offline_allowed_ips'] = array('xxx.xxx.xxx','xxx.xxx.xxx.xxx);
-//Posee un arreglo con las IP's con acceso permitido al sitio
-$config['offline_allowed_ips'] = array('127.0.0.2');
 
 
 /* End of file config.php */
