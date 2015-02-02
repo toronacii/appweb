@@ -11,4 +11,8 @@
 .table-declaracion .text-center{text-align: center}
 #crearDeclaracion .tooltip-inner{text-align: left; white-space: pre}
 .gmap3{width: 100%; height: 400px;}
-.input-span{font-weight: bold}
+.input-span{font-weight: bold; background-color: #eeeeea}
+.titulillo,
+.table-declaracion tbody span:not(.form-control){font-size: 0.84em;}
+.table-declaracion td {vertical-align: middle !important}
+td.push-bottom{vertical-align: bottom !important}

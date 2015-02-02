@@ -1,5 +1,5 @@
 <div id="contentDeclaraciones">
-<?php #d($declaraciones) ?>
+<?php #d($select) ?>
 
 <div class="well well-sm">
     <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar declaraciones de actividades económicas
@@ -19,7 +19,7 @@
                     <?php foreach($select as $i => $sttm): $p = explode('_', $sttm);  ?>
                     <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>
                         <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>
-                        <?php echo (($p[0] == 'FALSE') ? 'Estimada ' : 'Definitiva ') . $p[1] ?>
+                        <?php echo $this->statement->get_title_statement($p, true) ?>
                     </option>
                     <?php endforeach; ?>
                     </optgroup>
