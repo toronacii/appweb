@@ -17,6 +17,15 @@ class Statement {
         
         $this->CI = & get_instance();
     }
+
+    public function get_sttm_properties($sttm){
+        
+        return (object)[
+            'type' => is_numeric($sttm['sttm'][0]) ? 'TRUE' : $sttm['sttm'][0],
+            'fiscal_year' => $sttm['sttm'][1],
+            'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL'
+        ];
+    }
     
     public function get_select_statement()
     {

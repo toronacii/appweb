@@ -12,7 +12,7 @@ function changeClassActivitySpecified()
         count = 4;
     var classColumn = 12 / count;
 
-    //remove class y add class
+    //remove class y add class 
     var pattern = /^col-md-(\d){1,2}$/;
     $elements.each(function(){
         //console.log(this);
@@ -98,17 +98,50 @@ function calcular_montos(){
     $('#total_monto').text(format(total_monto));
     $('#total_impuesto').text(format(total_impuesto));
 
-    //DESCUENTO
-    if ($('#tax_discount').length == 1){
-        var descuento = parseFloat(original_number($('#tax_discount').val()));
-        total_impuesto = total_impuesto - descuento;
-        $('#total_impuesto_rebaja').text(format(total_impuesto));
+    //DESCUENTOS
+    var subtotal_discount = total_impuesto;
+    var percent_number;
+
+    $('.trDiscount').each(function(){
+        //console.log(this);
+        var $tax_discount = $(this).find('.tax_discount');
+        var $subtotal = $(this).find('.subtotal');
+        
+        if ($(this).hasClass('type_amount'))
+        {
+            discount = original_number($tax_discount.val());
+        }
+        else
+        {   
+            percent_number = original_number($(this).find('.percent_discount').text());
+            discount = subtotal_discount * percent_number / 100;
+            $tax_discount.text(format(discount));
+        }
+
+        subtotal_discount = subtotal_discount - discount;
+        $subtotal.text(format(subtotal_discount));
+
+    });
+
+    if (subtotal_discount < minimo_tributario) 
+    {
+        subtotal_discount = minimo_tributario;
     }
 
-    if (sttm_type){ //DEFINITIVA
-        var total_final = total_impuesto - sttm_old;
-    }else{ //ESTIMADA
-        var total_final = total_impuesto/4;
+    if (typeof(percent_number) !== 'undefinded' && percent_number === 100)
+    {
+        subtotal_discount = 0;
+    }
+
+    console.log(sttm_old);
+
+    if (sttm_type)
+    {
+        var total_final = subtotal_discount - sttm_old;
+    }
+    else
+    {
+        var total_final = subtotal_discount/4;
     }
 
     $('#total_final').text(format(total_final));
@@ -153,7 +186,7 @@ function add_element($option, $actSpec, json_parent)
     "<td><input  type='text' class='float form-control text-center montoActividad' id='monto_" + i + "' name='monto[" + $option.attr('id') + "]' value='0,00' /></td>\n"+
     "<td><strong><span class='alicuotaActividad' id='ali_" + i + "'>" + format($option.data('alicuota')) + "</span></strong></td>\n"+
     "<td><strong><span class='minimoActividad' id='min_" + i + "'>" + format($option.data('minimun')) + "</span></strong></td>\n"+
-    "<td><span class='input-span totalActividad' id='total_" + i + "'>0,00</span></td>"+
+    "<td><span class='input-span form-control totalActividad' id='total_" + i + "'>0,00</span></td>"+
     "</tr>");
 
     intercambiar_element($option, $("#activitiesTaxpayer"));

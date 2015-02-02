@@ -7,6 +7,7 @@ class Declaraciones extends MY_Controller {
 
     public $id_taxpayer;
     public $messages;
+    public $sttm_properties;
 
     public function __construct() {
         parent::__construct();
@@ -117,6 +118,11 @@ class Declaraciones extends MY_Controller {
     {
         $sttm_tax = $this->session->userdata('sttm_tax');
 
+        #SET PROPERTIES
+
+
+        $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
+
         if ( !(
                 $tax_account_number && #NO EXISTE ALGUN PARAMETRO
                 is_numeric($tax_account_number) && #SON TIPOS DISTINTOS
@@ -130,8 +136,6 @@ class Declaraciones extends MY_Controller {
         $sttm_tax['tax_account_number'] = $tax_account_number;
 
         $sttm_only = $sttm_tax['sttm'];
-
-        $fiscal_year = $sttm_tax['sttm'][1];
 
         #d($sttm_only);
 
@@ -153,7 +157,7 @@ class Declaraciones extends MY_Controller {
         $header['show_breadcrumbs'] = FALSE;
         $header['arrayVarsJs'] = array(
             'GLOBAL_showStepFour' => (int)$paso1['showStepFour'],
-            'GLOBAL_fiscal_year' => $fiscal_year
+            'GLOBAL_fiscal_year' => $this->sttm_properties->fiscal_year
         );
         $this->load->view('header', $header);
 
@@ -165,10 +169,10 @@ class Declaraciones extends MY_Controller {
 
         $this->load->view('declaraciones/pasos/pasos', [
             'steps' => $this->getSteps($sttm_only),
-            'fiscal_year' => $fiscal_year
+            'fiscal_year' => $this->sttm_properties->fiscal_year
         ]);
 
-        #dd($this->getSteps($sttm_only), $fiscal_year, $sttm_only);
+        #dd($this->getSteps($sttm_only), $this->sttm_properties->fiscal_year, $sttm_only);
 
         #PASO 1
         $paso1['datos_contribuyente'] = $this->declaraciones->datos_taxpayer($id_tax);
@@ -185,16 +189,16 @@ class Declaraciones extends MY_Controller {
         if ($id_sttm_form > 0){
             $paso3['actividades_contribuyente'] = $this->declaraciones->get_data_statement($id_sttm_form);
         }else{
-            $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax, $fiscal_year);
+            $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year);
         }
 
         #dd($this->declaraciones, $paso3);
 
-        $paso3['actividades_permisadas'] = $this->declaraciones->get_activities($fiscal_year);
+        $paso3['actividades_permisadas'] = $this->declaraciones->get_activities($this->sttm_properties->fiscal_year);
 
         #dd($this->declaraciones, $paso3['actividades_permisadas']);
 
-        $paso3['unidad_tributaria'] = $this->declaraciones->get_tax_unit($fiscal_year);
+        $paso3['unidad_tributaria'] = $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year);
         $this->load->view('declaraciones/pasos/paso3', $paso3);
 
         #var_dump($this->declaraciones, $paso3); exit;
@@ -214,15 +218,15 @@ class Declaraciones extends MY_Controller {
         }
 
         #PASO 5
-        //$paso5['tax_unit'] =  round($paso3['unidad_tributaria']->value axab* $this->getMinimunTle($fiscal_year), 2);
+        //$paso5['tax_unit'] =  round($paso3['unidad_tributaria']->value axab* $this->getMinimunTle($this->sttm_properties->fiscal_year), 2);
         $paso5['sttm'] = $sttm_tax['sttm'];
-        $paso5['sttm_old'] = $this->declaraciones->get_total_sttm($id_tax, $paso5['sttm'][0], $paso5['sttm'][1]);
+        $paso5['sttm_old'] = $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year);
 
         #var_dump($this->declaraciones, $paso5); exit;
 
-        $paso5['tax_discount'] =  $this->declaraciones->get_tax_discount($id_tax, $sttm_tax['sttm'][0], $sttm_tax['sttm'][1]);
+        $paso5['tax_discounts'] =  $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month);
 
-        #var_dump($this->declaraciones, $paso5); exit;
+        #d($paso5['tax_discounts'], $this->declaraciones);
 
         $this->load->view('declaraciones/pasos/paso5', $paso5);
 
@@ -243,19 +247,42 @@ class Declaraciones extends MY_Controller {
             redirect (site_url ('declaraciones/cuentas'));
         }
 
-        #dd($sttm_tax, $_POST);
+        $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
+        #dd($sttm_tax, $_POST, $this->sttm_properties);
 
         $tax_account_number = $sttm_tax['tax_account_number'];
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
         $latLong = explode(',', $_POST['latLong']);
 
+        if (isset($_POST['tax_discount']))
+        {
+            #DESCUENTO COMO EL 219
+            if (isset($_POST['tax_discount']['amount_discount']))
+            {
+                $amount_discount = $this->statement->my_format_number($_POST['tax_discount']['amount_discount']);
+                $discount[] = substr($this->statement->to_array_pgsql_data($amount_discount), 1, -1);
+            }
+
+            #DESCUENTO COMO PORCENTAJE
+            if (isset($_POST['tax_discount']['percent_discount']))
+            {
+                $percent_discount = $_POST['tax_discount']['percent_discount'];
+                $discount[] = substr($this->statement->to_array_pgsql_data($percent_discount), 1, -1);
+            }
+            
+            $discount = '{' . implode(', ', $discount) . '}';
+        }
+
+        $discount = isset($discount) ? "'$discount'" : 'NULL';
+
         $data = array(
             'function' => array(
                 'id_tax' => $id_tax,
                 'type' => 'TRUE',
-                'fiscal_year' => $sttm_tax['sttm'][1],
+                'fiscal_year' => $this->sttm_properties->fiscal_year,
                 'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
-                'month' => ($sttm_tax['sttm'][0] == 'TRUE') ? 'NULL' :  $sttm_tax['sttm'][0]
+                'discount' => $discount,
+                'month' => $this->sttm_properties->month
             ),
             'toolbar' => $_POST['toolbar'] + array('id_taxpayer' => $this->id_taxpayer),
             'maps' => array(
@@ -265,10 +292,6 @@ class Declaraciones extends MY_Controller {
             ),
             'activities_specified' => isset($_POST['last_children']) ? $_POST['last_children'] : FALSE
         );
-
-        if (isset($_POST['tax_discount'])){
-            $data['tax_discount'] = $this->statement->my_format_number($_POST['tax_discount']);
-        }
 
         #echo serialize($data);
 

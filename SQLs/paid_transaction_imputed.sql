@@ -1,8 +1,8 @@
-﻿-- Function: appweb.paid_transaction(bigint)
+﻿-- Function: appweb.paid_transaction_imputed(bigint)
 
--- DROP FUNCTION appweb.paid_transaction(bigint);
+-- DROP FUNCTION appweb.paid_transaction_imputed(bigint);
 
-CREATE OR REPLACE FUNCTION appweb.paid_transaction(bigint)
+CREATE OR REPLACE FUNCTION appweb.paid_transaction_imputed(bigint)
   RETURNS smallint AS
 $BODY$ 
 DECLARE
@@ -15,6 +15,7 @@ DECLARE
 	_RECORD record;
 	_DEBT_AMOUNT double precision;
 	_CREDIT boolean;
+	_RECORD_IMPUTED record;
 
 BEGIN
 
@@ -115,7 +116,37 @@ ELSE
 	-- FIN QUITAR LUEGO
 	
 	IF (_DEBT_AMOUNT <= 0) THEN
+
+		-- LENAMOS EL REGISTRO PARA VERIFICAR IMPUTACIONES
+
+		SELECT INTO _RECORD_IMPUTED
+		SUM(CASE WHEN id_payment ISNULL THEN 1 ELSE 0 END) AS imputed,
+		SUM(CASE WHEN id_payment ISNULL THEN 0 ELSE 1 END) AS no_imputed,
+		COUNT(payment_transaction.id) AS total
+		FROM payment_transaction
+		INNER JOIN transaction ON transaction.id = id_transaction_credit
+		LEFT JOIN payment ON payment_transaction.id_payment = payment.id AND payment.status = 2
+		WHERE id_transaction_debit = _ID_TRANSACTION
+		AND NOT transaction.canceled;
+
+		-- IMPUTADO TOTALMENTE
+		
+		IF (_RECORD_IMPUTED.imputed = _RECORD_IMPUTED.total) THEN
+
+			RETURN 5;
+
+		-- IMPUTADO PARCIALMENTE
+
+		ELSIF (_RECORD_IMPUTED.imputed BETWEEN 1 AND _RECORD_IMPUTED.total) THEN
+
+			RETURN 6;
+			
+		END IF;
+
+		-- NINGUNA IMPUTADA
+	
 		RETURN 3;
+		
 	END IF;
 
 	-- RAISE NOTICE '_DEBT_AMOUNT: %', _DEBT_AMOUNT;
@@ -129,9 +160,9 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION appweb.paid_transaction(bigint)
+ALTER FUNCTION appweb.paid_transaction_imputed(bigint)
   OWNER TO postgres;
-COMMENT ON FUNCTION appweb.paid_transaction(bigint) IS 'RETURNS
+COMMENT ON FUNCTION appweb.paid_transaction_imputed(bigint) IS 'RETURNS
 -4: transaccion sin convenio o fraccionamiento cancelada
 -3: transaccion sin convenio o fraccionamiento sin pagar
 -2: transaccion de fraccionamiento sin pagar
@@ -139,6 +170,7 @@ COMMENT ON FUNCTION appweb.paid_transaction(bigint) IS 'RETURNS
 0: transaccion no encontrada
 1: transaccion de convenio pagada
 2: transaccion de fraccionamiento pagada
-3: transaccion sin convenio o fraccionamiento pagada
+3: transaccion sin convenio o fraccionamiento pagada sin imputaciones
 4: transaccion de credito
-';
+5: transaccion sin convenio o fraccionamiento pagada y totalmente imputada
+6: transaccion sin convenio o fraccionamiento pagada y parcialmente imputada';
