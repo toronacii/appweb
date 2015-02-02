@@ -41,5 +41,7 @@ define('API_DIR'                            ,     'http://172.16.1.2/api.appweb/
 define('ONLINE_PAYMENT', "http://172.16.1.8/online_payment/api/");
 define('BANESCO_ONLINE', "https://payment.megasoft.com.ve/payment/action/paymentgatewayuniversal-data?control=");
 
+define('IS_OFFLINE', TRUE);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
