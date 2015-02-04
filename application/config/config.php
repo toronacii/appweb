@@ -18,7 +18,7 @@ $config['base_url']	= '';
 
 //$config['offline_allowed_ips'] = array('xxx.xxx.xxx','xxx.xxx.xxx.xxx);
 //Posee un arreglo con las IP's con acceso permitido al sitio
-$config['offline_allowed_ips'] = array('127.0.0.1', '192.168.102.7', '10.0.1.10');
+$config['offline_allowed_ips'] = array('127.0.0.1', '192.168.102.7', '10.0.1.10', '192.168.102.3');
 
 /*
 |--------------------------------------------------------------------------
