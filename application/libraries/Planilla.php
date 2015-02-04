@@ -1218,7 +1218,7 @@ class Planilla {
 
         extract($CI->statement->get_init_vars($data_planilla));
 
-        $total_old = number_format(round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year), 2), 2, ',', '.');
+        $total_old = $CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year);
 
         if ($data_planilla[0]->type == 'TRUE'){ #DEFINITIVA
             $dirImageHeader = "css/img/cabecera_declaracion_DEF.png";
@@ -1241,7 +1241,7 @@ class Planilla {
                 $dirImageHeader = "css/img/cabecera_declaracion_MEN.png";
                 $dirImageFooter = "css/img/pie_declaracion_MEN.png";
                 $textSttmOld = "";
-                $total_old = "";
+                $total_old = 0;
 
                 #d($periodo_declarado);
 
@@ -1428,7 +1428,7 @@ class Planilla {
         #var_dump(array($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year));exit;
         
         $pdf->Cell(91, 8, $textSttmOld, 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, $total_old, 'BR', ($data_planilla[0]->id_tax_discount == ''), 'R'); #INGRESO ANTERIOR
+        $pdf->Cell(40, 8, number_format(round($total_old, 2), 2, ',', '.'), 'BR', ($data_planilla[0]->id_tax_discount == ''), 'R'); #INGRESO ANTERIOR
 
 
         if ($data_planilla[0]->id_tax_discount > 0){ #DESCUENTO POR ARTICULO 219
