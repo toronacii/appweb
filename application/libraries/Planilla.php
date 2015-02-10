@@ -1444,8 +1444,8 @@ class Planilla {
                 $pdf->Cell(45, 8, strtoupper($descuento->description), 'BR', 0, 'C'); #DESCRIPCION DEL DESCUENTO
                 $pdf->Cell(33, 8,  number_format(round($descuento->amount, 2), 2, ',', '.'), 'BR', 0, 'R'); #MONTO DEL DESCUENTO
                 $pdf->Cell(31, 8,  'SUBTOTAL', 'BR', 0, 'C');
-                $total_impuesto_reb -= $descuento->amount;
                 $pdf->Cell(28, 8,  number_format(round($total_impuesto_reb, 2), 2, ',', '.'), 'BRT', 1, 'R');
+                $total_impuesto_reb -= $descuento->amount;
             }
 
         }
