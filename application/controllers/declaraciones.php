@@ -60,7 +60,7 @@ class Declaraciones extends MY_Controller {
         #DECLARACIONES SIMPLES
         if ($params[0] == 'TRUE')
         {
-            $params[0] = NULL;
+            $params[0] = 'NULL';
         }
         
         $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0])); 
