@@ -3,7 +3,7 @@
 <div class="col-md-12">
 
 	<div class="well well-sm">
-		<strong>Verifica en el menú de Planillas en la opción Generadas no pagadas:</strong><br><br>
+		<strong>Verifica en el <a title="Histórico de planillas" href="<?php echo site_url('planillas_pago/generadas') ?>">Histórico de planillas</a> para saber:</strong><br><br>
 		<ol>
 			<li>Si tienes planillas vencidas debes eliminarlas para liberar los impuestos a pagar</li>
 			<li>Si no están vencidas puedes reimprimirlas para presentarla en los bancos o pagar en línea</li>
