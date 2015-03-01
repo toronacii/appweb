@@ -63,7 +63,7 @@ class Declaraciones extends MY_Controller {
         }
         
         $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0])); 
-
+        #d($this->id_taxpayer, 'TRUE', $params[1], $params[0]);
         #d($data['declaraciones'], $params, $this->declaraciones);
 
         $this->load->view('declaraciones/cuentas_view', $data);

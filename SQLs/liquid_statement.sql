@@ -17,7 +17,7 @@ DECLARE
 	_ID_TAXPAYER bigint;
 	_DATE_LIMIT date;
 	_DAYS_EXTENSION smallint = 0;
-	_EXTEMP boolean;
+	_EXTEMP boolean = false;
 	_TYPE smallint;
 	_ID_STTM bigint;
 	_TAX_UNIT record;
@@ -54,6 +54,8 @@ BEGIN
 
 -- VERIFICAR SI HAY ERRORES DE VALIDACION: ERROR_CODE -1
 
+	RAISE NOTICE '_ID_TAXPAYER: %', _ID_TAXPAYER;
+
 	PERFORM * FROM appweb.errors_declare_taxpayer_monthly(_ID_TAXPAYER, _STTM_FORM.statement_type, _STTM_FORM.fiscal_year, _STTM_FORM.month)
 	WHERE id_tax = _STTM_FORM.id_tax;
 
@@ -66,19 +68,19 @@ BEGIN
 		_YEAR_STTM_COMPARE = CASE WHEN _STTM_FORM.month ISNULL THEN _STTM_FORM.fiscal_year + 1 ELSE _STTM_FORM.fiscal_year END;
 		_DATE_COMPARE_STTM = (_YEAR_STTM_COMPARE || '-' || COALESCE(_STTM_FORM.month, 1) || '-01')::date;
 		_IS_STATEMENT_ACTUAL = ((_STTM_FORM.fiscal_year || '-' || COALESCE(_STTM_FORM.month, 1) || '-' || EXTRACT('DAY' FROM CURRENT_DATE))::date  = CURRENT_DATE);
-		_DATE_LIMIT = (_DATE_COMPARE_STTM + '1 month'::interval - '1 days'::interval)::date;
-
+		_DATE_LIMIT = (_DATE_COMPARE_STTM + '2 month'::interval - '1 days'::interval)::date;
+/*
 		-- DECLARACION ANUAL
 		IF (_STTM_FORM.month ISNULL) THEN
 
 			_STATEMENT_DATE = _DATE_LIMIT;
-			_DATE_LIMIT = _DATE_LIMIT + (_DAYS_EXTENSION || ' days')::interval;
 
 		ELSE
-			_STATEMENT_DATE = _DATE_LIMIT;
-			_DATE_LIMIT = _DATE_LIMIT + (_DAYS_EXTENSION || ' days')::interval;
-		END IF;
 
+			_STATEMENT_DATE = _DATE_LIMIT;
+
+		END IF;
+*/
 		
 	ELSE -- DECLARACION ESTIMADA
 		_TYPE = 0;
@@ -86,33 +88,37 @@ BEGIN
 		_IS_STATEMENT_ACTUAL = (_STTM_FORM.fiscal_year - 1 = EXTRACT('YEAR' FROM CURRENT_DATE));
 	END IF;
 
--- TIEMPO DE PRORROGA SI SE PAGÓ EL 4TO TRIMESTRE A TIEMPO
+-- TIEMPO DE PRORROGA SI SE PAGÓ EL COMPLEMENTO A TIEMPO
 /*
 	IF (_IS_STATEMENT_ACTUAL AND CURRENT_DATE > _DATE_LIMIT) THEN
 
-		SELECT INTO _DEBT_AMOUNT
-		round((t.original_amount - CASE WHEN SUM(t2.original_amount) ISNULL THEN 0 ELSE SUM(t2.original_amount) END)::numeric, 2)
-		FROM transaction t
-		INNER JOIN payment_transaction ON t.id = id_transaction_debit
-		INNER JOIN transaction t2 ON t2.id = id_transaction_credit
-		LEFT JOIN payment ON payment_transaction.id_payment = payment.id AND payment.status = 2 AND payment.date <= _DATE_LIMIT
-		WHERE t.id_tax = _STTM_FORM.id_tax
-		AND t.id_transaction_type = 1
-		AND t.expiry_date = _DATE_LIMIT
-		AND NOT t.canceled
-		AND NOT t2.canceled
-		GROUP BY t.original_amount;
+		PERFORM * 
+		FROM transaction
+		INNER JOIN payment_transaction ON transaction.id = id_trasanction_debit
+		LEFT JOIN payment ON id_payment = payment.id AND payment.status = 2 AND payment.date <= _DATE_LIMIT
+		WHERE id_tax_type = 1
+		AND expiry_date = _DATE_LIMIT
+		AND appweb.paid_transaction(transaction.id) > 0;
 
-		IF (_DEBT_AMOUNT <= 0) THEN
+		
+		IF (FOUND) THEN
 			_DAYS_EXTENSION = 14;
 			_STATEMENT_DATE = _DATE_LIMIT;
 		END IF;
+
 	END IF;
-	
-	_DATE_LIMIT = (_DATE_LIMIT + CAST(_DAYS_EXTENSION || ' days' AS INTERVAL))::date;
+
+	RAISE NOTICE '_DATE_LIMIT: %', _DATE_LIMIT;
+
+	_DAYS_EXTENSION = 1;
+	_STATEMENT_DATE = _DATE_LIMIT;
 */
+	_DATE_LIMIT = _DATE_LIMIT + (_DAYS_EXTENSION || ' days')::interval;
+
 -- VALIDAR EXTEMPORANEA
 
+	-- RAISE EXCEPTION '_DATE_LIMIT: %', _DATE_LIMIT;
+	
 	IF (CURRENT_DATE > _DATE_LIMIT) THEN 
 		_EXTEMP = TRUE;
 	END IF;
@@ -175,32 +181,48 @@ BEGIN
 			_APPLICATION_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-01')::date;
 			_EXPIRY_DATE = ((_STTM_FORM.fiscal_year + 1) || '-03-31')::date;
 
+			IF (_AMOUNT < 0) THEN -- CREDITO PARA EL CONTRIBUYENTE
+				_AMOUNT = -1 * _AMOUNT;
+				_ID_TRANSACTION_TYPE = 17;
+				_APPLICATION_DATE = CURRENT_DATE;
+				_EXPIRY_DATE = CURRENT_DATE;
+				_DEBT_STATUS = NULL;
+			ELSE -- DEBITO PARA EL CONTRIBUYENTE
+				_ID_TRANSACTION_TYPE = 8;
+				_DEBT_STATUS = 1;
+			END IF;
+
+			-- ID DEL INTERES
+
+			SELECT INTO _ID_INTEREST 
+			id_interest 
+			FROM transaction_type
+			WHERE id = _ID_TRANSACTION_TYPE;
+
 		-- DECLARACION MENSUAL
 		ELSE
-			_APPLICATION_DATE = CURRENT_DATE;
+			
 			_EXPIRY_DATE = _DATE_LIMIT - (_DAYS_EXTENSION || ' days')::interval;
-			_CONCEPT = 'Impuesto por Declaración Jurada Mensual de ' || TO_CHAR(_DATE_COMPARE_STTM, 'TMMonth') || ' del Año ' || _STTM_FORM.fiscal_year;
+			_APPLICATION_DATE = _EXPIRY_DATE + '1 days'::interval - '1 month'::interval;
+			_CONCEPT = 'Aforo Mensual de ' || TO_CHAR(_DATE_COMPARE_STTM, 'TMMonth') || ' ' || _STTM_FORM.fiscal_year;
+			_ID_TRANSACTION_TYPE = 1;
+			_DEBT_STATUS = 1;
+
+			IF (_AMOUNT < 0) THEN -- CREDITO PARA EL CONTRIBUYENTE
+				RAISE EXCEPTION 'EL IMPUESTO MENSUAL NO PUEDE SER DE CRÉDITO';
+			END IF;
+			
+			-- ID DEL INTERES
+
+			SELECT INTO _ID_INTEREST 
+			id_interest 
+			FROM tax 
+			INNER JOIN tax_type ON id_tax_type = tax_type.id 
+			WHERE tax.id = _STTM_FORM.id_tax;
  
 		END IF;
 
-		IF (_AMOUNT < 0) THEN -- CREDITO PARA EL CONTRIBUYENTE
-			_AMOUNT = -1 * _AMOUNT;
-			_ID_TRANSACTION_TYPE = 17;
-			_APPLICATION_DATE = CURRENT_DATE;
-			_EXPIRY_DATE = CURRENT_DATE;
-			_DEBT_STATUS = NULL;
-		ELSE -- DEBITO PARA EL CONTRIBUYENTE
-			_ID_TRANSACTION_TYPE = 8;
-			_DEBT_STATUS = 1;
-		END IF;
-
-		-- ID DEL INTERES
-
-		SELECT INTO _ID_INTEREST 
-		id_interest 
-		FROM transaction_type
-		WHERE id = _ID_TRANSACTION_TYPE;
-		
+	
 		INSERT INTO transaction(id_transaction_type, id_user, id_tax, id_interest, id_statement, id_tax_unit, application_date, amount, concept, debt_status, canceled, original_amount, expiry_date)
 		VALUES (_ID_TRANSACTION_TYPE, 198, _STTM_FORM.id_tax, _ID_INTEREST, _ID_STTM, _TAX_UNIT.id, _APPLICATION_DATE, _AMOUNT, _CONCEPT, _DEBT_STATUS, false, _AMOUNT, _EXPIRY_DATE);
 
@@ -240,21 +262,39 @@ BEGIN
 		END LOOP;
 	END IF;
 
--- ESTIMADA ESTERIL
+  -- DECLARACION ANUAL
 
-	IF (_STTM_FORM.month ISNULL AND _STTM_FORM.statement_type) THEN
+	IF (_STTM_FORM.month ISNULL) THEN
+		
+		-- ESTIMADA ESTERIL
 
-		PERFORM appweb.generate_estimated_sterile(_STTM_FORM.id_tax, _STTM_FORM.fiscal_year);
+		IF (_STTM_FORM.statement_type) THEN
+
+			PERFORM appweb.generate_estimated_sterile(_STTM_FORM.id_tax, _STTM_FORM.fiscal_year);
+
+		END IF;
+		
+		-- MULTAS
+
+		PERFORM appweb.liquid_fine_statement(_ID_STTM);
+
+		-- INTERESES
+
+		PERFORM generate_statement_interest(_ID_STTM);
+
+	-- DECLARACION MENSUAL
+
+	ELSE
+
+		-- MULTAS
+
+		PERFORM appweb.liquid_fine_statement_monthly(_ID_STTM, _STTM_FORM.month);
+
+		-- INTERESES
+
+		-- PERFORM generate_statement_interest(_ID_STTM);
 		
 	END IF;
-
--- MULTAS
-
-	PERFORM appweb.liquid_fine_statement(_ID_STTM);
-
--- INTERESES
-
-	PERFORM generate_statement_interest(_ID_STTM);
 
 	RETURN _ID_STTM;
 	

@@ -60,7 +60,7 @@
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td align="center">
-                        <strong class="titulillo"><?php if ($tax_discount) echo "SUB-" ?>TOTAL IMPUESTO</strong><br>
+                        <strong class="titulillo"><?php if ($tax_discount || is_numeric($sttm[0])) echo "SUB-" ?>TOTAL IMPUESTO</strong><br>
                         <span id="total_impuesto" class="input-span">0,00</span>
                     </td>
                 </tr>
@@ -90,20 +90,24 @@
                 <?php else: #DEFINITIVA ?>
                 <tr>
                     <?php if ($sttm[0] != 'TRUE'): #MENSUALES ?>
-                    <td colspan="2"></td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                        <td colspan="2"></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
+                            <span id="total_final" class="input-span">0</span>
+                        </td>
                     <?php else: ?>
-                    <td colspan="2"><strong style="font-size:0.9em">IMPUESTO ESTIMADO <?php echo $sttm[1] ?> Bs:</strong></td>
-                    <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                        <td colspan="2"><strong style="font-size:0.9em">IMPUESTO ESTIMADO <?php echo $sttm[1] ?> Bs:</strong></td>
+                        <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong class="titulillo">COMPLEMENTO</strong><br>
+                            <span id="total_final" class="input-span">0</span>
+                        </td>
                     <?php endif; ?>
-                    <td>
-                        <strong class="titulillo">COMPLEMENTO</strong><br>
-                        <span id="total_final" class="input-span">0</span>
-                    </td>
                 </tr>
                 <?php endif; ?>
             </tfoot>

@@ -83,6 +83,8 @@ BEGIN
 
 		END IF;
 
+		_CAUSED_TAX_FORM = ROUND(_CAUSED_TAX_FORM::numeric, 2);
+
 		INSERT INTO statement_form_detail(id_tax_classifier, id_statement_form, authorized, monto, caused_tax_form)
 		VALUES (_ACTIVITIES[_I][1]::int, _ID_STATEMENT_FORM, _RECORD_TAX_CLASSIFIER.permised, _ACTIVITIES[_I][2]::double precision, _CAUSED_TAX_FORM);
 

@@ -39,7 +39,7 @@ class Statement {
         }
         else
         {
-            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos') . $this->get_month($type_month);
+            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month($type_month);
         }
 
         return $title . " " . $year;
