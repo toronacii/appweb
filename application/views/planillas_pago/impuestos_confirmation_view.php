@@ -1,25 +1,25 @@
 <h3>Confirmación</h3>
 
-<?php #var_dump($cargos) ?>
+<div class="col-md-12">
 
-<div class="col-md-2 col-lg-4">
-	<div class="well">
-	<strong>Verifica en el menú de Planillas en la opción Generadas no pagadas:</strong><br><br>
-	<ol>
-		<li>Si tienes planillas vencidas debes eliminarlas para liberar los impuestos a pagar</li>
-		<li>Si no están vencidas puedes reimprimirlas para presentarla en los bancos o pagar en línea</li>
-		<li>Si intentas marcar un aforo principal, sin haber marcado un aforo principal de fecha anterior, se agregará automáticamente a la planilla</li>
-	</ol>
+	<div class="well well-sm">
+		<strong>Verifica en el <a title="Histórico de planillas" href="<?php echo site_url('planillas_pago/generadas') ?>">Histórico de planillas</a> para saber:</strong><br><br>
+		<ol>
+			<li>Si tienes planillas vencidas debes eliminarlas para liberar los impuestos a pagar</li>
+			<li>Si no están vencidas puedes reimprimirlas para presentarla en los bancos o pagar en línea</li>
+			<li>Si intentas marcar un aforo principal, sin haber marcado un aforo principal de fecha anterior, se agregará automáticamente a la planilla</li>
+		</ol>
 	</div>
 	<?php if ($tax->id_tax_type == 3): ?>
-	<div class="alert alert-info">
-		<strong>Nota:</strong> El pago del impuesto de vehiculo no te exime de posibles recálculos cuando retires tu calcomanía en la Oficina de Atención al Contribuyente
-	</div>
+		<div class="alert alert-info">
+			<strong>Nota:</strong> El pago del impuesto de vehiculo no te exime de posibles recálculos cuando retires tu calcomanía en la Oficina de Atención al Contribuyente
+		</div>
 	<?php endif; ?>
-</div>
 
-<div class="col-md-10 col-lg-8">
+	<div class="clearfix"></div>
+
 	<?php $this->load->view('planillas_pago/partials/info_cuenta', array('taxpayer' => $taxpayer, 'tax' => $tax, 'tax_types' => $tax_types)) ?>
+
 </div>
 
 <form action="<?php echo site_url('planillas_pago/generar_planilla_impuesto') ?>" method="POST" target="_blank">

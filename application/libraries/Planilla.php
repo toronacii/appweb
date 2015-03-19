@@ -1218,7 +1218,7 @@ class Planilla {
 
         extract($CI->statement->get_init_vars($data_planilla));
 
-        $total_old = $CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year);
+        $total_old = round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year, $month), 2);
 
         if ($data_planilla[0]->type == 'TRUE'){ #DEFINITIVA
             $dirImageHeader = "css/img/cabecera_declaracion_DEF.png";
@@ -1426,18 +1426,27 @@ class Planilla {
         $pdf->SetFont('Arial', '', 8);
 
         #var_dump(array($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year));exit;
+
+        #DESCUENTOS
+
+        $descuentos = $CI->declaraciones->get_statement_tax_discount($data_planilla[0]->id);
+
+        #dd($descuentos);
         
         $pdf->Cell(91, 8, $textSttmOld, 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, number_format(round($total_old, 2), 2, ',', '.'), 'BR', ($data_planilla[0]->id_tax_discount == ''), 'R'); #INGRESO ANTERIOR
+        $pdf->Cell(40, 8, ($is_monthly) ? "" : number_format($total_old, 2, ',', '.'), 'BR', (count($descuentos) == 0) , 'R'); #INGRESO ANTERIOR
 
+        #d($data_planilla[0]);
+        if (count($descuentos) > 0){
 
-        if ($data_planilla[0]->id_tax_discount > 0){ #DESCUENTO POR ARTICULO 219
-
-            $pdf->Cell(45, 8,  'DESCUENTO POR ART. 219', 'BR', 0, 'C');
-            $pdf->Cell(33, 8,  number_format(round($data_planilla[0]->amount_discount, 2), 2, ',', '.'), 'BR', 0, 'R'); #MONTO DESCUENTO POR ARTICULO 219
-            $pdf->Cell(31, 8,  'SUBTOTAL', 'BR', 0, 'C');
-            $pdf->Cell(28, 8,  number_format(round($total_impuesto_reb, 2), 2, ',', '.'), 'BRT', 1, 'R');
-            $total_impuesto_reb -= $data_planilla[0]->amount_discount;
+            foreach ($descuentos as $descuento)
+            {
+                $pdf->Cell(45, 8, strtoupper($descuento->description), 'BR', 0, 'C'); #DESCRIPCION DEL DESCUENTO
+                $pdf->Cell(33, 8,  number_format(round($descuento->amount, 2), 2, ',', '.'), 'BR', 0, 'R'); #MONTO DEL DESCUENTO
+                $pdf->Cell(31, 8,  'SUBTOTAL', 'BR', 0, 'C');
+                $pdf->Cell(28, 8,  number_format(round($total_impuesto_reb, 2), 2, ',', '.'), 'BRT', 1, 'R');
+                $total_impuesto_reb -= $descuento->amount;
+            }
 
         }
         
@@ -1446,7 +1455,10 @@ class Planilla {
         
         $pdf->SetY($pdf->GetY() + 2);
 
+        #d($total_old);
+
         if ($data_planilla[0]->type == 'TRUE'){ #COMPLEMENTO
+            
             $comp_aforo = round($total_impuesto_reb - $total_old, 2);
             if (! $is_monthly)
             {
