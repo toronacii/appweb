@@ -41,7 +41,7 @@ define('API_DIR'                            ,     'http://172.16.1.17/api.appweb
 define('ONLINE_PAYMENT', "http://172.16.1.100/online_payment/api/"); 
 define('BANESCO_ONLINE', "https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control="); 
 
-define('IS_OFFLINE', TRUE);
+define('IS_OFFLINE', FALSE);
 
 /*RECAPTCHA*/
 define('RECAPTCHA_API_SERVER'                , 'http://www.google.com/recaptcha/api');
