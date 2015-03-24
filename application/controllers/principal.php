@@ -64,6 +64,7 @@ class Principal extends MY_Controller {
 
     private function init_session_vars($valid_user)
     {
+        $_SESSION = [];
         $this->session->set_userdata('taxpayer', $this->principal->taxpayer($valid_user->id_taxpayer));
         $taxes = $this->proccess_taxes($this->principal->taxes($valid_user->id_taxpayer));
 

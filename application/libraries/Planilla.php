@@ -1531,7 +1531,7 @@ class Planilla {
         }
 
 
-        #var_dump($data, $CI->planillas, $CI->session->userdata('metadata')); 
+        #dd($data, $CI->planillas, $CI->session->userdata('metadata')); 
 
         #var_dump($data);
 
