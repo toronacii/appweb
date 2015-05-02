@@ -66,7 +66,7 @@
         </td>
         <?php if (! $errores_declaraciones && ! $tiene_mensual): ?>
         <td class="text-center">
-            <a href="<?php echo site_url('tramites/set_session_statement') ?>" class="btn btn-default" title="ir a declaración mensual ">
+            <a href="<?php echo site_url("tramites/set_session_statement/$id_tax") ?>" class="btn btn-default" title="ir a declaración mensual ">
                 <span class="fa fa-arrow-right"></span>
             </a>
         </td>

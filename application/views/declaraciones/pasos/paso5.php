@@ -11,7 +11,7 @@
         <input type="hidden" name="objGoogleMaps" id="objGoogleMaps"/>
     </div>
     <div class="panel panel-primary">
-        <div class="panel-heading center"><span ng-bind="title_statement"></span><!--<?php echo $this->statement->get_title_statement($sttm) ?>--></div>
+        <div class="panel-heading center"><span ng-bind="title_statement"></span></div>
         <table class="table table-declaracion">
             <thead>
                 <tr>

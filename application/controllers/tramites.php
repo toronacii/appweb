@@ -183,7 +183,7 @@ class Tramites extends MY_Controller {
     public function retiro()
     {
         $header['sidebar'] = 'menu/oficina_menu';
-        $header['arrayJs'] = array('funciones_tramites.js');
+        $header['arrayJs'] = array('funciones_retiro.js');
         $this->load->view('header', $header);
 
         $data['cuentas'] = $this->taxes;
@@ -271,23 +271,22 @@ class Tramites extends MY_Controller {
         $this->load->view('footer');
     }  
 
-    public function set_session_statement ()
+    public function set_session_statement ($id_tax)
     {
+        $tax_account_number = $_SESSION['taxes'][$id_tax]->tax_account_number;
 
         $_SESSION["sttm_tax"] = [
-            'sttm' => [6, 2015],
+            'sttm' => [date("m"), date("Y"), 'CLOSING'],
             'tax' => [
-                '030021701' => (object)[
-                   'id_tax' => 1036583,
-                   'id_sttm_form' => 0
+                $tax_account_number => (object) [
+                    'id_tax' => $id_tax,
+                    'id_sttm_form' => 0
                 ]
             ]
         ];
-        
-            dd($usuario=$this->session->userdata('usuario'));
-              
+             
 
-        redirect("declaraciones/crear/030021701");
+        redirect("declaraciones/crear/$tax_account_number");
     }
 
 

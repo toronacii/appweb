@@ -20,7 +20,7 @@
 
             <?php if ($tax_types[1]->total): ?>
             <div class="tab-pane active" id="actividades_economicas">
-                <?php $this->load->view('tramites/partials/account_solvencias', array('cuentas' => $cuentas, 'id_tax_type' => 1)) ?>
+                <?php $this->load->view('tramites/partials/account_solvencias', array('cuentas' => $cuentas, 'id_tax_type' => 1, 'modal_target' => '#modal-retiro')) ?>
             </div>
             <?php endif; ?>
         </div>
@@ -29,7 +29,7 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="modal-solvencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-retiro" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -37,7 +37,7 @@
                 <h4 class="modal-title" id="myModalLabel">Requisitos para el retiro de la cuenta <span class="tax_account_number"></span></h4>
             </div>
             <div class="modal-body">
-                <div class="content-solvencia"></div>
+                <div class="content-retiro"></div>
             </div>
             <div class="modal-footer">
                 <form method="POST" target="_blank" action="<?php echo site_url('tramites/crear_retiro') ?>">

@@ -23,7 +23,8 @@ class Statement {
         return (object)[
             'type' => is_numeric($sttm['sttm'][0]) ? 'TRUE' : $sttm['sttm'][0],
             'fiscal_year' => $sttm['sttm'][1],
-            'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL'
+            'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL',
+            'closing' => ($sttm['sttm'][2] === 'CLOSING') ? 'TRUE' : 'FALSE'
         ];
     }
     
@@ -41,6 +42,7 @@ class Statement {
     {
         $year = $data_sttm[1];
         $type_month = $data_sttm[0];
+        $closing = (isset($data_sttm[2]));
 
         if ($type_month == 'TRUE')
         {
@@ -48,7 +50,7 @@ class Statement {
         }
         else
         {
-            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month($type_month);
+            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual' . ($closing ? ' de cierre' : '') . ' de ingresos brutos ') . $this->get_month($type_month);
         }
 
         return $title . " " . $year;
