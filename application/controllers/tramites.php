@@ -132,7 +132,7 @@ class Tramites extends MY_Controller {
 
 /// RETIRO DE ACTIVIDADES ECONOMICOS
 
-       public function ajax_get_table_validations2($id_tax, $type_tramite = 1)
+    public function ajax_get_table_validations_retiro($id_tax)
     {
 
         $data['id_tax_type'] = $this->taxes[$id_tax]->id_tax_type;
@@ -140,30 +140,21 @@ class Tramites extends MY_Controller {
         $data['taxpayer'] = $this->session->userdata('taxpayer');
         $data['passed'] = true;
 
-        #PARA OTROS TIPOS DE TRÁMITES
-        switch ($type_tramite)
-        {
-            #SOLVENCIAS
-            case 1:
+        $data['passed'] &= $data['tiene_tasa'] = $this->tramites->have_tasa_paid($id_tax);
+        $data['passed'] &= $data['esta_solvente'] = $this->tramites->esta_solvente($id_tax);
+        $data['passed'] &= $data['no_procedimientos'] = ! (
+            $this->tramites->get_procedimiento_auditoria($data['taxpayer']->id_taxpayer) || 
+            $this->tramites->get_procedimiento_fiscalizacion($data['taxpayer']->id_taxpayer)
+        );
 
-                $data['passed'] &= $data['tasa'] = $this->tramites->have_tasa_paid($id_tax);
-                $data['passed'] &= $data['estado_cuenta'] = $this->tramites->esta_solvente($id_tax);
-                $data['procedimientos'] = array(
-                 'auditoria' => $this->tramites->get_procedimiento_auditoria($data['taxpayer']->id_taxpayer),
-                 'fiscalizacion' => $this->tramites->get_procedimiento_fiscalizacion($data['taxpayer']->id_taxpayer)
-                );
+        $data['errores_declaraciones'] = implode('<br>', $this->tramites->declaraciones_anteriores($id_tax));
+        $data['passed'] &= count($data['errores_declaraciones']) == 0;
+        
+        $data['passed'] &= $data['tiene_mensual'] = $this->tramites->have_month($id_tax);
+        $data['passed'] &= $data['tiene_cese'] = $this->tramites->have_year($id_tax);
 
-                    $data['declaraciones'] = implode('<br>', $this->tramites->declaraciones_anteriores($id_tax));
-                    $data['passed'] &= count($data['declaraciones']) == 0;
-                
-                $data['passed'] &= $data['mes'] = $this->tramites->have_month($id_tax);
-                $data['passed'] &= $data['anio'] = $this->tramites->have_year($id_tax);
-
-                #dd($data);
-                $this->load->view('tramites/partials/table_retiro_validation', $data);
-
-            break;
-        }
+        #dd($data);
+        $this->load->view('tramites/partials/table_retiro_validation', $data);
 
         #var_dump($data, (bool)$data['declaraciones']);
 

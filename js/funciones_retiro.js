@@ -27,7 +27,7 @@ $(function(){
 
 		$('#modal-retiro').find('#iniciar').prop('disabled', true);
 
-		$.get(site_url + "/tramites/ajax_get_table_validations2/" + $data.data('id-tax'), function(resp){
+		$.get(site_url + "/tramites/ajax_get_table_validations_retiro/" + $data.data('id-tax'), function(resp){
 
 			$('#modal-retiro .content-retiro').html(resp);
 

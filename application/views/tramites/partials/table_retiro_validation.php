@@ -1,10 +1,10 @@
 <table class="table table-bordered">
     <tr>
-        <th>Tasa cancelada Desarrollo</th>
-        <td class="text-center text-<?php echo ($tasa) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo ($tasa) ? "check" : "times" ?>"></span>
+        <th>Tasa cancelada</th>
+        <td class="text-center text-<?php echo ($tiene_tasa) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ($tiene_tasa) ? "check" : "times" ?>"></span>
         </td>
-        <?php if (! $tasa): ?>
+        <?php if (! $tiene_tasa): ?>
         <td class="text-center">
             <form method="POST" action="<?php echo site_url('planillas_pago/tasas_confirmation') ?>" id="form-tasa">
                 <input type="hidden" name="id_tax"  value="<?php echo $id_tax ?>">
@@ -18,10 +18,10 @@
     </tr>
     <tr>
         <th>Estado de cuenta sin deuda</th>
-        <td class="text-center text-<?php echo ($estado_cuenta) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo ($estado_cuenta) ? "check" : "times" ?>"></span>
+        <td class="text-center text-<?php echo ($esta_solvente) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ($esta_solvente) ? "check" : "times" ?>"></span>
         </td>
-        <?php if (! $estado_cuenta): ?>
+        <?php if (! $esta_solvente): ?>
         <td class="text-center">
             <a href="<?php echo site_url('planillas_pago/impuestos') ?>" class="btn btn-default" title="ir a pago de impuestos">
                 <span class="fa fa-arrow-right"></span>
@@ -29,64 +29,12 @@
         </td>
         <?php endif; ?>
     </tr>
-
-<!-->
-    <?php if ($id_tax_type == 1) : ?>
-
-         <!-- Anteriores -->
-        <tr data-id-tax-type="1">
-
-            <th>Declaraciones Anteriores</th>
-            <td class="text-center text-<?php echo (! $declaraciones) ? "primary" : "danger" ?>">
-                <span class="fa fa-2x fa-<?php echo (! $declaraciones) ? "check" : "times cursor-hover" ?>" <?php if ($declaraciones) echo " title='$declaraciones'" ?>></span>
-            </td>
-            <?php 
-                #dd($declaraciones);
-            if ($declaraciones): ?>
-            <td class="text-center">
-                <a href="<?php echo site_url('declaraciones/cuentas') ?>" class="btn btn-default" title="ir a declaración mensual ">
-                    <span class="fa fa-arrow-right"></span>
-                </a>
-            </td>
-            <?php endif; ?>
-        </tr>
-
-        <!-- MENSUAL -->
-        <tr data-id-tax-type="1">
-            <th>Declaración Mensual</th>
-            <td class="text-center text-<?php echo (! $mes) ? "primary" : "danger" ?>">
-                <span class="fa fa-2x fa-<?php echo (! $mes) ? "check" : "times cursor-hover" ?>"></span>
-            </td>
-            <?php if ((! $mes) and (! $declaraciones) ): ?>
-            <td class="text-center">
-                <a href="<?php echo site_url('tramites/set_session_statement') ?>" class="btn btn-default" title="ir a declaración mensual ">
-                    <span class="fa fa-arrow-right"></span>
-                </a>
-            </td>
-            <?php endif; ?>
-        </tr>
-        <!-- ANUAL -->
-        <tr data-id-tax-type="1">
-        <th>Declaración Anual</th>
-        <td class="text-center text-<?php echo ( $anio) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo ( $anio) ? "check" : "times cursor-hover" ?>"></span>
-        </td>
-        <?php if ((!$anio) and (!$declaraciones) and (!$mes) ): ?>
-        <td class="text-center">
-            <a href="<?php echo site_url('declaraciones/validar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
-                <span class="fa fa-arrow-right"></span>
-            </a>
-        </td>
-        <?php endif; ?>
-    </tr>
-    <?php endif; ?>
-  
     <tr>
         <th>Procesos Administrativos</th>
-        <td class="text-center text-<?php echo (! $procedimientos) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo (! $procedimientos) ? "check" : "times" ?>"></span>
+        <td class="text-center text-<?php echo ($no_procedimientos) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ($no_procedimientos) ? "check" : "times" ?>"></span>
         </td>
-        <?php if ( $procedimientos): ?>
+        <?php if (! $no_procedimientos): ?>
         <td class="text-center">
             <a href="<?php echo site_url('tramites/procesos_administrativos') ?>" class="btn btn-default" title="ir a procesos administrativos">
                 <span class="fa fa-arrow-right"></span>
@@ -94,20 +42,48 @@
         </td>
         <?php endif; ?>
     </tr>
-    <?php if ($id_tax_type == 2) : ?>
-    <tr data-id-tax-type="2">
-        <th>Cedula catastral actualizada</th>
-        <td class="text-center text-<?php echo ($cedula_catastral) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo ($cedula_catastral) ? "check" : "times" ?>"></span>
+    <tr>
+        <th>Declaraciones Anteriores</th>
+        <td class="text-center text-<?php echo (! $errores_declaraciones) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo (! $errores_declaraciones) ? "check" : "times cursor-hover" ?>" <?php if ($errores_declaraciones) echo " title='$errores_declaraciones'" ?>></span>
         </td>
-        <?php if (! $cedula_catastral): ?>
+        <?php 
+            #dd($declaraciones);
+        if ($errores_declaraciones): ?>
         <td class="text-center">
-            <a href="https://alcaldiamunicipiosucre.gob.ve/ciudadano_sucre/ciudadano_sucre/catalogo/requisitos/Tramite/172" target="_blank" class="btn btn-default" title="Presione para saber como actualizar su cédula catastral">
+            <a href="<?php echo site_url('declaraciones/cuentas') ?>" class="btn btn-default" title="ir a declaración mensual ">
                 <span class="fa fa-arrow-right"></span>
             </a>
         </td>
         <?php endif; ?>
     </tr>
-   -->
-    <?php endif; ?>
+
+    <!-- MENSUAL -->
+    <tr>
+        <th>Declaración Mensual</th>
+        <td class="text-center text-<?php echo ($tiene_mensual) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ($tiene_mensual) ? "check" : "times cursor-hover" ?>"></span>
+        </td>
+        <?php if (! $errores_declaraciones && ! $tiene_mensual): ?>
+        <td class="text-center">
+            <a href="<?php echo site_url('tramites/set_session_statement') ?>" class="btn btn-default" title="ir a declaración mensual ">
+                <span class="fa fa-arrow-right"></span>
+            </a>
+        </td>
+        <?php endif; ?>
+    </tr>
+    <!-- ANUAL -->
+    <tr>
+        <th>Declaración de Cese</th>
+        <td class="text-center text-<?php echo ( $tiene_cese) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ( $tiene_cese) ? "check" : "times cursor-hover" ?>"></span>
+        </td>
+        <?php if (! $errores_declaraciones && $tiene_mensual && ! $tiene_cese): ?>
+        <td class="text-center">
+            <a href="<?php echo site_url('declaraciones/validar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
+                <span class="fa fa-arrow-right"></span>
+            </a>
+        </td>
+        <?php endif; ?>
+    </tr>
 </table>
