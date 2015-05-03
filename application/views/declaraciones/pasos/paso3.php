@@ -12,84 +12,48 @@
             <!-- Default panel contents -->
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-2 col-sm-2" style="padding-left:0; padding-top: 7px">Actividades</div>
-                    <div class="col-md-8 col-sm-8"><input type="text" class="form-control finder" placeholder="Buscar"></div>
-                    <div class="col-md-2 col-sm-2"><a href="#" class="btn btn-success add">Añadir</a></div>
+                    <div class="col-md-2 col-sm-2 title">Actividades</div>
+                    <div class="col-md-8 col-sm-8"><input type="text" class="form-control" placeholder="Buscar" ng-model="find_activity"></div>
+                    <div class="col-md-2 col-sm-2"><a href="" class="btn btn-success" ng-click="addActivities()">Añadir</a></div>
                 </div>                
                 <!---->
             </div>
 
-            <div style="max-height:300px; overflow-y: scroll;overflow-x: hidden">
-
+            <div class="list-activities">
                 <div class="list-group">
-                <?php foreach ($actividades_permisadas as $objActPerm): ($description = ($fiscal_year > 2010) ? $objActPerm->description : $objActPerm->name) ?>
-                    <a  href="#"
-                        class="list-group-item"
-                        style="white-space: nowrap"
-                        title="<?php echo $description ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)" 
-                        id="<?php echo $objActPerm->id ?>"
-                        data-alicuota="<?php echo $objActPerm->aliquot ?>"
-                        data-minimun="<?php echo $objActPerm->minimun_taxable * $unidad_tributaria->value ?>"
-                        data-value="<?php echo $objActPerm->code ?>" 
-                        <?php if ($showStepFour): ?>
-                        data-converter="<?php echo $objActPerm->ids_specialized ?>"
-                        <?php endif; ?>
-                    >
-                            <strong><?php echo $objActPerm->code ?></strong> - <?php echo $description  ?> (Alicuota: <?php echo number_format($objActPerm->aliquot, 2, ',', '.') ?>)
+                    <a  ng-repeat="activity in activities | filter:find_activity" href="" class="list-group-item nowrap" title="{{ activity.full_title }}" ng-class="{active: activity.selected}" ng-click="activity.selected = !activity.selected">
+                        <strong ng-bind="activity.code"></strong> - <span ng-bind="activity.full_title"></span>
                     </a>
-                <?php endforeach; ?>
                 </div>
             </div>
         </div>     
-
     </div>
     <div class="col-md-6 selectTable" id="activitiesTaxpayer">
         <div class="panel panel-primary">
             <!-- Default panel contents -->
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-4 col-sm-4" style="padding-left:0; padding-top: 7px">Actividades a declarar</div>
-                    <div class="col-md-6 col-sm-6"><input type="text" class="form-control finder" placeholder="Buscar"></div>
-                    <div class="col-md-2 col-sm-2"><a href="#" class="btn btn-danger remove">Quitar</a></div>
+                    <div class="col-md-4 col-sm-4 title">Actividades a declarar</div>
+                    <div class="col-md-6 col-sm-6"><input type="text" class="form-control" placeholder="Buscar" ng-model="find_tax_activity"></div>
+                    <div class="col-md-2 col-sm-2"><a href="#" class="btn btn-danger" ng-click="removeActivities()">Quitar</a></div>
                 </div>                
                 <!---->
             </div>
 
-            <div style="max-height:300px; overflow-y: scroll; overflow-x: hidden">
+            <div class="list-activities">
                 <div class="list-group">
-                <?php foreach ($actividades_contribuyente as $objAct): ($description = ($fiscal_year > 2010) ? $objAct->description : $objAct->name) ?>
-                    <?php if (@$objAct->authorized == "f"): ?>
-                    <a  href="#" 
-                        class="list-group-item" 
-                        id = "<?php echo $objAct->id ?>"
-                        title="<?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)" 
-                        style="white-space: nowrap"
-                        data-minimun="<?php echo $objAct->minimun_taxable ?>"
-                        data-alicuota="<?php echo $objAct->aliquot ?>"
-                        data-value="<?php echo $objAct->code ?>" 
-                        <?php if ($showStepFour): ?>
-                        data-converter="<?php echo $objAct->ids_specialized ?>"
-                        <?php endif; ?>
-                    >
-                        
-                        <strong><?php echo $objAct->code ?></strong> - <?php echo $description  ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
-                    </a>
-                    <?php else: ?>
-                    <div class="list-group-item" 
-                         id = "<?php echo $objAct->id ?>"
-                         title="<?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)"
-                         data-minimun="<?php echo $objAct->minimun_taxable ?>"
-                         style="white-space: nowrap">
-                        
-                        <strong><?php echo $objAct->code ?></strong> - <?php echo $description ?> (Alicuota: <?php echo number_format($objAct->aliquot, 2, ',', '.') ?>)
+
+                    <div ng-repeat="activity in tax_activities | filter:find_activity" title="{{ activity.full_title }}">
+                        <a ng-if="activity.authorized === 'f'" href="" class="nowrap list-group-item" ng-class="{active: activity.selected}" ng-click="activity.selected = !activity.selected">
+                            <strong ng-bind="activity.code"></strong> - <span ng-bind="activity.full_title"></span>
+                        </a>
+                        <div ng-if="activity.authorized !== 'f'" class="nowrap list-group-item">
+                            <strong ng-bind="activity.code"></strong> - <span ng-bind="activity.full_title"></span>
+                        </div>
                     </div>
-                    <?php endif ?>
-                    
-                <?php endforeach; ?>  
-                </div>               
-            
+                </div>
             </div>
-        </div> 
+        </div>
     </div>
     <div class="col-md-12">
         <div class="pull-right">

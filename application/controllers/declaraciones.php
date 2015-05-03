@@ -117,6 +117,7 @@ class Declaraciones extends MY_Controller {
     public function crear($tax_account_number = NULL)
     {
         $sttm_tax = $this->session->userdata('sttm_tax');
+        $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
 
         if ( !(
                 $tax_account_number && #NO EXISTE ALGUN PARAMETRO
@@ -133,10 +134,11 @@ class Declaraciones extends MY_Controller {
 
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
         $sttm_only = $sttm_tax['sttm'];
-        
+        $id_sttm_form = $sttm_tax['tax'][$tax_account_number]->id_sttm_form;
 
         $header['arrayCss'] = array('declaraciones.css');
         $header['arrayJs'] = array(
+            'lodash.min.js',
             'angular/angular.min.js',
             'angular/declaraciones.js',
             'bootstrap/bootstrap-steps.js',
@@ -161,15 +163,22 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/pasos/pasos', [
             'statementData' => [
                 'steps' => $this->getSteps($sttm_only),
-                'sttm_data' => $sttm_tax,
-                'showStepFour' => $this->statement->show_step_specified_activities($sttm_only),
-                'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax)
+                'sttm_properties' => $this->sttm_properties,
+                'show_step_four' => $this->statement->show_step_specified_activities($sttm_only),
+                'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax),
+                'tax_unit' => $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year),
+                'activities' => $this->declaraciones->get_activities($this->sttm_properties->fiscal_year),
+                'tax_activities' => ($id_sttm_form > 0) ?
+                    $this->declaraciones->get_data_statement($id_sttm_form) : 
+                    $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year)
             ]
         ]);
 
 
         $this->load->view('declaraciones/pasos/paso1');
         $this->load->view('declaraciones/pasos/paso2');
+        $this->load->view('declaraciones/pasos/paso3');
+
 
         /*
         
