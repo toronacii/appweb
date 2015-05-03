@@ -131,7 +131,7 @@ class Declaraciones extends MY_Controller {
         $sttm_tax['tax_account_number'] = $tax_account_number;
         $this->session->set_userdata('sttm_tax', $sttm_tax);
 
-
+        $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
         $sttm_only = $sttm_tax['sttm'];
         
 
@@ -139,13 +139,16 @@ class Declaraciones extends MY_Controller {
         $header['arrayJs'] = array(
             'angular/angular.min.js',
             'angular/declaraciones.js',
-            'bootstrap/bootstrap-steps.js'
-            /*,
+            'bootstrap/bootstrap-steps.js',
             'number_format.js',
             'round.js',
-            'validacionesToro.js',
-            'funciones_declaraciones_logica.js',
             'serialize.js',
+            'validacionesToro.js'
+            /*,
+            
+            ,
+            'funciones_declaraciones_logica.js',
+            
             ,
             'jqueryui/core-effects.js'
             */
@@ -159,7 +162,8 @@ class Declaraciones extends MY_Controller {
             'statementData' => [
                 'steps' => $this->getSteps($sttm_only),
                 'sttm_data' => $sttm_tax,
-                'showStepFour' => $this->statement->show_step_specified_activities($sttm_only)
+                'showStepFour' => $this->statement->show_step_specified_activities($sttm_only),
+                'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax)
             ]
         ]);
 
@@ -186,7 +190,7 @@ class Declaraciones extends MY_Controller {
 
         #var_dump($sttm_tax);
 
-        $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
+        
 
         #PASOS
 
@@ -195,7 +199,7 @@ class Declaraciones extends MY_Controller {
         #dd($this->getSteps($sttm_only), $this->sttm_properties->fiscal_year, $sttm_only);
 
         #PASO 1
-        $paso1['datos_contribuyente'] = $this->declaraciones->datos_taxpayer($id_tax);
+        $paso1['datos_contribuyente'] = 
 
         #var_dump($paso1['datos_contribuyente'], $this->declaraciones); exit;
         

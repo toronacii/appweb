@@ -13,11 +13,11 @@
                     <div class="row">
                         <div class="col-md-6">                                
                             <div><strong>N° cuenta nueva</strong></div>
-                            <div><?php echo $datos_contribuyente->numero_cuenta ?></div>
+                            <div ng-bind="taxpayer.numero_cuenta"></div>
                         </div>
                         <div class="col-md-6">                                
                             <div><strong>N° cuenta renta</strong></div>
-                            <div><?php echo $datos_contribuyente->cuenta_renta ?></div>
+                            <div ng-bind="taxpayer.cuenta_renta"></div>
                         </div>
                     </div>
                 </li>
@@ -25,11 +25,11 @@
                     <div class="row">
                         <div class="col-md-6">                                
                             <div><strong>Razón social</strong></div>
-                            <div id="razon_social"><?php echo $datos_contribuyente->razon_social ?></div>
+                            <div id="razon_social" ng-bind="taxpayer.razon_social"></div>
                         </div>
                         <div class="col-md-6">                                
                             <div><strong>RIF</strong></div>
-                            <div><?php echo $datos_contribuyente->rif ?></div>
+                            <div ng-bind="taxpayer.rif"></div>
                         </div>
                     </div>
                 </li>
@@ -37,7 +37,7 @@
                     <div class="row">
                         <div class="col-md-6">                                
                             <div><strong>Dirección</strong></div>
-                            <div><?php echo $datos_contribuyente->direccion ?></div>
+                            <div ng-bind="taxpayer.direccion"></div>
                         </div>
                         <div class="col-md-6">                                
                             <div><strong>Correo electrónico</strong></div>
@@ -56,11 +56,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label class="control-label" for="resp_legal">Responsable legal</label>
-                            <input type="text" name="toolbar[resp_legal]" class="form-control validate" id="resp_legal" data-validate-rules="required|texto" value="<?php echo $datos_contribuyente->resp_legal ?>"/>
+                            <input type="text" name="toolbar[resp_legal]" class="form-control validate" id="resp_legal" data-validate-rules="required|texto" ng-model="taxpayer.resp_legal" />
                         </div>
                         <div class="col-md-6">
                             <label class="control-label" for="ci_resp_legal">C.I. Responsable legal</label>
-                            <input type="text" name="toolbar[ci_resp_legal]" class="form-control validate" id="ci_resp_legal" data-validate-rules="required|numeric" value="<?php echo $datos_contribuyente->ci_resp_legal ?>"/>
+                            <input type="text" name="toolbar[ci_resp_legal]" class="form-control validate" id="ci_resp_legal" data-validate-rules="required|numeric" ng-model="taxpayer.ci_resp_legal" />
                         </div>
                     </div>
                 </li>
@@ -68,11 +68,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label class="control-label" for="tlf_local">Teléfono local</label>
-                            <input type="text" name="toolbar[local]" id="tlf_local" class='form-control formatoTelefonoLocal validate' data-validate-rules="required|tlf[local]" value="<?php echo $datos_contribuyente->local ?>"/>
+                            <input type="text" name="toolbar[local]" id="tlf_local" class='form-control formatoTelefonoLocal validate' data-validate-rules="required|tlf[local]" ng-model="taxpayer.local" />
                         </div>
                         <div class="col-md-6">
                             <label class="control-label" for="tlf_celular">Teléfono celular</label>
-                            <input type="text" name="toolbar[celular]" id="tlf_celular" class='form-control formatoTelefonoCelular validate' data-validate-rules="required|tlf[celular]" value="<?php echo $datos_contribuyente->celular ?>"/>
+                            <input type="text" name="toolbar[celular]" id="tlf_celular" class='form-control formatoTelefonoCelular validate' data-validate-rules="required|tlf[celular]" ng-model="taxpayer.celular" />
                         </div>
                     </div>
                 </li>
