@@ -1,6 +1,57 @@
 var statement = angular.module('statement', []);
 
-statement.service('Activities', [function() {
+statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassifierSpecialized) {
+
+	return {
+		addSpecialized: function(activity) {
+			if (activity.specialized === undefined)
+			{
+				activity.specialized = [
+					{selected: null, items: this.findSpecialized(activity.ids_specialized)}, 
+					{selected: null, items: []}, 
+					{selected: null, items: []}, 
+					{selected: null, items: []}
+				];
+			}
+		},
+		findSpecialized: function(ids, findChildren) {
+
+			if (findChildren) 
+			{
+				return _.where(TaxClassifierSpecialized, {'id_parent': ids});
+			}
+
+			var ids = _.map(ids.split(","), function(id) {
+				return parseInt(id.trim()); 	
+			});
+
+			var specialized = [];
+			for (var i = 0; i < TaxClassifierSpecialized.length && ids.length > 0; i++ ) {
+				var index = ids.indexOf(TaxClassifierSpecialized[i].id);
+				if (index > -1) {
+					ids.splice(index, 1);
+					specialized.push(TaxClassifierSpecialized[i]);
+				}
+			}
+			
+			return specialized;
+		},
+		selectSpecialized: function(specialized, index) {
+			for (var i = index + 1; i < specialized.length; i++) {
+				if (i === index + 1 && specialized[index].selected) {
+					specialized[i] = {
+						selected: null, 
+						items: this.findSpecialized(specialized[index].selected, true)
+					}
+				} else {
+					specialized[i] = {selected: null, items: []}
+				}
+			}
+		}
+	}
+}]);
+
+statement.service('Activities', ['TaxClassifierSpecialized', 'Specialized', function(TaxClassifierSpecialized, Specialized) {
 	return function(scope) {
 
 		var removeActivitiesRepeated = function () {
@@ -15,6 +66,9 @@ statement.service('Activities', [function() {
 				if (activity.selected) {
 					activity.selected = false;
 					scope[to].push(activity);
+					if (scope.show_step_four) {
+						Specialized.addSpecialized(activity);
+					}
 				} else {
 					activities.push(activity);
 				}
@@ -28,17 +82,26 @@ statement.service('Activities', [function() {
 			var description = (scope.sttm_properties.fiscal_year > 2010) ? 'description' : 'name';
 			_.each(_.union(scope.activities, scope.tax_activities), function(activity){
 				activity.full_title = activity[description] + " (Alicuota: " + number_format(activity.aliquot, 2, ',', '.') + ")";
+				activity.authorized = activity.authorized === 't';
+				if (scope.show_step_four) {
+					Specialized.addSpecialized(activity);
+				}
 			});
 		})();
 
-		return {
-			addActivities: function() {
-				passActivities('activities', 'tax_activities');
-			},
-			removeActivities: function() {
-				passActivities('tax_activities', 'activities');
-			}
-		}
+		return angular.extend(
+			{
+				addActivities: function() {
+					passActivities('activities', 'tax_activities');
+				},
+				removeActivities: function() {
+					passActivities('tax_activities', 'activities');
+				},
+				removeActivitiesFromSpecialized: function(activity) {
+					activity.selected = true;
+					this.removeActivities();
+				}
+			}, Specialized)
 	}
 }]);
 

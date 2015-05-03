@@ -159,25 +159,32 @@ class Declaraciones extends MY_Controller {
         $header['show_breadcrumbs'] = FALSE;
         $this->load->view('header', $header);
 
+        $show_step_four = $this->statement->show_step_specified_activities($sttm_only);
 
         $this->load->view('declaraciones/pasos/pasos', [
             'statementData' => [
                 'steps' => $this->getSteps($sttm_only),
                 'sttm_properties' => $this->sttm_properties,
-                'show_step_four' => $this->statement->show_step_specified_activities($sttm_only),
+                'show_step_four' => $show_step_four,
                 'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax),
                 'tax_unit' => $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year),
                 'activities' => $this->declaraciones->get_activities($this->sttm_properties->fiscal_year),
                 'tax_activities' => ($id_sttm_form > 0) ?
                     $this->declaraciones->get_data_statement($id_sttm_form) : 
                     $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year)
-            ]
+            ],
+            'specialized' => ($show_step_four) ? $this->declaraciones->get_tax_classifier_specialized() : []
         ]);
 
 
         $this->load->view('declaraciones/pasos/paso1');
         $this->load->view('declaraciones/pasos/paso2');
         $this->load->view('declaraciones/pasos/paso3');
+        
+        if ($show_step_four)
+        {
+            $this->load->view('declaraciones/pasos/paso4');
+        }
 
 
         /*
