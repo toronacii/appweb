@@ -1,5 +1,5 @@
 <script>statement.factory('StatementData', [function(){return <?php echo json_encode($statementData) ?>}]);</script>
-<div ng-app="statement" ng-controller="statementCtrl">
+<div ng-app="statement" ng-controller="statementCtrl" ng-cloak>
 
 	<form name="declaraciones" id="fDeclaraciones" method="post" action="<?php echo site_url('declaraciones/declarar'); ?>">
 	    

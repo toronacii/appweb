@@ -169,6 +169,7 @@ class Declaraciones extends MY_Controller {
 
 
         $this->load->view('declaraciones/pasos/paso1');
+        $this->load->view('declaraciones/pasos/paso2');
 
         /*
         
