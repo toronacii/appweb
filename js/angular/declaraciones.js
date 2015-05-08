@@ -12,6 +12,15 @@ statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassi
 					{selected: null, items: []}, 
 					{selected: null, items: []}
 				];
+
+				if (activity.last_specialized > 0) {
+					var last_specialized = activity.last_specialized;
+					for (var i = activity.specialized.length; i > 1; i--) {
+						var special = activity.specialized[i];
+						special.items = this.findSpecialized()
+						special.selected = last_specialized;
+					}
+				}	
 			}
 		},
 		findSpecialized: function(ids, findChildren) {
