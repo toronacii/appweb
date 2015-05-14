@@ -13,7 +13,7 @@
                 </div>
                 <div class="list-group">
                     <div class="list-group-item" ng-repeat="special in activity.specialized">
-                        <select class="select form-control validate" data-validate-rules="required[-1]"
+                        <select class="select form-control validate" data-validate-rules="required"
                             ng-model="special.selected"
                             ng-options="item.id as item.name for item in special.items"
                             ng-disabled="special.items.length === 0"

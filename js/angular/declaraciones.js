@@ -14,12 +14,17 @@ statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassi
 				];
 
 				if (activity.last_specialized > 0) {
-					var last_specialized = activity.last_specialized;
-					for (var i = activity.specialized.length; i > 1; i--) {
-						var special = activity.specialized[i];
-						special.items = this.findSpecialized()
-						special.selected = last_specialized;
+
+					for (var i = activity.specialized.length - 1; i > 0; i--) {
+
+						var last_specialized = (id_parent || activity.last_specialized);
+						var id_parent = this.findSpecialized(last_specialized)[0].id_parent;
+						activity.specialized[i].items = this.findSpecialized(id_parent, true);
+						activity.specialized[i].selected = last_specialized;
 					}
+
+					activity.specialized[0].selected = id_parent;
+
 				}	
 			}
 		},
@@ -30,7 +35,7 @@ statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassi
 				return _.where(TaxClassifierSpecialized, {'id_parent': ids});
 			}
 
-			var ids = _.map(ids.split(","), function(id) {
+			var ids = _.map((ids + "").split(","), function(id) {
 				return parseInt(id.trim()); 	
 			});
 
@@ -42,7 +47,7 @@ statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassi
 					specialized.push(TaxClassifierSpecialized[i]);
 				}
 			}
-			
+
 			return specialized;
 		},
 		selectSpecialized: function(specialized, index) {

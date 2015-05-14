@@ -43,17 +43,15 @@ $(document).ready(function() {
                 var func = /^(\w+)(\[([-\w]+(,[-\w]+)*)\])?$/g;
                 var regExpRule = func.exec(rules[i]); 
                 //console.log(regExpRule, rules[i]);
+
                 var params = regExpRule[3] || null;
                 var rule = regExpRule[1];
-                
-                
 
                 switch (rule)
                 {
                     case 'required' : 
-                        //console.log(params);
                         var notEqualChar = params && (params.split(',')[0] || "");
-                        validField &= $input.val().trim(' ') !== notEqualChar;
+                        validField &= (($input.val().trim(' ')) !== notEqualChar) && ($input.val().trim(' ') !== "");
                         msj = "El campo es requerido";
                         if ($input.is('select'))
                             msj = "Elija una opción";
