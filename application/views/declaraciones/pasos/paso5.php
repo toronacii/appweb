@@ -1,24 +1,17 @@
-<div class="row setup-content" id="paso-<?php echo ($showStepFour) ? 5 : 4 ?>">
+<div class="row setup-content" id="paso-{{ show_step_four ? 5 : 4 }}">
     <div class="well well-sm">
         <strong>Estimado contribuyente:</strong> A continuación usted podrá colocar los ingresos brutos que desea declarar. Pero primero lea lo siguiente: 
         <ol>
-            <?php if ($_SESSION['sttm_tax']['sttm'][0] == 'FALSE'): ?>
-            <li class="texto">Los montos deben ser mayores a los colocados en la Declaración Definitiva <?php echo (int)$_SESSION['sttm_tax']['sttm'][1] - 2 ?>.</li>
-            <?php endif; ?>
             <li class="texto">Si su cuenta renta es nueva deberá estimar los ingresos de acuerdo a su actividad económica.</li> 
             <li class="texto">Verifique que los montos colocados estén en los códigos correspondientes. Evite errores.</li>
             <li>Al finalizar, presione el botón <a href="#" class="label label-primary activate next">Siguiente</a></li>
         </ol>
-        <strong id="unidad_tributaria" value="<?php echo $unidad_tributaria->value ?>">Unidad tributaria = <?php echo number_format($unidad_tributaria->value, 2, ',', '.') ?></strong>
-        <input type="hidden" id="sttm_type" value="<?php echo (int)($this->sttm_properties->type != 'FALSE') ?>" />
-        <input type="hidden" id="fiscal_year" value="<?php echo $this->sttm_properties->fiscal_year ?>" />
+        <strong>Unidad tributaria = <span ng-bind="tax_unit.value | number_format"></span></strong>
         <input type="hidden" name="textSubmit" id="textSubmit"/>
         <input type="hidden" name="objGoogleMaps" id="objGoogleMaps"/>
-        <input type="hidden" name="cuentasPublicidad" id="hiddenCuentasPub"/>
-        <input type="hidden" name="activitiesDeleted" id="hiddenActivitiesDeleted"/>
     </div>
     <div class="panel panel-primary">
-        <div class="panel-heading center"><?php echo $this->statement->get_title_statement($sttm) ?></div>
+        <div class="panel-heading center"><!--<?php echo $this->statement->get_title_statement($sttm) ?>--></div>
         <table class="table table-declaracion">
             <thead>
                 <tr>
@@ -28,31 +21,30 @@
                     <th>Alícuota (%)</th>
                     <th>Mínimo Tributario</th>
                     <th>Impuesto</th>
+                    <th>Descuento %</th>
+                    <th>Total Impuesto</th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($actividades_contribuyente as $objActividad): ($description = ($fiscal_year > 2010) ? $objActividad->description : $objActividad->name); $iObj = $objActividad->id ?>
-                <tr id="row<?php echo str_replace('.', '_', $objActividad->code) ?>" option-id="<?php echo $objActividad->id ?>">
+                <tr ng-repeat="activity in tax_activities">
                     <td class="hidden-sm hidden-xs">
-                        <strong><?php echo $objActividad->code ?></strong>
+                        <strong ng-bind="activity.code"></strong>
                     </td>
                     <td class="visible-sm visible-xs">
-                        <strong title="<?php echo "$description (Alicuota: $objActividad->aliquot)" ?>">
-                            <?php echo $objActividad->code ?>
-                        </strong>
+                        <strong title="{{ activity.full_title }}" ng-bind="activity.code"></strong>
                     </td>
                     <td>
-                        <span class="hidden-sm hidden-xs" title="<?php echo "$description (Alicuota: $objActividad->aliquot)" ?>">
-                            <?php if (@$objActividad->authorized == 'f') echo "+" ?> <?php echo substr($description,0,50) ?>...
-                        </span>
+                        <span class="hidden-sm hidden-xs" title="{{ activity.full_title }}" ng-bind="((! activity.authorized) ? '+ ' : '') + activity.description.substr(0,50) + '...'"></span>
                     </td>
-                    <td><input type="text" class="float form-control text-center" id="monto_<?php echo $iObj ?>" name="monto[<?php echo $objActividad->id ?>]" value="<?php echo (isset($objActividad->monto)) ? number_format($objActividad->monto,2,',','.') : '0,00' ?>" /></td>
-                    <td><strong><span id="ali_<?php echo $iObj ?>" ><?php echo number_format($objActividad->aliquot,2,',','.') ?></span></strong></td>
-                    <td><strong><span id="min_<?php echo $iObj ?>" ><?php echo number_format($objActividad->minimun_taxable * $unidad_tributaria->value,2,',','.') ?></span></strong></td>
-                    <td><span id="total_<?php echo $iObj ?>" class="input-span form-control">0,00</span></td>
+                    <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" currency/></td>
+                    <td><strong><span ng-bind="activity.aliquot | number_format"></span></strong></td>
+                    <td><strong><span ng-bind="(activity.minimun_taxable * tax_unit.value) | number_format"></span></strong></td>
+                    <td><span class="input-span form-control" ng-bind="activity.tax | number_format"></span></td>
+                    <td><span class="input-span form-control" ng-bind="activity.discount | number_format"></span></td>
+                    <td><span class="input-span form-control" ng-bind="activity.total_tax | number_format"></span></td>
                 </tr>
-            <?php endforeach; ?>
             </tbody>
+            <!--
             <tfoot>        
                 <tr>
                     <td colspan="2"><strong class="titulillo">TOTAL DE INGRESOS BRUTOS DECLARADOS Bs:</strong></td>
@@ -134,13 +126,19 @@
                 </tr>
                 <?php endif; ?>
             </tfoot>
+            -->
         </table>
     </div>
+    <!--
     <div class="pull-right">
         <a class="btn btn-primary btn-lg activate">Anterior</a>
         <a class="btn btn-primary btn-lg activate next">Siguiente</a>
     </div>
-    
+
+    -->
+<pre ng-bind="tax_activities | json:spacing"></pre>    
 </div>
 
 </form>
+
+

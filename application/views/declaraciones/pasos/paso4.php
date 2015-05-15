@@ -34,4 +34,3 @@
         </div>  
     </div>
 </div>
-<pre ng-bind="tax_activities | json:spacing"></pre>

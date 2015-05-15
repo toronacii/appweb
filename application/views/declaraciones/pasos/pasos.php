@@ -7,7 +7,7 @@
 	    
 	<div class="row form-group">
 	    <ul class="nav nav-pills nav-justified thumbnail setup-panel pasos">
-	    	<li ng-repeat="step in steps" ng-class="{'active': $index === 3, 'disabled': $index > 3}">
+	    	<li ng-repeat="step in steps" ng-class="{'active': $index === 4, 'disabled': $index > 4}">
 		    	<a href="#paso-{{ $index + 1 }}">
 		            <h4 class="list-group-item-heading">Paso <span ng-bind="$index + 1"></span></h4>
 		            <p class="list-group-item-text" ng-bind="step"></p>
