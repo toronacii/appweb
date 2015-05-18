@@ -157,16 +157,15 @@ statement.service('CalculateTax', [function(){
 				}
 			});
 
-			if (subtotal === 0) {
+			if (discount_219 < 0) {
 				discount_219 = 0;
-			} else if (discount_219 < globalMinimun) {
-				discount_219 = globalMinimun;
 			}
 
 			scope.totals = {
 				income: income,
 				subtotal: subtotal,
-				discount_219: discount_219
+				discount_219: discount_219,
+				total: ((scope.have_discount_219) ? discount_219 : subtotal) - scope.sttm_old
 			};
 		}
 
@@ -220,7 +219,7 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 				activity.monto = (activity.monto) ? parseFloat(activity.monto) : 0;
 				activity.full_title = activity[description] + " (Alicuota: " + number_format(activity.aliquot, 2, ',', '.') + ")";
 				activity.authorized = activity.authorized === 't';
-				activity.percent_discount = (angular.isDefined(activity.percent_discount)) ? parseFloat(activity.percent_discount) : 0
+				activity.percent_discount = (activity.percent_discount) ? parseFloat(activity.percent_discount) : 0
 				data.have_percent_discount = !! (data.have_percent_discount || (activity.percent_discount > 0))
 				if (scope.show_step_four) {
 					Specialized.addSpecialized(activity);
@@ -249,7 +248,9 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 }]);
 
 statement.controller('statementCtrl', ['$scope', 'StatementData', 'Activities', function($scope, StatementData, Activities) {
-	StatementData.have_discount = StatementData.tax_discounts.length > 0	
+	StatementData.have_discount_219 = StatementData.tax_discounts.length > 0;
+	StatementData.is_monthly = StatementData.sttm_properties.month !== "NULL";
+	StatementData.sttm_old = (StatementData.sttm_old) ? parseFloat(StatementData.sttm_old) : 0;
 	angular.extend($scope, StatementData);
 	var activities = new Activities($scope);
 	angular.extend($scope, activities);
