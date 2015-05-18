@@ -113,15 +113,72 @@ statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassi
 statement.service('CalculateTax', [function(){
 	return function(scope) {
 
+		var globalMinimun = scope.activities[0].minimun_taxable * scope.tax_unit.value;
+
 		var calculateTaxes = function() {
 			_.each(scope.tax_activities, function(activity){
 				activity.tax = activity.monto * activity.aliquot / 100;
+				activity.total_tax = (100 - activity.percent_discount) * activity.tax / 100;
+				
+				// CALCULATE MINIMUN FOR STATEMENTS <= 2010
+				if (scope.sttm_properties.fiscal_year <= 2010 && activity.percent_discount < 100) {
+					var minimun = activity.minimun_taxable * scope.tax_unit.value;
+					if (activity.total_tax < minimun) {
+						activity.total_tax = minimun;
+					}
+				}
+				
 			});
+		}
+
+		var calculateMaxMinimun = function() {
+			var maxActivity = _.max(_.filter(scope.tax_activities, function(activity) { 
+				return activity.percent_discount < 100
+			}), 'tax');
+
+			if (maxActivity.tax < globalMinimun) {
+				maxActivity.total_tax = globalMinimun;
+			}
+		}
+
+		var calculateTotals = function() {
+			var income = 0, 
+				subtotal = 0,
+				discount_219 = 0; 
+
+			_.each(scope.tax_activities, function(activity) {
+				income += activity.monto;
+				subtotal += activity.total_tax;
+			});
+
+			_.each(scope.tax_discounts, function(discount) {
+				if (discount.type === 1) {
+					discount_219 = subtotal - (discount.amount || 0)
+				}
+			});
+
+			if (subtotal === 0) {
+				discount_219 = 0;
+			} else if (discount_219 < globalMinimun) {
+				discount_219 = globalMinimun;
+			}
+
+			scope.totals = {
+				income: income,
+				subtotal: subtotal,
+				discount_219: discount_219
+			};
 		}
 
 		return {
 			calculate: function() {
 				calculateTaxes();
+
+				if (scope.sttm_properties.fiscal_year > 2010) {
+					calculateMaxMinimun();
+				}
+
+				calculateTotals();
 			}
 		}
 	}
@@ -129,6 +186,8 @@ statement.service('CalculateTax', [function(){
 
 statement.service('Activities', ['Specialized', 'CalculateTax', function(Specialized, CalculateTax) {
 	return function(scope) {
+
+		var data = {};
 
 		var removeActivitiesRepeated = function () {
 			scope.activities = _.filter(scope.activities, function(activity){
@@ -156,38 +215,48 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 		var init = (function() {
 			removeActivitiesRepeated();
 			var description = (scope.sttm_properties.fiscal_year > 2010) ? 'description' : 'name';
-			_.each(_.union(scope.activities, scope.tax_activities), function(activity){
+			scope.totals = {};
+			_.each(_.union(scope.activities, scope.tax_activities), function(activity) {
+				activity.monto = (activity.monto) ? parseFloat(activity.monto) : 0;
 				activity.full_title = activity[description] + " (Alicuota: " + number_format(activity.aliquot, 2, ',', '.') + ")";
 				activity.authorized = activity.authorized === 't';
+				activity.percent_discount = (angular.isDefined(activity.percent_discount)) ? parseFloat(activity.percent_discount) : 0
+				data.have_percent_discount = !! (data.have_percent_discount || (activity.percent_discount > 0))
 				if (scope.show_step_four) {
 					Specialized.addSpecialized(activity);
 				}
 			});
 		})();
 
-		return angular.extend(
+		var calculates = new CalculateTax(scope);
+
+		return angular.extend(data,
 			{
 				addActivities: function() {
 					passActivities('activities', 'tax_activities');
+					calculates.calculate();
 				},
 				removeActivities: function() {
 					passActivities('tax_activities', 'activities');
+					calculates.calculate();
 				},
 				removeActivitiesFromSpecialized: function(activity) {
 					activity.selected = true;
 					this.removeActivities();
 				}
-			}, Specialized, new CalculateTax(scope));
+			}, Specialized, calculates);
 	}
 }]);
 
 statement.controller('statementCtrl', ['$scope', 'StatementData', 'Activities', function($scope, StatementData, Activities) {
 	StatementData.have_discount = StatementData.tax_discounts.length > 0	
-	console.log(StatementData);
 	angular.extend($scope, StatementData);
 	var activities = new Activities($scope);
 	angular.extend($scope, activities);
 
+	console.log(StatementData);
 	console.log($scope);
+
+	$scope.calculate();
 
 }]);

@@ -20,9 +20,9 @@
                     <th>Monto Declarado</th>
                     <th>Alícuota (%)</th>
                     <th>Mínimo Tributario</th>
-                    <th>Impuesto</th>
-                    <th>Descuento %</th>
-                    <th>Total Impuesto</th>
+                    <th ng-if="have_percent_discount">Impuesto</th>
+                    <th ng-if="have_percent_discount">Rebaja (%)</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,23 +39,40 @@
                     <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" currency/></td>
                     <td><strong><span ng-bind="activity.aliquot | number_format"></span></strong></td>
                     <td><strong><span ng-bind="(activity.minimun_taxable * tax_unit.value) | number_format"></span></strong></td>
-                    <td><span class="input-span form-control" ng-bind="activity.tax | number_format"></span></td>
-                    <td><span class="input-span form-control" ng-bind="activity.discount | number_format"></span></td>
+                    <td ng-if="have_percent_discount"><span class="input-span form-control" ng-bind="activity.tax | number_format"></span></td>
+                    <td ng-if="have_percent_discount"><span class="input-span form-control" ng-bind="activity.percent_discount | number_format"></span></td>
                     <td><span class="input-span form-control" ng-bind="activity.total_tax | number_format"></span></td>
                 </tr>
             </tbody>
-            <!--
             <tfoot>        
                 <tr>
                     <td colspan="2"><strong class="titulillo">TOTAL DE INGRESOS BRUTOS DECLARADOS Bs:</strong></td>
-                    <td><span id="total_monto" class="input-span form-control">0,00</span></td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><span class="input-span form-control" ng-bind="totals.income | number_format"></span></td>
+                    <td colspan="{{ have_percent_discount ? 4 : 2 }}">&nbsp;</td>
                     <td align="center">
-                        <strong class="titulillo"><?php if ($tax_discounts || is_numeric($this->sttm_properties->month)) echo "SUB-" ?>TOTAL IMPUESTO</strong><br>
-                        <span id="total_impuesto" class="input-span form-control">0,00</span>
+                        <strong class="titulillo">TOTAL IMPUESTO</strong><br>
+                        <span class="input-span form-control" ng-bind="totals.subtotal | number_format"></span>
                     </td>
                 </tr>
+                <tr ng-repeat="discount in tax_discounts">
+                    <td colspan="2"><strong class="titulillo">DESCUENTO <span ng-bind="discount.name | uppercase"></span></strong></td>
+                    <td class="push-bottom">
+                        <input
+                            type="text" 
+                            class="form-control text-center" 
+                            name="tax_discount[amount_discount][{{ discount.id }}]" 
+                            ng-model="discount.amount"
+                            ng-blur="calculate()"
+                            currency
+                        />
+                    </td>
+                    <td colspan="{{ have_percent_discount ? 4 : 2 }}">&nbsp;</td>
+                    <td align="center">
+                        <span class="input-span form-control" ng-bind="totals.discount_219 | number_format"></span>
+                    </td>
+                </tr>
+            </tfoot>
+            <!--
                 <?php if ($tax_discounts): #DESCUENTOS?>
                     <?php foreach ($tax_discounts as $tax_discount): ?>
                         <tr class="trDiscount <?php echo ($tax_discount->type == 0) ? 'type_percent' : 'type_amount' ?>">
