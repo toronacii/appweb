@@ -130,7 +130,6 @@ $(document).ready(function() {
                     }
                 }
 
-                llenar_tabla_resumen();
                 break;
             }
         }

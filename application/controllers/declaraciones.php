@@ -164,6 +164,7 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/pasos/pasos', [
             'statementData' => [
                 'steps' => $this->getSteps($sttm_only),
+                'title_statement' => $this->statement->get_title_statement($sttm_only),
                 'sttm_properties' => $this->sttm_properties,
                 'show_step_four' => $show_step_four,
                 'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax),
@@ -189,6 +190,7 @@ class Declaraciones extends MY_Controller {
         }
 
         $this->load->view('declaraciones/pasos/paso5');
+        $this->load->view('declaraciones/pasos/paso6');
 
 
         /*

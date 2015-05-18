@@ -11,7 +11,7 @@
         <input type="hidden" name="objGoogleMaps" id="objGoogleMaps"/>
     </div>
     <div class="panel panel-primary">
-        <div class="panel-heading center"><!--<?php echo $this->statement->get_title_statement($sttm) ?>--></div>
+        <div class="panel-heading center"><span ng-bind="title_statement"></span><!--<?php echo $this->statement->get_title_statement($sttm) ?>--></div>
         <table class="table table-declaracion">
             <thead>
                 <tr>
@@ -88,88 +88,9 @@
                     </td>
                 </tr>
             </tfoot>
-            <!--
-                <?php if ($tax_discounts): #DESCUENTOS?>
-                    <?php foreach ($tax_discounts as $tax_discount): ?>
-                        <tr class="trDiscount <?php echo ($tax_discount->type == 0) ? 'type_percent' : 'type_amount' ?>">
-                            <td colspan="2"><strong class="titulillo">DESCUENTO <?php echo strtoupper($tax_discount->name) ?></strong></td>
-                            <td>&nbsp;</td>
-                            <td class="push-bottom">
-                            <?php if ($tax_discount->type == 0): ?>
-                                <strong class="input-span form-control">
-                                    <span class="percent_discount"><?php echo number_format($tax_discount->percent, 2, ',', '.') ?></span>
-                                    <span>%</span>
-                                </strong>
-                            <?php endif; ?>    
-                            </td>
-                            <td class="push-bottom">
-                                <?php if ($tax_discount->type == 0): #DE PORCENTAJES ?>
-                                    <span class="tax_discount input-span form-control">0,00</span>
-                                    <input type="hidden" name="tax_discount[percent_discount][<?php echo $tax_discount->id ?>]" value="<?php echo 'NULL' ?>">
-                                <?php endif; ?>
-                                <?php if ($tax_discount->type == 1): #DE MONTO (219) ?>
-                                    <input
-                                        type="text" 
-                                        class="float form-control text-center text-primary tax_discount" 
-                                        name="tax_discount[amount_discount][<?php echo $tax_discount->id ?>]" 
-                                        id="percent_<?php echo $tax_discount->id ?>"
-                                        value="<?php echo ($tax_discount->amount) ? number_format($tax_discount->amount, 2, ',', '.') : '0,00' ?>"
-                                        data-type="<?php echo $tax_discount->type ?>"
-                                    >
-                                <?php endif; ?>
-                            </td>
-                            <td align="center">
-                                <span class="subtotal input-span form-control">0,00</span>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif;?>
-                <?php if ($this->sttm_properties->type == 'FALSE'): #ESTIMADA ?>
-                <tr>
-                    <td colspan="2"><strong style="font-size:0.9em">INGRESOS DEFINITIVOS <?php echo $this->sttm_properties->fiscal_year - 2 ?> Bs:</strong></td>
-                    <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold" class="text-success"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>
-                        <strong class="titulillo">IMPUESTO TRIMESTRAL</strong><br>
-                        <span id="total_final" class="input-span form-control">0,00</span>
-                    </td>
-                </tr>
-                <?php else: #DEFINITIVA ?>
-                <tr>
-                    <?php if (is_numeric($this->sttm_properties->month)): #MENSUALES ?>
-                        <td colspan="2"></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
-                            <span id="total_final" class="input-span form-control">0</span>
-                        </td>
-                    <?php else: ?>
-                        <td colspan="2"><strong style="font-size:0.9em">IMPUESTO ESTIMADO <?php echo $this->sttm_properties->fiscal_year ?> Bs:</strong></td>
-                        <td><strong id="sttm_old" style="font-size:0.9em; font-weight: bold"><?php echo number_format($sttm_old,2,',','.') ?></strong></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <strong class="titulillo">COMPLEMENTO</strong><br>
-                            <span id="total_final" class="input-span form-control">0</span>
-                        </td>
-                    <?php endif; ?>
-                </tr>
-                <?php endif; ?>
-            </tfoot>
-            -->
         </table>
     </div>
-    <!--
-    <div class="pull-right">
-        <a class="btn btn-primary btn-lg activate">Anterior</a>
-        <a class="btn btn-primary btn-lg activate next">Siguiente</a>
-    </div>
-
-    -->
-<pre ng-bind="tax_activities | json:spacing"></pre>    
+    
 </div>
 
 </form>
