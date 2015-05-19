@@ -117,10 +117,6 @@ class Declaraciones extends MY_Controller {
     public function crear($tax_account_number = NULL)
     {
         $sttm_tax = $this->session->userdata('sttm_tax');
-
-        #SET PROPERTIES
-
-
         $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
 
         if ( !(
@@ -134,27 +130,81 @@ class Declaraciones extends MY_Controller {
 
         $sttm_tax['tax'] = array($tax_account_number => $sttm_tax['tax'][$tax_account_number]);
         $sttm_tax['tax_account_number'] = $tax_account_number;
-
-        $sttm_only = $sttm_tax['sttm'];
-
-        #d($sttm_only);
-
-        $paso1['showStepFour'] = $this->statement->show_step_specified_activities($sttm_only);
-        
         $this->session->set_userdata('sttm_tax', $sttm_tax);
+
+        $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
+        $sttm_only = $sttm_tax['sttm'];
+        $id_sttm_form = $sttm_tax['tax'][$tax_account_number]->id_sttm_form;
 
         $header['arrayCss'] = array('declaraciones.css');
         $header['arrayJs'] = array(
+            'lodash.min.js',
+            'angular/angular.min.js',
+            'angular/declaraciones.js',
+            'bootstrap/bootstrap-steps.js',
             'number_format.js',
             'round.js',
-            'validacionesToro.js',
-            'funciones_declaraciones_logica.js',
             'serialize.js',
-            'bootstrap/bootstrap-steps.js',
+            'validacionesToro.js'
+            /*,
+            
+            ,
+            'funciones_declaraciones_logica.js',
+            
+            ,
             'jqueryui/core-effects.js'
+            */
         );
         $header['sidebar'] = 'menu/oficina_menu';
         $header['show_breadcrumbs'] = FALSE;
+        $this->load->view('header', $header);
+
+        $show_step_four = $this->statement->show_step_specified_activities($sttm_only);
+
+        $this->load->view('declaraciones/pasos/pasos', [
+            'statementData' => [
+                'steps' => $this->getSteps($sttm_only),
+                'title_statement' => $this->statement->get_title_statement($sttm_only),
+                'sttm_properties' => $this->sttm_properties,
+                'show_step_four' => $show_step_four,
+                'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax),
+                'tax_unit' => $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year),
+                'activities' => $this->declaraciones->get_activities($this->sttm_properties->fiscal_year),
+                'tax_activities' => ($id_sttm_form > 0) ?
+                    $this->declaraciones->get_data_statement($id_sttm_form) : 
+                    $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year),
+                'sttm_old' => $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year),
+                'tax_discounts' => $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month)
+            ],
+            'specialized' => ($show_step_four) ? $this->declaraciones->get_tax_classifier_specialized() : []
+        ]);
+
+
+        $this->load->view('declaraciones/pasos/paso1');
+        $this->load->view('declaraciones/pasos/paso2');
+        $this->load->view('declaraciones/pasos/paso3');
+        
+        if ($show_step_four)
+        {
+            $this->load->view('declaraciones/pasos/paso4');
+        }
+
+        $this->load->view('declaraciones/pasos/paso5');
+        $this->load->view('declaraciones/pasos/paso6');
+
+
+        /*
+        
+
+        
+
+        #d($sttm_only);
+
+        $paso1['showStepFour'] = 
+        
+        
+
+        
         $header['arrayVarsJs'] = array(
             'GLOBAL_showStepFour' => (int)$paso1['showStepFour'],
             'GLOBAL_fiscal_year' => $this->sttm_properties->fiscal_year
@@ -163,22 +213,19 @@ class Declaraciones extends MY_Controller {
 
         #var_dump($sttm_tax);
 
-        $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
+        
 
         #PASOS
 
-        $this->load->view('declaraciones/pasos/pasos', [
-            'steps' => $this->getSteps($sttm_only),
-            'fiscal_year' => $this->sttm_properties->fiscal_year
-        ]);
+        
 
         #dd($this->getSteps($sttm_only), $this->sttm_properties->fiscal_year, $sttm_only);
 
         #PASO 1
-        $paso1['datos_contribuyente'] = $this->declaraciones->datos_taxpayer($id_tax);
+        $paso1['datos_contribuyente'] = 
 
         #var_dump($paso1['datos_contribuyente'], $this->declaraciones); exit;
-        $this->load->view('declaraciones/pasos/paso1', $paso1);
+        
 
         #PASO 2
         $this->load->view('declaraciones/pasos/paso2');
@@ -234,7 +281,7 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/pasos/paso6');
 
         $this->load->view('footer');
-
+        */
 
     }
 
