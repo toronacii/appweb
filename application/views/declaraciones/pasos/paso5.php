@@ -72,7 +72,7 @@
                     </td>
                 </tr>
                 <tr ng-if="is_monthly">
-                    <td colspan="5">&nbsp;</td>
+                    <td colspan="{{ have_percent_discount ? 7 : 5 }}">&nbsp;</td>
                     <td>
                         <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
                         <span class="input-span form-control" ng-bind="totals.total | number_format"></span>
@@ -89,6 +89,12 @@
                 </tr>
             </tfoot>
         </table>
+    </div>
+    <div class="col-md-12">
+        <div class="pull-right">
+            <a class="btn btn-primary btn-lg activate">Anterior</a>
+            <a class="btn btn-primary btn-lg activate next">Siguiente</a>
+        </div>  
     </div>
     
 </div>

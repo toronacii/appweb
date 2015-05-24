@@ -33,7 +33,7 @@
                         <td colspan="3">&nbsp;</td>
                         <td>
                             <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
-                            <span class="input-span form-control" ng-bind="totals.total | number_format"></span>
+                            <span ng-bind="totals.total | number_format"></span>
                         </td>
                     </tr>
                     <tr ng-if="! is_monthly">
