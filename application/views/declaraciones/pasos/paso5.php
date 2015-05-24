@@ -36,7 +36,7 @@
                     <td>
                         <span class="hidden-sm hidden-xs" title="{{ activity.full_title }}" ng-bind="((! activity.authorized) ? '+ ' : '') + activity.description.substr(0,50) + '...'"></span>
                     </td>
-                    <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" currency/></td>
+                    <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" name="monto[{{ activity.id }}]" currency/></td>
                     <td><strong><span ng-bind="activity.aliquot | number_format"></span></strong></td>
                     <td><strong><span ng-bind="(activity.minimun_taxable * tax_unit.value) | number_format"></span></strong></td>
                     <td ng-if="have_percent_discount"><span class="input-span form-control" ng-bind="activity.tax | number_format"></span></td>

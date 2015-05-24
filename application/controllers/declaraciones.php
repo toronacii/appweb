@@ -146,14 +146,6 @@ class Declaraciones extends MY_Controller {
             'round.js',
             'serialize.js',
             'validacionesToro.js'
-            /*,
-            
-            ,
-            'funciones_declaraciones_logica.js',
-            
-            ,
-            'jqueryui/core-effects.js'
-            */
         );
         $header['sidebar'] = 'menu/oficina_menu';
         $header['show_breadcrumbs'] = FALSE;
@@ -193,95 +185,7 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/pasos/paso6');
 
 
-        /*
-        
-
-        
-
-        #d($sttm_only);
-
-        $paso1['showStepFour'] = 
-        
-        
-
-        
-        $header['arrayVarsJs'] = array(
-            'GLOBAL_showStepFour' => (int)$paso1['showStepFour'],
-            'GLOBAL_fiscal_year' => $this->sttm_properties->fiscal_year
-        );
-        $this->load->view('header', $header);
-
-        #var_dump($sttm_tax);
-
-        
-
-        #PASOS
-
-        
-
-        #dd($this->getSteps($sttm_only), $this->sttm_properties->fiscal_year, $sttm_only);
-
-        #PASO 1
-        $paso1['datos_contribuyente'] = 
-
-        #var_dump($paso1['datos_contribuyente'], $this->declaraciones); exit;
-        
-
-        #PASO 2
-        $this->load->view('declaraciones/pasos/paso2');
-
-        #PASO 3
-        $id_sttm_form = $sttm_tax['tax'][$sttm_tax['tax_account_number']]->id_sttm_form;
-
-        if ($id_sttm_form > 0){
-            $paso3['actividades_contribuyente'] = $this->declaraciones->get_data_statement($id_sttm_form);
-        }else{
-            $paso3['actividades_contribuyente'] = $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year);
-        }
-
-        #dd($this->declaraciones, $paso3);
-
-        $paso3['actividades_permisadas'] = $this->declaraciones->get_activities($this->sttm_properties->fiscal_year);
-
-        #dd($this->declaraciones, $paso3['actividades_permisadas']);
-
-        $paso3['unidad_tributaria'] = $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year);
-        $this->load->view('declaraciones/pasos/paso3', $paso3);
-
-        #var_dump($this->declaraciones, $paso3); exit;
-
-        #PASO 4
-
-        if ($paso1['showStepFour'])
-        {
-            foreach ($paso3['actividades_contribuyente'] AS $i => $act)
-            {
-                $paso3['actividades_contribuyente'][$i]->parent_specialized = $this->declaraciones->get_children_tax_classifier_specialized($act->ids_specialized);
-            }
-
-            #d($this->declaraciones, $paso3['actividades_contribuyente']); exit;
-
-            $this->load->view('declaraciones/pasos/paso4');
-        }
-
-        #PASO 5
-        //$paso5['tax_unit'] =  round($paso3['unidad_tributaria']->value axab* $this->getMinimunTle($this->sttm_properties->fiscal_year), 2);
-        $paso5['sttm'] = $sttm_tax['sttm'];
-        $paso5['sttm_old'] = $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year);
-
-        #var_dump($this->declaraciones, $paso5); exit;
-
-        $paso5['tax_discounts'] =  $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month);
-
-        #d($paso5['tax_discounts'], $this->declaraciones);
-
-        $this->load->view('declaraciones/pasos/paso5', $paso5);
-
-        #PASO 6
-        $this->load->view('declaraciones/pasos/paso6');
-
         $this->load->view('footer');
-        */
 
     }
 
@@ -295,7 +199,7 @@ class Declaraciones extends MY_Controller {
         }
 
         $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
-        #dd($sttm_tax, $_POST, $this->sttm_properties);
+        #dd($sttm_tax, $_POST, $this->sttm_properties, $this->statement->proccess_array($_POST['last_children']));
 
         $tax_account_number = $sttm_tax['tax_account_number'];
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
@@ -337,7 +241,7 @@ class Declaraciones extends MY_Controller {
                 'long' => trim(@$latLong[1]),
                 'json_gm' => (empty($_POST['objGoogleMaps'])) ? '' : json_encode(unserialize($_POST['objGoogleMaps']))
             ),
-            'activities_specified' => isset($_POST['last_children']) ? $_POST['last_children'] : FALSE
+            'activities_specified' => isset($_POST['last_children']) ? $this->statement->proccess_array($_POST['last_children']) : FALSE
         );
 
         #echo serialize($data);

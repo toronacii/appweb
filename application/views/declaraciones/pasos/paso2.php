@@ -1,13 +1,8 @@
-<?php if (!empty($datos_contribuyente->lat)) $latLong = "{$datos_contribuyente->lat} , {$datos_contribuyente->long}"; ?>
-
 <script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 <script type="text/javascript" src="<?php echo base_url('js/gmap3/gmap3.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('js/gmap3/gmap3.ini.js') ?>"></script>
 
-<div id="coordenadas" style="display:none">
-    <strong>Coordenadas: </strong><span id="labelatLong"><?php echo @$latLong ?></span>
-    <input type="hidden" name="latLong" id="latLong" value="<?php echo @$latLong ?>"/>
-</div>
+<input type="hidden" name="latLong" id="latLong" value="{{ (taxpayer.lat) ? taxpayer.lat + ',' + taxpayer.long : '' }}"/>
 
 <div class="row setup-content" id="paso-2">
     <div class="well well-sm">
