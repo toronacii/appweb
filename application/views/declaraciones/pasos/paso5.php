@@ -36,7 +36,7 @@
                     <td>
                         <span class="hidden-sm hidden-xs" title="{{ activity.full_title }}" ng-bind="((! activity.authorized) ? '+ ' : '') + activity.description.substr(0,50) + '...'"></span>
                     </td>
-                    <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" currency/></td>
+                    <td><input type="text" class="form-control text-center" ng-model="activity.monto" ng-blur="calculate()" name="monto[{{ activity.id }}]" currency/></td>
                     <td><strong><span ng-bind="activity.aliquot | number_format"></span></strong></td>
                     <td><strong><span ng-bind="(activity.minimun_taxable * tax_unit.value) | number_format"></span></strong></td>
                     <td ng-if="have_percent_discount"><span class="input-span form-control" ng-bind="activity.tax | number_format"></span></td>
@@ -72,7 +72,7 @@
                     </td>
                 </tr>
                 <tr ng-if="is_monthly">
-                    <td colspan="5">&nbsp;</td>
+                    <td colspan="{{ have_percent_discount ? 7 : 5 }}">&nbsp;</td>
                     <td>
                         <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
                         <span class="input-span form-control" ng-bind="totals.total | number_format"></span>
@@ -89,6 +89,12 @@
                 </tr>
             </tfoot>
         </table>
+    </div>
+    <div class="col-md-12">
+        <div class="pull-right">
+            <a class="btn btn-primary btn-lg activate">Anterior</a>
+            <a class="btn btn-primary btn-lg activate next">Siguiente</a>
+        </div>  
     </div>
     
 </div>

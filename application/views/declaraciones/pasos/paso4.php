@@ -18,7 +18,7 @@
                             ng-options="item.id as item.name for item in special.items"
                             ng-disabled="special.items.length === 0"
                             ng-change="selectSpecialized(activity.specialized, $index)"
-                            name="{{ ($last && special.selected) ? 'last_children[' + special.selected + ']' : '' }}">
+                            name="{{ ($last && special.selected) ? 'last_children[' + activity.id + '][' + special.selected + ']' : '' }}">
                             <option value="">Seleccione</option>
                         </select>
                     </div>
