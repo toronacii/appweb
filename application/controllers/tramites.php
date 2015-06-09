@@ -276,5 +276,6 @@ class Tramites extends MY_Controller {
         $this->load->view('tramites/procesos_administrativos', $data);
 
         $this->load->view('footer');
-    }
+    }  
+
 }

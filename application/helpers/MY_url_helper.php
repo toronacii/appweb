@@ -33,8 +33,10 @@ if(!function_exists('create_breadcrumb')){
 			'procesos_administrativos' => 'procesos administrativos',
 			'cedula_catastral' => 'cédula catastral',
 			'pago_online' => 'pago en línea',
-			'show_invoice_megasoft' => 'factura'
-
+			'show_invoice_megasoft' => 'factura',
+			'validar_anio' => 'validar año',
+			'validar_mes' => 'validar mes'
+		
 		);
 
 		$uris_nulas = array(

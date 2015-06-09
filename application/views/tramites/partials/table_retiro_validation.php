@@ -56,7 +56,7 @@
             </td>
             <?php if ($declaraciones): ?>
             <td class="text-center">
-                <a href="<?php echo site_url('tramites/declarar_mes') ?>" class="btn btn-default" title="ir a declaración mensual ">
+                <a href="<?php echo site_url('declaraciones/validar_mes') ?>" class="btn btn-default" title="ir a declaración mensual ">
                     <span class="fa fa-arrow-right"></span>
                 </a>
             </td>
@@ -70,7 +70,7 @@
         </td>
         <?php if ($declaraciones): ?>
         <td class="text-center">
-            <a href="<?php echo site_url('tramites/declarar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
+            <a href="<?php echo site_url('declaraciones/validar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
                 <span class="fa fa-arrow-right"></span>
             </a>
         </td>

@@ -2,7 +2,7 @@
 <?php #d($select) ?>
 
 <div class="well well-sm">
-    <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar declaració anual de actividades económicas
+    <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar declaració  <strong>anual </strong> de actividades económicas
     <ol>
         <li>Para ello, debe estar solvente, ademas de no tener declaraciones de años anteriores sin realizar</li>
         <li><strong>Ya puedes realizar tus declaraciones para los periodos fiscales 2009 y 2010</strong></li>
