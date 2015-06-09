@@ -36,7 +36,7 @@ define('FOPEN_READ_WRITE_CREATE'             , 	'a+b');
 define('FOPEN_WRITE_CREATE_STRICT'           , 	'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT'      , 	'x+b');
 define('TITLE_APP'                           , 	'Alcaldía WEB');
-define('API_DIR'                            ,     'http://172.16.1.17/api.appweb/api/v1'); 
+define('API_DIR'                            ,     'http://localhost/api.appweb/public/api/v1'); 
 
 define('ONLINE_PAYMENT', "http://172.16.1.100/online_payment/api/"); 
 define('BANESCO_ONLINE', "https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control="); 

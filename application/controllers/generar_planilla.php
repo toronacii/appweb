@@ -103,5 +103,20 @@ class Generar_planilla extends MY_Controller {
         var_dump($this->querys->send_email_WS($data));
     }
 
+    //IMPRIMIR RECIBO RETIRO
+    public  function imprime_retiro($id_invoice = NULL){
+
+        $this->load->library('Planilla.php');
+        $planilla = new Planilla();
+        $data = array(
+            'id_request' => $this->session->userdata('id_request'),
+            'taxpayer' => $this->session->userdata('taxpayer')
+        );
+        $planilla->generar_recibo_retiro($data);
+
+    }
+
+
+
 }
 

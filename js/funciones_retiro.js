@@ -2,20 +2,20 @@ $(function(){
 
 	$(document).on('click', '.btn-modal', function(){
 
-		showLoading('#modal-solvencia .modal-body');
+		showLoading('#modal-retiro .modal-body');
 
 		$data = $(this).find('.span-data');
 
 		console.log(site_url);
 
-		$('#modal-solvencia .modal-title span.tax_account_number').text($data.data('tax-account-number'));
-		$('#modal-solvencia .modal-body').find('tr[data-id-tax-type]').hide();
-		$('#modal-solvencia form [name=id_tax]').val($data.data('id-tax'));
-		$('#modal-solvencia .modal-body').find('tr[data-id-tax-type=' + $data.data('id-tax-type') +']').show();
+		$('#modal-retiro .modal-title span.tax_account_number').text($data.data('tax-account-number'));
+		$('#modal-retiro .modal-body').find('tr[data-id-tax-type]').hide();
+		$('#modal-retiro form [name=id_tax]').val($data.data('id-tax'));
+		$('#modal-retiro .modal-body').find('tr[data-id-tax-type=' + $data.data('id-tax-type') +']').show();
 
 		//console.log(site_url + "/tramites/ajax_get_validations/" + $data.data('id-tax'));
 
-		$table = $('#modal-solvencia .content-solvencia table');
+		$table = $('#modal-retiro .content-retiro table');
 
 		$table
 		.find('.td-change').removeClass("text-danger text-primary").addClass('text-danger')
@@ -25,19 +25,19 @@ $(function(){
 
 		$table.find('td.declaraciones span.fa').removeClass('cursor-hover').removeAttr('title').tooltip('destroy');
 
-		$('#modal-solvencia').find('#iniciar').prop('disabled', true);
+		$('#modal-retiro').find('#iniciar').prop('disabled', true);
 
 		$.get(site_url + "/tramites/ajax_get_table_validations2/" + $data.data('id-tax'), function(resp){
 
-			$('#modal-solvencia .content-solvencia').html(resp);
+			$('#modal-retiro .content-retiro').html(resp);
 
-			$('#modal-solvencia .content-solvencia').find('[title]').attr({'rel' : 'tooltip'}).tooltip({ placement: 'top', html : true});
+			$('#modal-retiro .content-retiro').find('[title]').attr({'rel' : 'tooltip'}).tooltip({ placement: 'top', html : true});
 
 			if ($(resp).find('span.fa-times').length == 0)
 			{
-				$('#modal-solvencia').find('#iniciar').prop('disabled', false);
+				$('#modal-retiro').find('#iniciar').prop('disabled', false);
 			}
-			hideLoading('#modal-solvencia .modal-body')
+			hideLoading('#modal-retiro .modal-body')
 
 		});
 
