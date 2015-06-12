@@ -232,7 +232,7 @@ class Gestion_usuario extends MY_Controller {
             $this->form_validation->set_message('validacionesCuentaRenta', 'Cuenta inexistente');
             return FALSE;
         }
-        $this->session->set_userdata('cuentas', $cuentas);
+        $this->session->set_userdata('cuentas', (array)$cuentas);
         return TRUE;
     }
 

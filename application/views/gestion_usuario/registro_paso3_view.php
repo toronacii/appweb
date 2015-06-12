@@ -1,4 +1,4 @@
-<?php $cuentas = $this->session->userdata('cuentas'); ?>
+<?php $cuentas = (object)$this->session->userdata('cuentas'); ?>
 <script type="text/javascript">
     $(function () {
         $('.datatable').dataTable({
