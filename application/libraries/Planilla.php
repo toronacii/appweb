@@ -43,8 +43,6 @@ class Planilla {
 
         /* FIN DE GENERAR OBJETO PARA CADA PAGINA */
 
-
-
         foreach ($objPerPage as $iPag => $asociados) {
 
             $pdf->AddPage();
@@ -221,8 +219,7 @@ class Planilla {
         $pdf->Output('PLANILLA.pdf', 'I');
     }
 
-    ///Comienzo de la funcion como tal.-.......///////////////////////////////////////////////////////
-    function Generar_edocuenta($data) {
+    public function Generar_edocuenta($data) {
         extract($data);
         #d($data);
         $CI = & get_instance();
@@ -520,7 +517,7 @@ class Planilla {
         $pdf->Output();
     }
 
-    function generar_recibo_tramite($data) {
+    public function generar_recibo_tramite($data) {
 
         extract($data);
         #var_dump($data); exit;
@@ -573,409 +570,6 @@ class Planilla {
         $pdf->SetX($pdf->GetX() + 100, 179);
         $pdf->Cell(10, 6, '1/1', 0, 0, 'C');
         $pdf->Output();
-    }
-
-    public function genera_DEI($data) {
-
-        extract($data);
-        $CI = & get_instance();
-        $CI->load->library('fpdf/PDF_Code128');
-        $CI->load->model('declaracion_model', 'declaracion');
-
-        //var_dump($data); exit;
-
-        $pdf = new PDF_Code128('P', 'mm', 'Letter');
-        $cant_celdas = 14;
-        $pdf->AddPage('L');
-        $pdf->SetMargins(6, 5);
-        $pdf->SetAutoPageBreak(true, 5);
-        define('x_', 0);
-
-        #CABECERA
-
-        $pdf->Image('css/img/cabecera_declaracion.png', 5, 13, 269);
-        $pdf->Image('css/img/pie_declaracion.png', 5, 145, 269);
-
-        $pdf->SetTextColor(215, 215, 215);
-        $pdf->Rotate(20);
-
-        $data_planilla = $CI->declaracion->data_planilla_DEI2013($numero_declaracion);
-
-        if (strtotime($data_planilla[0]->created_sttm) > strtotime('2012-10-31')) { //NOVIEMBRE
-            $pdf->SetFont('Arial', '', 35);
-            $pdf->Text(0, 150, utf8_decode('DECLARACIÓN EXTEMPORANEA'));
-        } else {
-            $pdf->SetFont('Arial', '', 40);
-            $pdf->Text(15, 150, utf8_decode('DECLARACIÓN ESTIMADA'));
-        }
-        $pdf->Rotate(0);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-
-        $pdf->setXY(6, 5);
-        $pdf->Cell(0, 3, utf8_decode('PLANILLA DE DECLARACIÓN ESTIMADA MUNICIPIO SUCRE'), 0, 1, 'C');
-        $pdf->Cell(0, 3, utf8_decode('DETERMINACIÓN DE IMPUESTO AÑO 2013'), 0, 0, 'C');
-
-        $pdf->SetFont('Arial', '', 7);
-        $pdf->SetY(22);
-        $pdf->Cell(32, 4, 'DESDE', x_, 0, 'C');
-        $pdf->Cell(34, 4, 'HASTA', x_, 0, 'C');
-
-
-        $data_taxpayer = $CI->declaracion->datos_contribuyente($id_tax);
-        $data_planilla = $CI->declaracion->data_planilla_DEI2013($numero_declaracion);
-
-        #var_dump(array($data_planilla, $numero_declaracion, $data));
-
-        $pdf->Cell(49, 4, $data_taxpayer->cuenta_renta, x_, 0, 'C'); #CUENTA RENTA
-        $x = $pdf->GetX();
-        $pdf->Multicell(58, 4, $data_taxpayer->razon_social, x_, 1); #RAZON SOCIAL
-
-        $pdf->SetXY($x + 58, 22);
-
-
-
-        $pdf->Cell(34, 7, $data_planilla[0]->form_number, x_, 1, 'C'); #NUMERO DE PLANILLA
-
-        $pdf->SetY($pdf->GetY() - 3);
-
-        $pdf->Cell(11, 4, '01', x_, 0, 'C'); #DESDE DIA
-        $pdf->Cell(10, 4, '01', x_, 0, 'C'); #DESDE MES
-        $pdf->Cell(11, 4, '2013', x_, 0, 'C'); #DESDE AÑO
-        $pdf->Cell(12, 4, '31', x_, 0, 'C'); #HASTA DIA
-        $pdf->Cell(10, 4, '12', x_, 0, 'C'); #HASTA MES
-        $pdf->Cell(12, 4, '2013', x_, 0, 'C'); #HASTA AÑO
-        $pdf->Cell(49, 4, $data_taxpayer->numero_cuenta, x_, 1, 'C'); #CUENTA NUEVA
-
-        $pdf->SetY($pdf->GetY() + 3);
-        $x = $pdf->GetX();
-
-        $pdf->Multicell(58, 4, $data_taxpayer->nombre_comercial, x_, 1); #DENOMINACION COMERCIAL
-        $pdf->SetXY($x + 66, 33);
-
-        $pdf->Multicell(141, 4, $data_taxpayer->direccion, x_, 1); #DIRECCION
-
-        $pdf->SetY(45);
-
-        $pdf->Cell(45, 4, '', x_, 0, 'C'); #TIPO DE NEGOCIO
-        $pdf->Cell(68, 4, $data_taxpayer->resp_legal, x_, 0, 'C'); #PROPIETARIO O RESPONSABLE LEGAL
-        $pdf->Cell(39, 4, $data_taxpayer->ci_resp_legal, x_, 0, 'C'); #CI RESPONSABLE LEGAL
-        $pdf->Cell(25, 4, $data_taxpayer->rif, x_, 0, 'C'); #RIF
-        $pdf->Cell(30, 4, $data_taxpayer->local, x_, 0, 'C'); #TELEFONO
-        $pdf->Cell(60, 4, $_SESSION['usuario_appweb'][0]->email, x_, 1, 'C'); #EMAIL
-
-        $pdf->SetY($pdf->GetY() + 2);
-
-        $pdf->Cell(14, 7, '', '1', 0, 'C');
-        $pdf->Cell(18, 7, '', '1', 0, 'C');
-        $pdf->Cell(59, 7, '', 'TRB', 0, 'L');
-        $pdf->Cell(40, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(17, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(28, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(33, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(15, 7, '', 'TRB', 0, 'R');
-        $pdf->Cell(16, 7, '', 'TRB', 0, 'R');
-        $pdf->Cell(28, 7, '', 'TRB', 1, 'R');
-
-        $tax_unit = $CI->declaracion->unidad_tributaria(2013);
-
-        $pdf->SetFont('Arial', '', 8);
-
-        foreach ($data_planilla as $i => $objPlanilla) {
-
-            $name = utf8_decode($objPlanilla->name . "...");
-            $monto = number_format($objPlanilla->monto, 2, ',', '.');
-            $minimo = number_format($objPlanilla->minimun_taxable * $tax_unit->value, 2, ',', '.');
-            $total = number_format($objPlanilla->caused_tax_form, 2, ',', '.');
-
-            $pdf->Cell(14, 5, substr($objPlanilla->code, 0, 1), 'LBR', 0, 'C');   #GRUPO
-            $pdf->Cell(18, 5, $objPlanilla->code, 'BR', 0, 'C');   #CODIGO
-            $pdf->Cell(59, 5, $name, 'BR', 0, 'L'); #ACTIVIDADES
-            $pdf->Cell(40, 5, $monto, 'BR', 0, 'R'); #INGRESOS BRUTOS
-            $pdf->Cell(17, 5, $objPlanilla->aliquot, 'BR', 0, 'C'); #ALICUOTA
-            $pdf->Cell(28, 5, $minimo, 'BR', 0, 'R'); #MINIMO TRIBUTARIO
-            $pdf->Cell(33, 5, $total, 'BR', 0, 'R'); #IMPUESTO ANUAL
-            $pdf->Cell(15, 5, '0 %', 'BR', 0, 'C'); #% REBAJA
-            $pdf->Cell(16, 5, '0,00', 'BR', 0, 'R'); #MONTO DE REBAJA
-            $pdf->Cell(28, 5, $total, 'BR', 1, 'R'); #IMPUESTO - REBAJA
-
-            @$total_bruto += $objPlanilla->monto;
-            @$total_impuesto += $objPlanilla->caused_tax_form;
-        }
-
-
-        for ($j = 1; $j < $cant_celdas - $i; $j++) {
-            $pdf->Cell(14, 5, '', 'LBR', 0, 'C');   #GRUPO
-            $pdf->Cell(18, 5, '', 'BR', 0, 'C');   #CODIGO
-            $pdf->Cell(59, 5, '', 'BR', 0, 'L'); #ACTIVIDADES
-            $pdf->Cell(40, 5, '', 'BR', 0, 'C'); #INGRESOS BRUTOS
-            $pdf->Cell(17, 5, '', 'BR', 0, 'C'); #ALICUOTA
-            $pdf->Cell(28, 5, '', 'BR', 0, 'C'); #MINIMO TRIBUTARIO
-            $pdf->Cell(33, 5, '', 'BR', 0, 'C'); #IMPUESTO ANUAL
-            $pdf->Cell(15, 5, '', 'BR', 0, 'C'); #% REBAJA
-            $pdf->Cell(16, 5, '', 'BR', 0, 'R'); #MONTO DE REBAJA
-            $pdf->Cell(28, 5, '', 'BR', 1, 'R'); #IMPUESTO - REBAJA
-        }
-        $pdf->Cell(91, 8, 'TOTAL INGRESOS BRUTOS DECLARADOS', 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, number_format($total_bruto, 2, ',', '.'), 'BR', 0, 'R');  #TOTAL INGRESOS BRUTOS
-
-        $total_impuesto_format = number_format($total_impuesto, 2, ',', '.');
-
-        $pdf->Cell(45, 8, 'TOTAL IMPUESTO ANUAL', 'BR', 0, 'C');
-        $pdf->Cell(33, 8, $total_impuesto_format, 'BR', 0, 'R'); #TOTAL IMPUESTO ANUAL
-        $x = $pdf->GetX();
-        $y = $pdf->GetY();
-        $pdf->Multicell(15, 4, "TOTAL\nREBAJA", 'BR', 0);
-        $pdf->SetXY($x + 15, $y);
-        $pdf->Cell(16, 8, '0,00', 'BR', 1, 'R'); #TOTAL REBAJA
-
-
-        $pdf->Cell(91, 8, '17. INGRESO DEFINITIVO 2011', 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, ($initial_date < '2012-01-01' || $sttm_def2011 > 0) ? number_format($total_declaracion, 2, ',', '.') : 'NO APLICA', 'BR', 1, 'R'); #INGRESO DEFINITIVO 2011
-
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 7, $total_impuesto_format, x_, 1, 'R'); #TOTAL INGRESO - REBAJA
-
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 8, number_format($total_impuesto / 4, 2, ',', '.'), x_, 1, 'R'); # TOTAL TRIMESTRE
-
-        $pdf->SetXY(70, $pdf->GetY() + 15);
-
-        $pdf->SetFont('Arial', '', 13);
-
-        $pdf->Cell(58, 4, $data_planilla[0]->codval, x_, 0, 'C'); # CODIGO VALIDADOR
-        $pdf->Cell(28, 4, $data_planilla[0]->form_number, x_, 1, 'C'); # NUMERO DE PLANILLA
-
-        $pdf->Code128(127, $pdf->GetY(), $data_planilla[0]->form_number, 30, 8); #CODIGO DE BARRAS
-        $pdf->SetX(70);
-        $pdf->SetTextColor(215, 215, 215);
-        $pdf->SetFont('Arial', '', 10);
-        $fecha_liquidacion = date("d/m/Y", strtotime($data_planilla[0]->created_sttm));
-        $pdf->Cell(58, 8, "LIQUIDADA WEB EL $fecha_liquidacion", x_, 1, 'C');
-        $pdf->SetTextColor(0, 0, 0);
-
-        $pdf->SetY($pdf->GetY() + 10);
-
-        $pdf->Cell(190, 4, utf8_decode("PLANILLA DE DECLARACIÓN ESTIMADA MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO ESTIMADO AÑO 2013"), x_, 0, 'C');
-        $pdf->Cell(0, 4, "CONTRIBUYENTE", x_, 1, 'C');
-
-        $pdf->Output('DEI.pdf', 'I');
-    }
-
-    public function genera_DDI($data) {
-
-        extract($data);
-        $CI = & get_instance();
-        $CI->load->library('fpdf/PDF_Code128');
-        $CI->load->model('declaracion_model', 'declaracion');
-
-        //var_dump($data); exit;
-
-        $pdf = new PDF_Code128('P', 'mm', 'Letter');
-        $cant_celdas = 14;
-        $pdf->AddPage('L');
-        $pdf->SetMargins(6, 5);
-        $pdf->SetAutoPageBreak(true, 5);
-        define('x_', 0);
-
-        #CABECERA
-
-        $pdf->Image('css/img/cabecera_declaracion_DEF.png', 5, 13, 269);
-        $pdf->Image('css/img/pie_declaracion_DEF.png', 5, 145, 269);
-
-        $pdf->SetTextColor(215, 215, 215);
-        $pdf->Rotate(20);
-
-        $data_planilla = $CI->declaracion->data_planilla_DEI2013($id_sttm_form_def_2012);
-
-        #var_dump($data_planilla, $id_sttm_form_def_2012); exit;
-
-        if (strtotime($data_planilla[0]->created_sttm) > strtotime('2013-01-31')) { //FEBRERO
-            $pdf->SetFont('Arial', '', 35);
-            $pdf->Text(0, 150, utf8_decode('DECLARACIÓN EXTEMPORANEA'));
-        } else {
-            $pdf->SetFont('Arial', '', 40);
-            $pdf->Text(15, 150, utf8_decode("DECLARACIÓN DEFINITIVA"));
-        }
-        $pdf->Rotate(0);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-
-        $pdf->setXY(6, 5);
-        $pdf->Cell(0, 3, utf8_decode('PLANILLA DE DECLARACIÓN DEFINITIVA MUNICIPIO SUCRE'), 0, 1, 'C');
-        $pdf->Cell(0, 3, utf8_decode('DETERMINACIÓN DE IMPUESTO AÑO 2012'), 0, 0, 'C');
-
-        $pdf->SetFont('Arial', '', 7);
-        $pdf->SetY(22);
-        $pdf->Cell(32, 4, 'DESDE', x_, 0, 'C');
-        $pdf->Cell(34, 4, 'HASTA', x_, 0, 'C');
-
-
-        $data_taxpayer = $CI->declaracion->datos_contribuyente($id_tax);
-        $data_planilla = $CI->declaracion->data_planilla_DEI2013($id_sttm_form_def_2012);
-
-        #var_dump($data_taxpayer, $id_sttm_form_def_2012);
-
-        $pdf->Cell(49, 4, $data_taxpayer->cuenta_renta, x_, 0, 'C'); #CUENTA RENTA
-        $x = $pdf->GetX();
-        $pdf->Multicell(58, 4, utf8_decode($data_taxpayer->razon_social), x_, 1); #RAZON SOCIAL
-
-        $pdf->SetXY($x + 58, 22);
-
-
-
-        $pdf->Cell(34, 7, $data_planilla[0]->form_number, x_, 1, 'C'); #NUMERO DE PLANILLA
-
-        $pdf->SetY($pdf->GetY() - 3);
-
-        $pdf->Cell(11, 4, '01', x_, 0, 'C'); #DESDE DIA
-        $pdf->Cell(10, 4, '01', x_, 0, 'C'); #DESDE MES
-        $pdf->Cell(11, 4, '2012', x_, 0, 'C'); #DESDE AÑO
-        $pdf->Cell(12, 4, '31', x_, 0, 'C'); #HASTA DIA
-        $pdf->Cell(10, 4, '12', x_, 0, 'C'); #HASTA MES
-        $pdf->Cell(12, 4, '2012', x_, 0, 'C'); #HASTA AÑO
-        $pdf->Cell(49, 4, $data_taxpayer->numero_cuenta, x_, 1, 'C'); #CUENTA NUEVA
-
-        $pdf->SetY($pdf->GetY() + 3);
-        $x = $pdf->GetX();
-
-        $pdf->Multicell(58, 4, utf8_decode($data_taxpayer->nombre_comercial), x_, 1); #DENOMINACION COMERCIAL
-        $pdf->SetXY($x + 66, 33);
-
-        $pdf->Multicell(141, 4, utf8_decode($data_taxpayer->direccion), x_, 1); #DIRECCION
-
-        $pdf->SetY(45);
-
-        $pdf->Cell(45, 4, '', x_, 0, 'C'); #TIPO DE NEGOCIO
-        $pdf->Cell(68, 4, utf8_decode($data_taxpayer->resp_legal), x_, 0, 'C'); #PROPIETARIO O RESPONSABLE LEGAL
-        $pdf->Cell(39, 4, $data_taxpayer->ci_resp_legal, x_, 0, 'C'); #CI RESPONSABLE LEGAL
-        $pdf->Cell(25, 4, $data_taxpayer->rif, x_, 0, 'C'); #RIF
-        $pdf->Cell(30, 4, $data_taxpayer->local, x_, 0, 'C'); #TELEFONO
-        $pdf->Cell(60, 4, $_SESSION['usuario_appweb'][0]->email, x_, 1, 'C'); #EMAIL
-
-        $pdf->SetY($pdf->GetY() + 2);
-
-        $pdf->Cell(14, 7, '', '1', 0, 'C');
-        $pdf->Cell(18, 7, '', '1', 0, 'C');
-        $pdf->Cell(59, 7, '', 'TRB', 0, 'L');
-        $pdf->Cell(40, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(17, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(28, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(33, 7, '', 'TRB', 0, 'C');
-        $pdf->Cell(15, 7, '', 'TRB', 0, 'R');
-        $pdf->Cell(16, 7, '', 'TRB', 0, 'R');
-        $pdf->Cell(28, 7, '', 'TRB', 1, 'R');
-
-        $tax_unit = $CI->declaracion->unidad_tributaria(2012);
-
-        $pdf->SetFont('Arial', '', 8);
-
-        $rebajas = $CI->declaracion->rebajas($id_tax);
-
-        #var_dump($rebajas, $data_planilla);
-
-        foreach ($data_planilla as $i => $objPlanilla) {
-
-            $authorized = ($objPlanilla->authorized == 't') ? "" : "+ ";
-            $name = utf8_decode("$authorized{$objPlanilla->name}...");
-            $monto = number_format($objPlanilla->monto, 2, ',', '.');
-            $minimo = number_format($objPlanilla->minimun_taxable * $tax_unit->value, 2, ',', '.');
-
-            $p_rebaja = '0 %';
-            $rebaja = 0;
-            $total_imp_reb = $objPlanilla->caused_tax_form;
-
-            if (in_array($objPlanilla->code, $rebajas) && $objPlanilla->authorized == 't') { #REBAJA
-                #EL CAUSED_TAX_FORM YA CONTEMPLA LA REBAJA DEL 50%
-                $p_rebaja = '50 %';
-                $rebaja = $objPlanilla->caused_tax_form;
-                $total_imp_reb = $rebaja;
-                #PARA QUE EL TOTAL NO CONTEMPLE LA REBAJA
-                $objPlanilla->caused_tax_form *= 2;
-            }
-            $total = number_format($objPlanilla->caused_tax_form, 2, ',', '.');
-            $pdf->Cell(14, 5, substr($objPlanilla->code, 0, 1), 'LBR', 0, 'C');   #GRUPO
-            $pdf->Cell(18, 5, $objPlanilla->code, 'BR', 0, 'C');   #CODIGO
-            $pdf->Cell(59, 5, $name, 'BR', 0, 'L'); #ACTIVIDADES
-            $pdf->Cell(40, 5, $monto, 'BR', 0, 'R'); #INGRESOS BRUTOS
-            $pdf->Cell(17, 5, $objPlanilla->aliquot, 'BR', 0, 'C'); #ALICUOTA
-            $pdf->Cell(28, 5, $minimo, 'BR', 0, 'R'); #MINIMO TRIBUTARIO
-            $pdf->Cell(33, 5, $total, 'BR', 0, 'R'); #IMPUESTO ANUAL
-            $pdf->Cell(15, 5, $p_rebaja, 'BR', 0, 'C'); #% REBAJA
-
-            $pdf->SetFont('Arial', '', 6);
-            $pdf->Cell(16, 5, number_format(round($rebaja, 2), 2, ',', '.'), 'BR', 0, 'R'); #MONTO DE REBAJA
-            $pdf->SetFont('Arial', '', 8);
-
-            $pdf->Cell(28, 5, number_format(round($total_imp_reb, 2), 2, ',', '.'), 'BR', 1, 'R'); #IMPUESTO - REBAJA
-
-            @$total_bruto += $objPlanilla->monto;
-            @$total_rebaja += $rebaja;
-            @$total_impuesto += $objPlanilla->caused_tax_form;
-            @$total_impuesto_reb += $total_imp_reb;
-        }
-
-
-        for ($j = 1; $j < $cant_celdas - $i; $j++) {
-            $pdf->Cell(14, 5, '', 'LBR', 0, 'C');   #GRUPO
-            $pdf->Cell(18, 5, '', 'BR', 0, 'C');   #CODIGO
-            $pdf->Cell(59, 5, '', 'BR', 0, 'L'); #ACTIVIDADES
-            $pdf->Cell(40, 5, '', 'BR', 0, 'C'); #INGRESOS BRUTOS
-            $pdf->Cell(17, 5, '', 'BR', 0, 'C'); #ALICUOTA
-            $pdf->Cell(28, 5, '', 'BR', 0, 'C'); #MINIMO TRIBUTARIO
-            $pdf->Cell(33, 5, '', 'BR', 0, 'C'); #IMPUESTO ANUAL
-            $pdf->Cell(15, 5, '', 'BR', 0, 'C'); #% REBAJA
-            $pdf->Cell(16, 5, '', 'BR', 0, 'R'); #MONTO DE REBAJA
-            $pdf->Cell(28, 5, '', 'BR', 1, 'R'); #IMPUESTO - REBAJA
-        }
-        $pdf->Cell(91, 8, 'TOTAL INGRESOS BRUTOS DECLARADOS', 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, number_format($total_bruto, 2, ',', '.'), 'BR', 0, 'R');  #TOTAL INGRESOS BRUTOS
-
-        $total_impuesto_format = number_format($total_impuesto, 2, ',', '.');
-
-        $pdf->Cell(45, 8, 'TOTAL IMPUESTO ANUAL', 'BR', 0, 'C');
-        $pdf->Cell(33, 8, $total_impuesto_format, 'BR', 0, 'R'); #TOTAL IMPUESTO ANUAL
-        $x = $pdf->GetX();
-        $y = $pdf->GetY();
-        $pdf->Multicell(15, 4, "TOTAL\nREBAJA", 'BR', 0);
-        $pdf->SetXY($x + 15, $y);
-
-        $pdf->SetFont('Arial', '', 6);
-        $pdf->Cell(16, 8, number_format(round($total_rebaja, 2), 2, ',', '.'), 'BR', 1, 'R'); #TOTAL REBAJA
-        $pdf->SetFont('Arial', '', 8);
-
-        #var_dump($data);
-
-        $pdf->Cell(91, 8, '17. IMPUESTO ESTIMADO 2012', 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, ($initial_date < '2012-01-01' || $tot_est_2012 > 0) ? number_format($tot_est_2012, 2, ',', '.') : 'NO APLICA', 'BR', 1, 'R'); #INGRESO DEFINITIVO 2011
-
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 7, number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
-
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 8, number_format($total_impuesto_reb - $tot_est_2012, 2, ',', '.'), x_, 1, 'R'); # TOTAL COMPLEMENTO
-
-        $pdf->SetXY(70, $pdf->GetY() + 15);
-
-        $pdf->SetFont('Arial', '', 13);
-
-        $pdf->Cell(58, 4, $data_planilla[0]->codval, x_, 0, 'C'); # CODIGO VALIDADOR
-        $pdf->Cell(28, 4, $data_planilla[0]->form_number, x_, 1, 'C'); # NUMERO DE PLANILLA
-
-        $pdf->Code128(127, $pdf->GetY(), $data_planilla[0]->form_number, 30, 8); #CODIGO DE BARRAS
-        $pdf->SetX(70);
-        $pdf->SetTextColor(215, 215, 215);
-        $pdf->SetFont('Arial', '', 10);
-        $fecha_liquidacion = date("d/m/Y", strtotime($data_planilla[0]->created_sttm));
-        $pdf->Cell(58, 8, "LIQUIDADA WEB EL $fecha_liquidacion", x_, 1, 'C');
-        $pdf->SetTextColor(0, 0, 0);
-
-        $pdf->SetY($pdf->GetY() + 10);
-
-        $pdf->Cell(190, 4, utf8_decode("PLANILLA DE DECLARACIÓN DEFINITIVA MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO ESTIMADO AÑO 2012"), x_, 0, 'C');
-        $pdf->Cell(0, 4, "CONTRIBUYENTE", x_, 1, 'C');
-
-        $pdf->Output("DDI_{$CI->uri->segment(3)}.pdf", 'I');
     }
 
     public function genera_calc_PU($data) {
@@ -1205,7 +799,7 @@ class Planilla {
         $CI->load->model('api_model', 'declaraciones');
         $CI->load->library('Statement');
 
-        #d($data_planilla);
+        #dd($data_planilla);
 
         $pdf = new PDF_Code128('P', 'mm', 'Letter');
         $cant_celdas = 14;
@@ -1217,6 +811,8 @@ class Planilla {
         $rebajas = array();
 
         extract($CI->statement->get_init_vars($data_planilla));
+
+        #dd($CI->statement->get_init_vars($data_planilla));
 
         $total_old = round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year, $month), 2);
 
@@ -1294,7 +890,7 @@ class Planilla {
 
         $data_taxpayer = $CI->declaraciones->datos_taxpayer($data_planilla[0]->id_tax);
 
-        #var_dump($data_taxpayer, $CI->declaraciones); exit;
+        #dd($data_taxpayer, $CI->declaraciones);
 
         $pdf->Cell(49, 4, $data_taxpayer->cuenta_renta, x_, 0, 'C'); #CUENTA RENTA
         $x = $pdf->GetX();
@@ -1350,7 +946,7 @@ class Planilla {
 
         $pdf->SetFont('Arial', '', 8);
 
-        #var_dump($rebajas, $data_planilla);
+        #dd($rebajas, $data_planilla);
 
         foreach ($data_planilla as $i => $objPlanilla) {
 
@@ -1358,9 +954,10 @@ class Planilla {
             $name = utf8_decode("$permised{$objPlanilla->name}...");
             $income = number_format($objPlanilla->income, 2, ',', '.');
             $minimo = number_format($objPlanilla->minimun_taxable * $tax_unit->value, 2, ',', '.');
+            $total = round($objPlanilla->income * (float)$objPlanilla->aliquot / 100, 2);
 
-            $p_rebaja = '0 %';
-            $rebaja = 0;
+            $p_rebaja = $objPlanilla->percent_discount . '%';
+            $rebaja =  $objPlanilla->percent_discount * $total / 100;
             $total_imp_reb = $objPlanilla->caused_tax;
 
             if (in_array($objPlanilla->code, $rebajas) && $objPlanilla->permised == 't') { #REBAJA
@@ -1372,7 +969,7 @@ class Planilla {
                 $objPlanilla->caused_tax *= 2;
             }
 
-            $total = number_format($objPlanilla->caused_tax, 2, ',', '.');
+            #dd($data_planilla);
 
             $pdf->Cell(14, 5, substr($objPlanilla->code, 0, 1), 'LBR', 0, 'C');   #GRUPO
             $pdf->Cell(18, 5, $objPlanilla->code, 'BR', 0, 'C');   #CODIGO
@@ -1380,7 +977,7 @@ class Planilla {
             $pdf->Cell(40, 5, $income, 'BR', 0, 'R'); #INGRESOS BRUTOS
             $pdf->Cell(17, 5, $objPlanilla->aliquot, 'BR', 0, 'C'); #ALICUOTA
             $pdf->Cell(28, 5, $minimo, 'BR', 0, 'R'); #MINIMO TRIBUTARIO
-            $pdf->Cell(33, 5, $total, 'BR', 0, 'R'); #IMPUESTO ANUAL
+            $pdf->Cell(33, 5, number_format($total, 2, ',', '.'), 'BR', 0, 'R'); #IMPUESTO ANUAL
             $pdf->Cell(15, 5, $p_rebaja, 'BR', 0, 'C'); #% REBAJA
 
             $pdf->SetFont('Arial', '', 6);
@@ -1682,8 +1279,7 @@ class Planilla {
         $pdf->Output('PLANILLA.pdf', 'I');
     }
 
-    public function print_invoice_megasoft($control)
-    {
+    public function print_invoice_megasoft($control) {
         $CI = & get_instance();
         $CI->load->library('fpdf/PDF_Code128');
         $CI->load->model('api_model', 'planillas');

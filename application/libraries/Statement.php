@@ -183,4 +183,14 @@ class Statement {
         return (array)$r;
     }
 
+    public function proccess_array($array)
+    {
+        $return = [];
+        foreach ($array as $id => $arr) {
+            $return[$id] = array_keys($arr)[0];
+        }
+
+        return $return;
+    }
+
 }
