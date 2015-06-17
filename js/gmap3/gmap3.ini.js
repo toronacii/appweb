@@ -1,37 +1,23 @@
-function imprimeDireccion(bigObj, inner, all){
-
-    if (all || false){
-        $.post('post.php',{
-            post : serialize(bigObj)
-        },function(data){
-            $(inner).append(data);
-        });
-    } else {
-        bigObj = bigObj[0].address_components;
-        html = '';
-        for (i in bigObj){
-            var obj = bigObj[i];
-            html += obj.long_name;
-            html += '<ul>';
-            for (j in obj.types){
-                html += '<li>' + obj.types[j] + '</li>';
+var actionEvent = function(event, obj, latLng) {
+    $("#latLong").val(event.latLng.lat() + ',' +event.latLng.lng());
+    $(obj).gmap3({
+        getaddress:{
+            latLng: latLng,
+            callback:function(results){
+                $("#objGoogleMaps").val(serialize(results));
             }
-            html += '</ul>'
         }
-        $(inner).append(html);
-			
-    }
+    });
 }
 		
 var latLgtAlcaldia = [10.486672523550666 , -66.82352542877197];
 
+var initializeMaps = false;
 
-initializeMaps = false;
-
-function initialize(){
+var initialize = function(){
     
     
-    if ($('#labelatLong').text() == ''){
+    if ($('#latLong').val() == ''){
         var latLongTax = false;
         var info = {
             latLng: latLgtAlcaldia,
@@ -41,7 +27,7 @@ function initialize(){
         };
         
     }else{
-        var latLongTax = eval('[' + $('#labelatLong').text() + ']');
+        var latLongTax = eval('[' + $('#latLong').val() + ']');
         var info = {
             latLng: latLongTax,
             options:{
@@ -71,31 +57,12 @@ function initialize(){
                             },
                             events: {
                                 dragend: function(marker, event){
-                                    $("#latLong").val(event.latLng.lat()+ ' , ' +event.latLng.lng());
-                                    $('#labelatLong').text($("#latLong").val());
-                                    $(this).gmap3({
-                                        getaddress:{
-                                            latLng:marker.getPosition(),
-                                            callback:function(results){
-                                                $("#objGoogleMaps").val(serialize(results));
-                                            }
-                                        }
-                                    });
+                                    actionEvent(event, this, marker.getPosition())
                                 }
                             }
                         }
                     });
-                    $("#latLong").val(event.latLng.lat()+ ' , ' +event.latLng.lng());
-                    $('#labelatLong').text($("#latLong").val());
-                    $(this).gmap3({
-                        getaddress:{
-                            latLng:event.latLng,
-                            callback: function(results){
-                                $("#objGoogleMaps").val(serialize(results));
-                            }
-                        }
-                    });
-							
+                    actionEvent(event, this, event.latLng)
                 }
             }
         },
