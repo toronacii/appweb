@@ -112,7 +112,7 @@ class Declaraciones extends MY_Controller {
         #d($this->id_taxpayer, 'TRUE', $params[1], $params[0]);
         #d($data['declaraciones'], $params, $this->declaraciones);
 
-        $this->load->view('tramites/declarar_mes_view', $data);
+        $this->load->view('tramites/declaracion_retiro_mes_view', $data);
         $this->load->view('footer');
     }
 
@@ -213,8 +213,7 @@ class Declaraciones extends MY_Controller {
         $sttm_tax = $this->session->userdata('sttm_tax');
 
         #SET PROPERTIES
-
-
+         
         $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
 
         if ( !(
@@ -506,6 +505,21 @@ class Declaraciones extends MY_Controller {
         echo json_encode($this->declaraciones->get_children_tax_classifier_specialized($_GET['ids_specialized'], $field));
     }
 
+     // Validar DJ MES EN CURSO
+     public function get_dj_mes()
+    {
+        $id_taxpayer = $this->session->userdata('taxpayer');
+       # $id_tax = $_POST['id_tax'];
+        $this->declaraciones->get_data_djmes($id_taxpayer->id_taxpayer);
+        #dd( $this->tramites);
+      
+        #dd($_POST['id_tax']);
+       // redirect('controller/action/params')
+
+            $this->session->set_userdata('id_invoice', $id_invoice);
+            redirect(site_url('generar_planilla/imprime_retiro'));
+
+    }
 
 
 }

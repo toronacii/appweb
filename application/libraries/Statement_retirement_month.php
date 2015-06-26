@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Statement {
+class Statement_retirement_month {
     
     const YEAR_INI = 2009;
     const YEAR_INIT_MONTHLY = 2015;
@@ -34,7 +34,7 @@ class Statement {
 
     public function get_month($number)
     {
-        return $this->months_names[$number -1];
+        return $this->months_names[$number];
     }
 
     public function get_title_statement($data_sttm, $short = false)

@@ -156,8 +156,10 @@ class Tramites extends MY_Controller {
                     $data['declaraciones'] = implode('<br>', $this->tramites->declaraciones_anteriores($id_tax));
                     $data['passed'] &= count($data['declaraciones']) == 0;
                 
-                
+                $data['passed'] &= $data['mes'] = $this->tramites->have_month($id_tax);
+                $data['passed'] &= $data['anio'] = $this->tramites->have_year($id_tax);
 
+                #dd($data);
                 $this->load->view('tramites/partials/table_retiro_validation', $data);
 
             break;
@@ -277,5 +279,27 @@ class Tramites extends MY_Controller {
 
         $this->load->view('footer');
     }  
+
+    public function set_session_statement ()
+    {
+
+        $_SESSION["sttm_tax"] = [
+            'sttm' => [6, 2015],
+            'tax' => [
+                '030021701' => (object)[
+                   'id_tax' => 1036583,
+                   'id_sttm_form' => 0
+                ]
+            ]
+        ];
+        
+            dd($usuario=$this->session->userdata('usuario'));
+              
+
+        redirect("declaraciones/crear/030021701");
+    }
+
+
+
 
 }

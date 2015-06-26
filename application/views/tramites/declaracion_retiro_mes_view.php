@@ -2,7 +2,7 @@
 <?php #d($select) ?>
 
 <div class="well well-sm">
-    <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar la declaración del mes de actividades económicas
+    <strong>Estimado contribuyente:</strong> Este módulo le permitirá realizar la declaración del  <strong>mes  </strong>de actividades económicas
     <ol>
         <li>Para ello, debe estar solvente, ademas de no tener declaraciones de años anteriores sin realizar</li>
         <li><strong>Ya puedes realizar tus declaraciones para los periodos fiscales 2009 y 2010</strong></li>
@@ -18,7 +18,7 @@
                 <select name="statement_filter" id="statement_filter" class="form-control">
                     <?php foreach($select as $i => $sttm): $p = explode('_', $sttm);  ?>
                     <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>
-                        <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>
+                        <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>   
                         <?php echo $this->statement->get_title_statement($p, true) ?>
                     </option>
                     <?php endforeach; ?>

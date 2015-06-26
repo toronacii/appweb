@@ -30,16 +30,19 @@
         <?php endif; ?>
     </tr>
 
-
+<!-->
     <?php if ($id_tax_type == 1) : ?>
 
          <!-- Anteriores -->
         <tr data-id-tax-type="1">
+
             <th>Declaraciones Anteriores</th>
             <td class="text-center text-<?php echo (! $declaraciones) ? "primary" : "danger" ?>">
                 <span class="fa fa-2x fa-<?php echo (! $declaraciones) ? "check" : "times cursor-hover" ?>" <?php if ($declaraciones) echo " title='$declaraciones'" ?>></span>
             </td>
-            <?php if ($declaraciones): ?>
+            <?php 
+                #dd($declaraciones);
+            if ($declaraciones): ?>
             <td class="text-center">
                 <a href="<?php echo site_url('declaraciones/cuentas') ?>" class="btn btn-default" title="ir a declaración mensual ">
                     <span class="fa fa-arrow-right"></span>
@@ -51,12 +54,12 @@
         <!-- MENSUAL -->
         <tr data-id-tax-type="1">
             <th>Declaración Mensual</th>
-            <td class="text-center text-<?php echo (! $declaraciones) ? "primary" : "danger" ?>">
-                <span class="fa fa-2x fa-<?php echo (! $declaraciones) ? "check" : "times cursor-hover" ?>" <?php if ($declaraciones) echo " title='$declaraciones'" ?>></span>
+            <td class="text-center text-<?php echo (! $mes) ? "primary" : "danger" ?>">
+                <span class="fa fa-2x fa-<?php echo (! $mes) ? "check" : "times cursor-hover" ?>"></span>
             </td>
-            <?php if ($declaraciones): ?>
+            <?php if ((! $mes) and (! $declaraciones) ): ?>
             <td class="text-center">
-                <a href="<?php echo site_url('declaraciones/validar_mes') ?>" class="btn btn-default" title="ir a declaración mensual ">
+                <a href="<?php echo site_url('tramites/set_session_statement') ?>" class="btn btn-default" title="ir a declaración mensual ">
                     <span class="fa fa-arrow-right"></span>
                 </a>
             </td>
@@ -65,10 +68,10 @@
         <!-- ANUAL -->
         <tr data-id-tax-type="1">
         <th>Declaración Anual</th>
-        <td class="text-center text-<?php echo (! $declaraciones) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo (! $declaraciones) ? "check" : "times cursor-hover" ?>" <?php if ($declaraciones) echo " title='$declaraciones'" ?>></span>
+        <td class="text-center text-<?php echo ( $anio) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ( $anio) ? "check" : "times cursor-hover" ?>"></span>
         </td>
-        <?php if ($declaraciones): ?>
+        <?php if ((!$anio) and (!$declaraciones) and (!$mes) ): ?>
         <td class="text-center">
             <a href="<?php echo site_url('declaraciones/validar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
                 <span class="fa fa-arrow-right"></span>
@@ -105,6 +108,6 @@
         </td>
         <?php endif; ?>
     </tr>
-   
+   -->
     <?php endif; ?>
 </table>
