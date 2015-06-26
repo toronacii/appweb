@@ -1,4 +1,4 @@
-<?php $cuentas = $this->session->userdata('cuentas'); ?>
+<?php $cuentas = (object)$this->session->userdata('cuentas'); ?>
 <script type="text/javascript">
     $(function () {
         $('.datatable').dataTable({
@@ -52,12 +52,11 @@
     </div>
     <div class="col-md-9 col-lg-8">
         <?php echo form_open(site_url('gestion_usuario/registro/3'), array('class' => 'form-horizontal', "role"=>"form", 'id' => 'registro_usuario'));?>
-
-            <input type="hidden" id="data_enviada" name="data_enviada" value="<?php echo $cuentas['id_taxpayer'] ?>" />
+            <input type="hidden" id="data_enviada" name="data_enviada" value="<?php echo $cuentas->id_taxpayer ?>" />
 
             <div class="panel panel-success">
             <!-- Default panel contents -->
-                <div class="panel-heading center">Cuenta(s) Contribuyente N° <?php echo $cuentas['id_taxpayer'] ?></div>
+                <div class="panel-heading center">Cuenta(s) Contribuyente N° <?php echo $cuentas->id_taxpayer ?></div>
 
                 <table class="table center table-striped datatable" id="tableCuentas">
                     <thead>
@@ -69,7 +68,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach($cuentas['cuentas'] as $iObj=>$objCuenta): ?> 
+                    <?php foreach($cuentas->cuentas as $iObj => $objCuenta): ?> 
                     <tr>
                         <td><?php echo $iObj + 1?></td>
                         <td class='n_cuentarenta'><?php echo $objCuenta->rent_account?></td>

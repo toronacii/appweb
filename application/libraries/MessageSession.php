@@ -39,8 +39,12 @@ class MessageSession {
         if ($messages = $this->CI->session->userdata(base_url('messages'))){
             
             foreach ($messages as $type => $typeMessage)
+            {
                 foreach ($typeMessage as $message)
+                {
                     $html .= "<div class='alert alert-{$this->types->$type} flash'>$message</div>";
+                }
+            }
             
             $this->CI->session->unset_userdata(base_url('messages'));
         }
