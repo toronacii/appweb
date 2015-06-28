@@ -62,7 +62,7 @@ class Declaraciones extends MY_Controller {
         {
             $params[0] = 'NULL';
         }
-        
+        #dd($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0]));
         $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0])); 
         #d($this->id_taxpayer, 'TRUE', $params[1], $params[0]);
         #d($data['declaraciones'], $params, $this->declaraciones);
@@ -165,8 +165,10 @@ class Declaraciones extends MY_Controller {
                 'tax_activities' => ($id_sttm_form > 0) ?
                     $this->declaraciones->get_data_statement($id_sttm_form) : 
                     $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year),
-                'sttm_old' => $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year),
-                'tax_discounts' => $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month)
+                'sttm_old' => ($this->sttm_properties->closing) ?
+                    $this->declaraciones->get_sttm_sumary($id_tax, $this->sttm_properties->fiscal_year) :
+                    $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year),
+                'tax_discounts' => $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month),
             ],
             'specialized' => ($show_step_four) ? $this->declaraciones->get_tax_classifier_specialized() : []
         ]);
@@ -192,6 +194,8 @@ class Declaraciones extends MY_Controller {
     public function declarar(){
 
         $sttm_tax = $this->session->userdata('sttm_tax');
+
+        #dd($sttm_tax);
 
         if (!$sttm_tax && (!(isset($_POST)) || empty($_POST))){
             $this->unset_userdata('sttm_tax');
@@ -233,7 +237,8 @@ class Declaraciones extends MY_Controller {
                 'fiscal_year' => $this->sttm_properties->fiscal_year,
                 'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
                 'discount' => $discount,
-                'month' => $this->sttm_properties->month
+                'month' => $this->sttm_properties->month,
+                'closing' => ($this->sttm_properties->closing) ? 'TRUE' : 'FALSE'
             ),
             'toolbar' => $_POST['toolbar'] + array('id_taxpayer' => $this->id_taxpayer),
             'maps' => array(

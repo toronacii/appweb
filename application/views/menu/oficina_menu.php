@@ -67,6 +67,9 @@
                         <?php if ($tax_types[2]->total) : ?>
                         <tr><td><a href="<?php echo site_url('tramites/cedula_catastral'); ?>">Cédula catastral</a></td></tr>
                         <?php endif; ?>
+                         <?php if ($tax_types[1]->total) : ?>
+                        <tr><td><a href="<?php echo site_url('tramites/retiro'); ?>">Retiro de Licencia AE</a></td></tr>
+                        <?php endif; ?>
                         <tr><td><a href="<?php echo site_url('tramites/historico'); ?>">Histórico</a></td></tr>
                     </table>
                 </div>

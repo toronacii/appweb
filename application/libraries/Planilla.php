@@ -827,18 +827,29 @@ class Planilla {
 
             if ($is_monthly) 
             {
-                 $name_sttm = "JURADA MENSUAL";
-                 $month_text = strtoupper($CI->statement->get_month($month));
-                 $periodo_declarado = (object)[
+                $periodo_declarado = (object)[
                     'init_month' => str_pad($month, 2, "0", STR_PAD_LEFT),
                     'last_month' => str_pad($month, 2, "0", STR_PAD_LEFT),
                     'last_day' => date("t", strtotime("{$fiscal_year}-{$month}-01"))
                 ];
-                $dirImageHeader = "css/img/cabecera_declaracion_MEN.png";
-                $dirImageFooter = "css/img/pie_declaracion_MEN.png";
-                $textSttmOld = "";
-                $total_old = 0;
 
+                if ($is_closing) 
+                {
+                    $name_sttm = "DE CESE DE ACTIVIDADES";
+                    $periodo_declarado->init_month = "01";
+                    $dirImageFooter = "css/img/pie_declaracion_DEF.png";
+                    $textSttmOld = "17. DECLARACIONES ANTERIORES";
+                    $total_old = round($CI->declaraciones->get_sttm_sumary($data_planilla[0]->id_tax, $fiscal_year), 2);
+                }
+                else
+                {
+                    $name_sttm = "JURADA MENSUAL";
+                    $month_text = strtoupper($CI->statement->get_month($month));
+                    $dirImageHeader = "css/img/cabecera_declaracion_MEN.png";
+                    $dirImageFooter = "css/img/pie_declaracion_MEN.png";
+                    $textSttmOld = "";
+                    $total_old = 0;
+                }
                 #d($periodo_declarado);
 
             }
@@ -866,7 +877,20 @@ class Planilla {
             $pdf->Text(0, 150, utf8_decode("DECLARACIÓN EXTEMPORÁNEA"));
         } else {
 
-            $pdf->SetFont('Arial', '', ($is_monthly) ? 35 : 40);
+            if ($is_monthly) {
+
+                if ($is_closing) {
+                    $pdf->SetFont('Arial', '', 30);
+                }
+                else
+                {
+                    $pdf->SetFont('Arial', '', 35);
+                }
+
+            } else {
+                $pdf->SetFont('Arial', '', 40);
+            }
+            
             $pdf->Text(0, 150, utf8_decode("DECLARACION $name_sttm"));
         }
 
@@ -1031,7 +1055,8 @@ class Planilla {
         #dd($descuentos);
         
         $pdf->Cell(91, 8, $textSttmOld, 'LBR', 0, 'R');
-        $pdf->Cell(40, 8, ($is_monthly) ? "" : number_format($total_old, 2, ',', '.'), 'BR', (count($descuentos) == 0) , 'R'); #INGRESO ANTERIOR
+
+        $pdf->Cell(40, 8, ($total_old === 0) ? "" : number_format($total_old, 2, ',', '.'), 'BR', (count($descuentos) == 0) , 'R'); #INGRESO ANTERIOR
 
         #d($data_planilla[0]);
         if (count($descuentos) > 0){
@@ -1048,7 +1073,7 @@ class Planilla {
         }
         
         $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 7, ($is_monthly) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
+        $pdf->Cell(28, 7, ($is_monthly && ! $is_closing) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
         
         $pdf->SetY($pdf->GetY() + 2);
 
@@ -1331,6 +1356,63 @@ class Planilla {
 
         $pdf->Output("Recibo de pago {$data_payment->control}.pdf", 'I');
     }
+
+    function generar_recibo_retiro($data) {
+
+        extract($data);
+        #var_dump($data); exit;
+
+        $CI = & get_instance();
+        $CI->load->library('fpdf/fpdf');
+        $CI->load->model('api_model', 'tramites');
+        define('FPDF_FONTPATH', 'application/libraries/fpdf/font');
+        $pdf = new FPDF('L');
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->SetMargins(12, 10);
+        $pdf->Image('css/img/cabeceratramite.png', 10, 10, 278);
+        $pdf->Image('css/img/cuerpo_tramite.png', 10, 60, 278);
+        $pdf->Image('css/img/pie_tramite.png', 10, 150, 278);
+
+        $data_tramite = $CI->tramites->get_data_request_retiro($id_request);
+         #dd($data_tramite);
+
+        #dd($data_tramite, $data, $CI->tramites);
+
+        $fecha = date('d/m/Y', strtotime($data_tramite->request_date));  //SI ES REIMPRIMIR
+
+        $pdf->SetXY(225, 45);
+        $pdf->Cell(30, 10, "FECHA:", 0, 0, 'R');
+        $pdf->Cell(30, 10, $fecha , 0, 1, 'R');
+        $pdf->Ln(15);       
+
+        $pdf->Cell(91, 9, $data_tramite->request_code, 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 5);
+
+       # $pdf->Cell(179, 9, $data_tramite->request_type, 0, 1, 'C');
+        $pdf->Cell(179, 9, $data_tramite->request_name, 0, 1, 'C');
+        $pdf->Ln(16);
+
+        $pdf->Cell(91, 9, $taxpayer->rif, 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 5);
+        $pdf->Cell(179, 9, $taxpayer->firm_name, 0, 1, 'C');
+
+        $pdf->Ln(15);
+
+        $pdf->Cell(91, 9, $data_tramite->tax_account_number, 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 5);
+        $pdf->Cell(179, 9, $data_tramite->tax_type, 0, 1, 'C');
+
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->SetXY(50, 178);
+        $pdf->Cell(20, 5, $fecha, 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 80, 179);
+        $pdf->Cell(10, 6, 'WEB', 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 100, 179);
+        $pdf->Cell(10, 6, '1/1', 0, 0, 'C');
+        $pdf->Output();
+    }
+
 
 }
 

@@ -224,6 +224,9 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 				if (scope.show_step_four) {
 					Specialized.addSpecialized(activity);
 				}
+				if (scope.is_closing) {
+					activity.minimun_taxable = 4 * ((new Date()).getMonth() + 1);
+				}
 			});
 		})();
 
@@ -251,6 +254,7 @@ statement.controller('statementCtrl', ['$scope', 'StatementData', 'Activities', 
 	StatementData.have_discount_219 = StatementData.tax_discounts.length > 0;
 	StatementData.is_monthly = StatementData.sttm_properties.month !== "NULL";
 	StatementData.sttm_old = (StatementData.sttm_old) ? parseFloat(StatementData.sttm_old) : 0;
+	StatementData.is_closing = StatementData.sttm_properties.closing;
 	angular.extend($scope, StatementData);
 	var activities = new Activities($scope);
 	angular.extend($scope, activities);

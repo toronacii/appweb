@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Statement {
+class Statement_retirement_month {
     
     const YEAR_INI = 2009;
     const YEAR_INIT_MONTHLY = 2015;
@@ -23,8 +23,7 @@ class Statement {
         return (object)[
             'type' => is_numeric($sttm['sttm'][0]) ? 'TRUE' : $sttm['sttm'][0],
             'fiscal_year' => $sttm['sttm'][1],
-            'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL',
-            'closing' => (isset($sttm['sttm'][2]) && $sttm['sttm'][2] === 'CLOSING')
+            'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL'
         ];
     }
     
@@ -35,14 +34,13 @@ class Statement {
 
     public function get_month($number)
     {
-        return $this->months_names[$number -1];
+        return $this->months_names[$number];
     }
 
     public function get_title_statement($data_sttm, $short = false)
     {
         $year = $data_sttm[1];
         $type_month = $data_sttm[0];
-        $closing = (isset($data_sttm[2]));
 
         if ($type_month == 'TRUE')
         {
@@ -51,11 +49,6 @@ class Statement {
         else
         {
             $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month($type_month);
-
-            if ($closing) {
-                $title = 'Declaración de cese de actividades económicas';
-            }
-
         }
 
         return $title . " " . $year;
@@ -186,19 +179,8 @@ class Statement {
             'last_month' => '12',
             'last_day' => '31'
         ];
-        $r->is_closing = $data_planilla[0]->closing;
 
         return (array)$r;
-    }
-
-    public function proccess_array($array)
-    {
-        $return = [];
-        foreach ($array as $id => $arr) {
-            $return[$id] = array_keys($arr)[0];
-        }
-
-        return $return;
     }
 
 }

@@ -14,7 +14,7 @@
 				<tr class="tooltip-breakline">
 					<td><span title="<?php echo $account->html_tax_information_condensed ?>"><?php echo $account->tax_account_number?></span></td>
 					<td>
-						<button type="button" class="btn btn-default btn-md btn-modal" title="Verificar requisitos" data-toggle="modal" data-target="#modal-solvencia">
+						<button type="button" class="btn btn-default btn-md btn-modal" title="Verificar requisitos" data-toggle="modal" data-target="<?php echo (isset($modal_target) ? $modal_target : "#modal-solvencia") ?>">
 							<span class="glyphicon glyphicon-new-window span-data" 
 							data-id-tax-type="<?php echo $account->id_tax_type ?>" 
 							data-id-tax="<?php echo $account->id_tax ?>" 

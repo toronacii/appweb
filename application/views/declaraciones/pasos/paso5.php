@@ -11,7 +11,7 @@
         <input type="hidden" name="objGoogleMaps" id="objGoogleMaps"/>
     </div>
     <div class="panel panel-primary">
-        <div class="panel-heading center"><span ng-bind="title_statement"></span><!--<?php echo $this->statement->get_title_statement($sttm) ?>--></div>
+        <div class="panel-heading center"><span ng-bind="title_statement"></span></div>
         <table class="table table-declaracion">
             <thead>
                 <tr>
@@ -71,10 +71,19 @@
                         <span class="input-span form-control" ng-bind="totals.discount_219 | number_format"></span>
                     </td>
                 </tr>
-                <tr ng-if="is_monthly">
+                <tr ng-if="is_monthly && ! is_closing">
                     <td colspan="{{ have_percent_discount ? 7 : 5 }}">&nbsp;</td>
                     <td>
                         <strong class="titulillo">TOTAL IMPUESTO MENSUAL</strong><br>
+                        <span class="input-span form-control" ng-bind="totals.total | number_format"></span>
+                    </td>
+                </tr>
+                <tr ng-if="is_monthly && is_closing">
+                    <td colspan="2"><strong style="font-size:0.9em">DJMs <span ng-bind="sttm_properties.fiscal_year"></span> Bs:</strong></td>
+                    <td><strong style="font-size:0.9em; font-weight: bold" ng-bind="sttm_old | number_format"></strong></td>
+                    <td colspan="{{ have_percent_discount ? 4 : 2 }}">&nbsp;</td>
+                    <td>
+                        <strong class="titulillo">COMPLEMENTO</strong><br>
                         <span class="input-span form-control" ng-bind="totals.total | number_format"></span>
                     </td>
                 </tr>
