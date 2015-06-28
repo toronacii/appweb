@@ -24,7 +24,7 @@ class Statement {
             'type' => is_numeric($sttm['sttm'][0]) ? 'TRUE' : $sttm['sttm'][0],
             'fiscal_year' => $sttm['sttm'][1],
             'month' => is_numeric($sttm['sttm'][0]) ? $sttm['sttm'][0] : 'NULL',
-            'closing' => ($sttm['sttm'][2] === 'CLOSING') ? 'TRUE' : 'FALSE'
+            'closing' => (isset($sttm['sttm'][2]) && $sttm['sttm'][2] === 'CLOSING')
         ];
     }
     
@@ -50,7 +50,12 @@ class Statement {
         }
         else
         {
-            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual' . ($closing ? ' de cierre' : '') . ' de ingresos brutos ') . $this->get_month($type_month);
+            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month($type_month);
+
+            if ($closing) {
+                $title = 'Declaración de cese de actividades económicas';
+            }
+
         }
 
         return $title . " " . $year;
@@ -181,6 +186,7 @@ class Statement {
             'last_month' => '12',
             'last_day' => '31'
         ];
+        $r->is_closing = $data_planilla[0]->closing;
 
         return (array)$r;
     }

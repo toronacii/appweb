@@ -104,7 +104,7 @@ class Generar_planilla extends MY_Controller {
     }
 
     //IMPRIMIR RECIBO RETIRO
-    public  function imprime_retiro($id_invoice = NULL){
+    public  function imprime_retiro($id_request = NULL){
 
         $this->load->library('Planilla.php');
         $planilla = new Planilla();

@@ -150,8 +150,8 @@ class Tramites extends MY_Controller {
         $data['errores_declaraciones'] = implode('<br>', $this->tramites->declaraciones_anteriores($id_tax));
         $data['passed'] &= count($data['errores_declaraciones']) == 0;
         
-        $data['passed'] &= $data['tiene_mensual'] = $this->tramites->have_month($id_tax);
-        $data['passed'] &= $data['tiene_cese'] = $this->tramites->have_year($id_tax);
+        $data['passed'] &= $data['tiene_mensual'] = $this->tramites->have_statement($id_tax);
+        $data['passed'] &= $data['tiene_cese'] = $this->tramites->have_statement($id_tax, true);
 
         #dd($data);
         $this->load->view('tramites/partials/table_retiro_validation', $data);
@@ -162,18 +162,17 @@ class Tramites extends MY_Controller {
     }
 
     // INSERTAR RETIRO
-     public function crear_retiro()
+    public function crear_retiro()
     {
         $id_taxpayer = $this->session->userdata('taxpayer');
         $id_tax = $_POST['id_tax'];
-        $this->tramites->post_retiro($id_tax,$id_taxpayer->id_taxpayer);
-        #dd( $this->tramites);
+        $id_request = $this->tramites->post_retiro($id_tax, $id_taxpayer->id_taxpayer);
       
         #dd($_POST['id_tax']);
        // redirect('controller/action/params')
 
-            $this->session->set_userdata('id_invoice', $id_invoice);
-            redirect(site_url('generar_planilla/imprime_retiro'));
+        $this->session->set_userdata('id_request', $id_request);
+        redirect(site_url('generar_planilla/imprime_retiro'));
 
     }
 
@@ -271,12 +270,12 @@ class Tramites extends MY_Controller {
         $this->load->view('footer');
     }  
 
-    public function set_session_statement ($id_tax)
+    public function set_session_statement ($id_tax, $closing = false)
     {
         $tax_account_number = $_SESSION['taxes'][$id_tax]->tax_account_number;
 
         $_SESSION["sttm_tax"] = [
-            'sttm' => [date("m"), date("Y"), 'CLOSING'],
+            'sttm' => [date("m"), date("Y")],
             'tax' => [
                 $tax_account_number => (object) [
                     'id_tax' => $id_tax,
@@ -284,6 +283,10 @@ class Tramites extends MY_Controller {
                 ]
             ]
         ];
+
+        if ($closing) {
+           $_SESSION["sttm_tax"]['sttm'][2] = 'CLOSING'; 
+        }
              
 
         redirect("declaraciones/crear/$tax_account_number");

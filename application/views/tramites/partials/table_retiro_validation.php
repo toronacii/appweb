@@ -80,7 +80,7 @@
         </td>
         <?php if (! $errores_declaraciones && $tiene_mensual && ! $tiene_cese): ?>
         <td class="text-center">
-            <a href="<?php echo site_url('declaraciones/validar_anio') ?>" class="btn btn-default" title="ir a declaracióm anual">
+            <a href="<?php echo site_url("tramites/set_session_statement/$id_tax/true") ?>" class="btn btn-default" title="ir a declaración de cese">
                 <span class="fa fa-arrow-right"></span>
             </a>
         </td>
