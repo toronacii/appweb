@@ -36,11 +36,8 @@ define('FOPEN_READ_WRITE_CREATE'             , 	'a+b');
 define('FOPEN_WRITE_CREATE_STRICT'           , 	'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT'      , 	'x+b');
 define('TITLE_APP'                           , 	'Alcaldía WEB');
+
 define('API_DIR'                            ,     'http://172.16.1.2/api.appweb/api/v1');
-
-define('ONLINE_PAYMENT', "http://172.16.1.8/online_payment/api/");
-define('BANESCO_ONLINE', "https://payment.megasoft.com.ve/payment/action/paymentgatewayuniversal-data?control=");
-
 define('IS_OFFLINE', FALSE);
 
 /* End of file constants.php */
