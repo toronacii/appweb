@@ -101,7 +101,7 @@ class Planillas_pago extends MY_Controller {
 			#PAGO EN LINEA
 			if (@$_POST['action'] == 'pagar')
 			{
-				redirect(site_url("planillas_pago/pago_online/$id_invoice"));
+				redirect(site_url("pago_online/index/$id_invoice"));
 			}
 
 		}else{
@@ -197,7 +197,7 @@ class Planillas_pago extends MY_Controller {
 			#PAGO EN LINEA
 			if ($_POST['action'] == 'pagar')
 			{
-				redirect(site_url("planillas_pago/pago_online/$id_invoice"));
+				redirect(site_url("pago_online/index/$id_invoice"));
 			}
 
 
@@ -257,7 +257,7 @@ class Planillas_pago extends MY_Controller {
 			#PAGO EN LINEA
 			if ($_POST['action'] == 'pagar')
 			{
-				redirect(site_url("planillas_pago/pago_online/$id_invoice"), 'refresh');
+				redirect(site_url("pago_online/index/$id_invoice"), 'refresh');
 			}
 
 		}else{
@@ -322,49 +322,15 @@ class Planillas_pago extends MY_Controller {
 
 	}
 
-	public function pago_online($id_invoice)
-	{
-		#dd($_SERVER);
-		if (! ($id_invoice) || ! preg_match('/^[\d]+$/', $id_invoice))
-		{
-			redirect(site_url());
-		}
-		#$id_invoice = '455323';
-
-		$data = array(
-			'id_invoice' => $id_invoice,
-			'pagina' => $this->session->userdata('uri_pago_online')
-		);
-
-		#$this->session->unset_userdata('uri_pago_online');
-
-		$url = ONLINE_PAYMENT . "get_new_control"; 
-		$resp = json_decode($this->curl->simple_post($url, $data));
-
-		#dd($data, $resp, $this->curl->error_string);
-
-		if ($resp->control)
-		{
-			redirect(BANESCO_ONLINE . $resp->control);
-		}
-		else
-		{
-			echo $resp->error;
-		}
-
-		#https://200.71.151.226:8443/payment/action/paymentgatewayuniversal-data?control=13535633346
-
-	}
-
 	public function show_invoice_megasoft($control)
-	{
-		$online_payment = $this->planillas->get_online_payment($control);
+    {
+        $online_payment = $this->planillas->get_online_payment($control);
 
-		$this->session->set_userdata('control', $online_payment->control);
+        $this->session->set_userdata('control', $online_payment->control);
 
-		$this->load->view('planillas_pago/invoice_megasoft', $online_payment);
+        $this->load->view('planillas_pago/invoice_megasoft', $online_payment);
 
-		$this->load->view('footer');
-	}
+        $this->load->view('footer');
+    }
 
 }
