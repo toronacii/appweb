@@ -34,7 +34,7 @@ class Pago_Online extends MY_Controller {
         try
         {
             $control_number = $this->payment->set_control_number($id_invoice, $url_origin);
-            $config = (object)$this->CI->config->config['megasoft'];
+            $config = (object)$this->config->config['megasoft'];
             redirect(str_replace("@control", $control_number, $config->redirect));
         }
         catch (Exception $e) {
