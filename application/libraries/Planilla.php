@@ -815,10 +815,10 @@ class Planilla {
         #dd($CI->statement->get_init_vars($data_planilla));
 
         $total_old = round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year, $month), 2);
-
+         $name_montly = "DETERMINACIÓN DE IMPUESTO ";
         if ($data_planilla[0]->type == 'TRUE'){ #DEFINITIVA
             $dirImageHeader = "css/img/cabecera_declaracion_DEF.png";
-            $dirImageFooter = "css/img/pie_declaracion_DEF.png";
+            $dirImageFooter = "css/img/pie_declaracion_DEF_.png";
             $name_sttm = "DEFINITIVA";
             $year_tax_unit = $fiscal_year;
             if (strtotime($data_planilla[0]->statement_date) < strtotime('2013-09-27') && $fiscal_year == 2012)
@@ -835,18 +835,20 @@ class Planilla {
 
                 if ($is_closing) 
                 {
-                    $name_sttm = "DE CESE DE ACTIVIDADES";
+                    $name_sttm = "DE CESE DE ACTIVIDADES ECONÓMICAS";
+                    $name_montly = " ";
                     $periodo_declarado->init_month = "01";
-                    $dirImageFooter = "css/img/pie_declaracion_DEF.png";
+                    $dirImageFooter = "css/img/pie_declaracion_MEN_.png"; //pie_declaracion_DEF_
                     $textSttmOld = "17. DECLARACIONES ANTERIORES";
                     $total_old = round($CI->declaraciones->get_sttm_sumary($data_planilla[0]->id_tax, $fiscal_year), 2);
                 }
                 else
                 {
                     $name_sttm = "JURADA MENSUAL";
+                    $name_montly = "DETERMINACIÓN DE IMPUESTO ";
                     $month_text = strtoupper($CI->statement->get_month($month));
-                    $dirImageHeader = "css/img/cabecera_declaracion_MEN.png";
-                    $dirImageFooter = "css/img/pie_declaracion_MEN.png";
+                    $dirImageHeader = "css/img/cabecera_declaracion_.png";
+                    $dirImageFooter = "css/img/pie_declaracion_MEN_.png";
                     $textSttmOld = "";
                     $total_old = 0;
                 }
@@ -858,6 +860,7 @@ class Planilla {
             $dirImageHeader = "css/img/cabecera_declaracion.png";
             $dirImageFooter = "css/img/pie_declaracion.png";
             $name_sttm = "ESTIMADA";
+            $name_montly = "DETERMINACIÓN DE IMPUESTO ";
             $year_tax_unit = $fiscal_year - 1;
             $textSttmOld = "17. INGRESOS DEFINITIVOS ". ($fiscal_year - 2);
         }
@@ -905,7 +908,7 @@ class Planilla {
 
         $pdf->setXY(6, 5);
         $pdf->Cell(0, 3, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE"), 0, 1, 'C');
-        $pdf->Cell(0, 3, utf8_decode("DETERMINACIÓN DE IMPUESTO " . strtoupper($month_text) . " {$fiscal_year}"), 0, 0, 'C');
+        $pdf->Cell(0, 3, utf8_decode($name_montly . strtoupper($month_text) . " {$fiscal_year}"), 0, 0, 'C');
 
         $pdf->SetFont('Arial', '', 7);
         $pdf->SetY(22);
@@ -1035,8 +1038,8 @@ class Planilla {
         $pdf->Cell(91, 8, 'TOTAL INGRESOS BRUTOS DECLARADOS', 'LBR', 0, 'R');
         $pdf->Cell(40, 8, number_format($total_bruto, 2, ',', '.'), 'BR', 0, 'R');  #TOTAL INGRESOS BRUTOS
 
-        $pdf->Cell(45, 8, 'TOTAL IMPUESTO ANUAL', 'BR', 0, 'C');
-        $pdf->Cell(33, 8, number_format(round($total_impuesto_reb, 2), 2, ',', '.'), 'BR', 0, 'R'); #TOTAL IMPUESTO ANUAL
+        $pdf->Cell(45, 8, 'SUB-TOTAL IMPUESTO', 'BR', 0, 'C');
+        $pdf->Cell(33, 8, number_format(round($total_impuesto_reb, 2), 2, ',', '.'), 'BR', 0, 'R'); #TOTAL IMPUESTO
         $x = $pdf->GetX();
         $y = $pdf->GetY();
         $pdf->Multicell(15, 4, "TOTAL\nREBAJA", 'BR', 0);
@@ -1390,7 +1393,7 @@ class Planilla {
         $pdf->SetX($pdf->GetX() + 5);
 
        # $pdf->Cell(179, 9, $data_tramite->request_type, 0, 1, 'C');
-        $pdf->Cell(179, 9, $data_tramite->request_name, 0, 1, 'C');
+        $pdf->Cell(179, 9,"Solicitud de Retiro de Licencia de Actividades Economicas", 0, 1, 'C');
         $pdf->Ln(16);
 
         $pdf->Cell(91, 9, $taxpayer->rif, 0, 0, 'C');
