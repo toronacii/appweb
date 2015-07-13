@@ -33,7 +33,7 @@
 					<a href="<?php echo site_url("generar_planilla/$action/$planilla->id") ?>" class="btn btn-info" title="Imprimir" target="_blank"><li class="fa fa-file-text-o fa-lg"></li></a>
 				<?php if (! $status): ?>
 					<?php if (! $this->session->userdata('eventual')): # CONTRIBUYENTE LOGUEADO ?> 
-					<a href="<?php echo site_url("planillas_pago/pago_online/{$planilla->id}") ?>" class="btn btn-primary" title="Pagar en línea" target="_blank"><li class="fa fa-money fa-lg"></li></a>
+					<a href="<?php echo site_url("pago_online/index/{$planilla->id}") ?>" class="btn btn-primary" title="Pagar en línea" target="_blank"><li class="fa fa-money fa-lg"></li></a>
 					<?php endif; ?>
 					<a href="<?php echo site_url("planillas_pago/delete/{$planilla->id}") ?>" class="btn btn-danger delete_planilla" title="Eliminar"><li class="fa fa-times fa-lg"></li></a>
 				<?php endif; ?>
