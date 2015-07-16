@@ -871,7 +871,7 @@ class Planilla {
         $pdf->Image($dirImageFooter, 5, 145, 269);
 
         $pdf->SetTextColor(215, 215, 215);
-        $pdf->Rotate(20);
+        $pdf->Rotate(19);
 
         #var_dump($data_planilla);exit;
 
@@ -883,18 +883,18 @@ class Planilla {
             if ($is_monthly) {
 
                 if ($is_closing) {
-                    $pdf->SetFont('Arial', '', 30);
+                    $pdf->SetFont('Arial', '', 22);
                 }
                 else
                 {
-                    $pdf->SetFont('Arial', '', 35);
+                    $pdf->SetFont('Arial', '', 40);
                 }
 
             } else {
                 $pdf->SetFont('Arial', '', 40);
             }
             
-            $pdf->Text(0, 150, utf8_decode("DECLARACION $name_sttm"));
+            $pdf->Text(0, 138, utf8_decode("DECLARACION $name_sttm"));
         }
 
         if ($data_planilla[0]->change_audit == 't'){ #MONTOS MODIFICADOS POR AUDITORIA
@@ -1074,9 +1074,9 @@ class Planilla {
             }
 
         }
-        
-        $pdf->SetXY(-34, $pdf->GetY() + 2);
-        $pdf->Cell(28, 7, ($is_monthly && ! $is_closing) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
+        //MONTO VARIANTE
+        $pdf->SetXY(-34, $pdf->GetY() + 1);
+        $pdf->Cell(50, 7, ($is_monthly && ! $is_closing) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
         
         $pdf->SetY($pdf->GetY() + 2);
 
@@ -1122,7 +1122,7 @@ class Planilla {
 
         @$pdf->SetY($pdf->GetY() + 10);
 
-        $pdf->Cell(190, 4, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO {$month_text} {$fiscal_year}"), x_, 0, 'C');
+        $pdf->Cell(220, 4, utf8_decode("PLANILLA DE DECLARACIÓN $name_sttm MUNICIPIO SUCRE DETERMINACIÓN IMPUESTO {$month_text} {$fiscal_year}"), x_, 0, 'C');
         $pdf->Cell(0, 4, "CONTRIBUYENTE", x_, 1, 'C');
 
         $pdf->Output("DDI_{$CI->uri->segment(3)}.pdf", 'I');
