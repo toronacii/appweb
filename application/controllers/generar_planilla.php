@@ -73,7 +73,7 @@ class Generar_planilla extends MY_Controller {
 
     function imprime_pago_megasoft($control)
     {
-        if (! $control = $this->session->userdata('control'))
+        if (! in_array($control, $this->session->userdata('control')))
         {
             redirect(site_url());
         }
