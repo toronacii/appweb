@@ -45,6 +45,19 @@ statement.directive('currency', ['$filter', function($filter) {
     };
 }]);
 
+statement.directive('title', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            $(element).hover(function(){
+                $(element).tooltip('show');
+            }, function(){
+                $(element).tooltip('hide');
+            });
+        }
+    };
+});
+
 statement.service('Specialized', ['TaxClassifierSpecialized', function(TaxClassifierSpecialized) {
 
 	return {
