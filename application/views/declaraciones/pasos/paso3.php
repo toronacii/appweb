@@ -43,7 +43,7 @@
             <div class="list-activities">
                 <div class="list-group">
 
-                    <div ng-repeat="activity in tax_activities | filter:find_activity" title="{{ activity.full_title }}">
+                    <div ng-repeat="activity in tax_activities | filter:find_tax_activity" title="{{ activity.full_title }}">
                         <a ng-if="! activity.authorized" href="" class="nowrap list-group-item" ng-class="{active: activity.selected}" ng-click="activity.selected = !activity.selected">
                             <strong ng-bind="activity.code"></strong> - <span ng-bind="activity.full_title"></span>
                         </a>

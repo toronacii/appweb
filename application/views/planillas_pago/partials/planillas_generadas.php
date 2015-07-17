@@ -30,7 +30,11 @@
 				<td><?php echo number_format($planilla->total_amount, 2, ',', '.') ?></td>
 				<td>
 					<?php $action = ($planilla->invoice_type == 5) ? 'unificada' : 'imprime_planilla' ?>
-					<a href="<?php echo site_url("generar_planilla/$action/$planilla->id") ?>" class="btn btn-info" title="Imprimir" target="_blank"><li class="fa fa-file-text-o fa-lg"></li></a>
+					<a href="<?php echo site_url("generar_planilla/$action/$planilla->id") ?>" class="btn btn-info" title="Imprimir Planilla" target="_blank"><li class="fa fa-file-text-o fa-lg"></li></a>
+					<?php if (! $this->session->userdata('eventual') && $status && $planilla->control): ?>
+					<a href="<?php echo site_url("generar_planilla/imprime_pago_megasoft/$planilla->control") ?>" class="btn btn-success" title="Imprimir Voucher" target="_blank"><li class="fa fa-file-text-o fa-lg"></li></a>
+					<?php $control[] = $planilla->control ?>
+					<?php endif; ?>
 				<?php if (! $status): ?>
 					<?php if (! $this->session->userdata('eventual')): # CONTRIBUYENTE LOGUEADO ?> 
 					<a href="<?php echo site_url("pago_online/index/{$planilla->id}") ?>" class="btn btn-primary" title="Pagar en línea" target="_blank"><li class="fa fa-money fa-lg"></li></a>
@@ -39,7 +43,7 @@
 				<?php endif; ?>
 				</td>
 			</tr>
-		<?php endforeach; ?>
+		<?php endforeach; if (isset($control)) $this->session->set_userdata("control", $control) ?>
 		</tbody>
 	</table>
 	<!--

@@ -284,7 +284,7 @@ class Planillas_pago extends MY_Controller {
 
 		$planillas = $this->planillas->get_planillas_pago($data['taxpayer']->id_taxpayer, $id_tax);
 
-		#echo "<pre>"; print_r($this->planillas->errors->message); var_dump($planillas, $this->planillas); exit;
+		#dd($this->planillas, $planillas);
 
 		foreach ($planillas as $planilla)
 		{
@@ -326,7 +326,7 @@ class Planillas_pago extends MY_Controller {
     {
         $online_payment = $this->planillas->get_online_payment($control);
 
-        $this->session->set_userdata('control', $online_payment->control);
+        $this->session->set_userdata('control', [$online_payment->control]);
 
         $this->load->view('planillas_pago/invoice_megasoft', $online_payment);
 
