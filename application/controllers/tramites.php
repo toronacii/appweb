@@ -92,6 +92,12 @@ class Tramites extends MY_Controller {
         redirect(site_url('generar_planilla/imprime_solvencia'));
     }
 
+    public function imprimir_retiro($id_request)
+    {
+        $this->session->set_userdata('id_request', $id_request);
+        redirect(site_url('generar_planilla/imprime_retiro'));
+    }
+
     public function ajax_get_table_validations($id_tax, $type_tramite = 1)
     {
 
@@ -242,8 +248,8 @@ class Tramites extends MY_Controller {
         $data['taxpayer'] = $this->session->userdata('taxpayer');
         $data['tax_types'] = $this->session->userdata('tax_types');
         $data['tramites'] = $this->tramites->get_solvencias_taxpayer($data['taxpayer']->id_taxpayer);
-
-        #d($data, $this->tramites);
+        $data['tramites_retiro'] = $this->tramites->get_retiro_taxpayer($data['taxpayer']->id_taxpayer);
+        #dd($data, $this->tramites);
 
         $this->load->view('tramites/historico', $data);
 

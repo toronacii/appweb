@@ -1363,7 +1363,7 @@ class Planilla {
     function generar_recibo_retiro($data) {
 
         extract($data);
-        #var_dump($data); exit;
+       # var_dump($data); exit;
 
         $CI = & get_instance();
         $CI->load->library('fpdf/fpdf');
@@ -1380,7 +1380,7 @@ class Planilla {
         $data_tramite = $CI->tramites->get_data_request_retiro($id_request);
          #dd($data_tramite);
 
-        #dd($data_tramite, $data, $CI->tramites);
+        #dd($data_tramite, $data, $CI->tramites,$id_request);
 
         $fecha = date('d/m/Y', strtotime($data_tramite->request_date));  //SI ES REIMPRIMIR
 
