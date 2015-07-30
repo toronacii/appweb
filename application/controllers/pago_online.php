@@ -14,10 +14,10 @@ class Pago_Online extends MY_Controller {
 
         if (! $this->id_taxpayer = $this->session->userdata('taxpayer')->id_taxpayer)
         {
-            if ($this->uri->segment(2) === 'compensate' && $_SERVER['SERVER_ADDR'] === '200.75.140.58') {
+            if ($this->uri->segment(2) === 'compensate' && $_SERVER['SERVER_NAME'] === '200.75.140.58') {
                 redirect('http://190.60.39.50' . $_SERVER['REQUEST_URI']);
             }
-            
+
             redirect(base_url());
         }
 
