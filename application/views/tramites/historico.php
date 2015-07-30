@@ -71,6 +71,7 @@
                                 <th>N° de trámite</th>
                                 <th>Fecha</th>
                                 <th>Tipo</th>
+                                <th>Estatus</th>
                                 <th>Reimprimir</th>
                             </tr>
                         </thead>
@@ -85,6 +86,7 @@
                                     Retiro de Licencias de Actividades Económicas
                                 <?php endif; ?>
                                 </td>
+                                 <td><?php echo $tramite->status ?></td>
                                 <td><a href="<?php echo site_url("tramites/imprimir_retiro/$tramite->id") ?>" class="btn btn-info" target="_blank" title="Imprimir">
                                     <li class="fa fa-file-text-o fa-lg"></li></a>
                                 </td>
