@@ -38,7 +38,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT'      , 	'x+b');
 define('TITLE_APP'                           , 	'Alcaldía WEB');
 
 define('API_DIR'                            ,     'http://172.16.1.2/api.appweb/api/v1');
-define('IS_OFFLINE', TRUE);
+define('IS_OFFLINE', FALSE);
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
