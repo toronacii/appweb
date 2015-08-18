@@ -31,10 +31,10 @@
     </tr>
     <tr>
         <th>Procesos Administrativos</th>
-        <td class="text-center text-<?php echo (!$no_procedimientos) ? "primary" : "danger" ?>">
-            <span class="fa fa-2x fa-<?php echo (!$no_procedimientos) ? "check" : "times" ?>"></span>
+        <td class="text-center text-<?php echo ($no_procedimientos) ? "primary" : "danger" ?>">
+            <span class="fa fa-2x fa-<?php echo ($no_procedimientos) ? "check" : "times" ?>"></span>
         </td>
-        <?php if ( $no_procedimientos): ?>
+        <?php if ( ! $no_procedimientos): ?>
         <td class="text-center">
             <a href="<?php echo site_url('tramites/procesos_administrativos') ?>" class="btn btn-default" title="ir a procesos administrativos">
                 <span class="fa fa-arrow-right"></span>
