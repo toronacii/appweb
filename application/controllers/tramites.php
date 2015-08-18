@@ -148,11 +148,11 @@ class Tramites extends MY_Controller {
 
         $data['passed'] &= $data['tiene_tasa'] = $this->tramites->have_tasa_paid($id_tax);
         $data['passed'] &= $data['esta_solvente'] = $this->tramites->esta_solvente($id_tax);
-        $data['passed'] &= $data['no_procedimientos'] =  (
+        $data['passed'] &= $data['no_procedimientos'] =  ( 
             $this->tramites->get_procedimiento_auditoria_retiro($id_tax) || 
             $this->tramites->get_procedimiento_fiscalizacion_retiro($id_tax)
         );
-
+        #dd($data);
         $data['errores_declaraciones'] = implode('<br>', $this->tramites->declaraciones_anteriores($id_tax));
         $data['passed'] &= count($data['errores_declaraciones']) == 0;
         
