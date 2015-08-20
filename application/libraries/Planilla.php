@@ -1363,7 +1363,7 @@ class Planilla {
     function generar_recibo_retiro($data) {
 
         extract($data);
-        #var_dump($data); exit;
+       # var_dump($data); exit;
 
         $CI = & get_instance();
         $CI->load->library('fpdf/fpdf');
@@ -1375,12 +1375,12 @@ class Planilla {
         $pdf->SetMargins(12, 10);
         $pdf->Image('css/img/cabeceratramite.png', 10, 10, 278);
         $pdf->Image('css/img/cuerpo_tramite.png', 10, 60, 278);
-        $pdf->Image('css/img/pie_tramite.png', 10, 150, 278);
+        $pdf->Image('css/img/pie_tramite_retiro.png', 40, 130, 200);
 
         $data_tramite = $CI->tramites->get_data_request_retiro($id_request);
          #dd($data_tramite);
 
-        #dd($data_tramite, $data, $CI->tramites);
+        #dd($data_tramite, $data, $CI->tramites,$id_request);
 
         $fecha = date('d/m/Y', strtotime($data_tramite->request_date));  //SI ES REIMPRIMIR
 
@@ -1402,17 +1402,17 @@ class Planilla {
 
         $pdf->Ln(15);
 
-        $pdf->Cell(91, 9, $data_tramite->tax_account_number, 0, 0, 'C');
+        $pdf->Cell(91, 7, $data_tramite->tax_account_number, 0, 0, 'C');
         $pdf->SetX($pdf->GetX() + 5);
         $pdf->Cell(179, 9, $data_tramite->tax_type, 0, 1, 'C');
 
         $pdf->SetFont('Arial', '', 11);
-        $pdf->SetXY(50, 178);
-        $pdf->Cell(20, 5, $fecha, 0, 0, 'C');
-        $pdf->SetX($pdf->GetX() + 80, 179);
-        $pdf->Cell(10, 6, 'WEB', 0, 0, 'C');
-        $pdf->SetX($pdf->GetX() + 100, 179);
-        $pdf->Cell(10, 6, '1/1', 0, 0, 'C');
+        $pdf->SetXY(10, 178);
+       // $pdf->Cell(40, 5, $fecha, 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 80, 200);
+       // $pdf->Cell(10, 10, 'WEB', 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + 170, 200);
+        $pdf->Cell(15, 6, 'Operador: WEB', 0, 0, 'C');
         $pdf->Output();
     }
 
