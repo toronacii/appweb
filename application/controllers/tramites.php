@@ -145,8 +145,8 @@ class Tramites extends MY_Controller {
         $data['id_tax'] = $id_tax;
         $data['taxpayer'] = $this->session->userdata('taxpayer');
         $data['passed'] = true;
-
-        $data['passed'] &= $data['tiene_tasa'] = $this->tramites->have_tasa_paid($id_tax);
+        $type = 'retiro';
+        $data['passed'] &= $data['tiene_tasa'] = $this->tramites->have_tasa_paid_retiro($id_tax);
         $data['passed'] &= $data['esta_solvente'] = $this->tramites->esta_solvente($id_tax);
         $data['passed'] &= $data['no_procedimientos'] =  ( 
             $this->tramites->get_procedimiento_auditoria_retiro($id_tax) || 
