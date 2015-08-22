@@ -6,7 +6,7 @@
         </td>
         <?php if (! $tiene_tasa): ?>
         <td class="text-center">
-            <form method="POST" action="<?php echo site_url('planillas_pago/tasas_confirmation') ?>" id="form-tasa">
+            <form method="POST" action="<?php echo site_url('planillas_pago/tasas') ?>" id="form-tasa">
                 <input type="hidden" name="id_tax"  value="<?php echo $id_tax ?>">
                 <input type="hidden" name="id_tasa" value="<?php echo ($id_tax_type == 1) ? 6 : 5 ?>">
                 <button class="btn btn-default" title="ir a pago de tasas">
