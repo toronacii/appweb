@@ -85,6 +85,7 @@
         </div>
     <?php endif; ?>
     <?php #if ($tax_types[4]->total || $tax_types[5]->total): # PUBLICIDAD FIJA O EVENTUAL?>
+    <!--
     <div class="panel panel-default">
         <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
             <h4 class="panel-title">
@@ -99,6 +100,7 @@
             </div>
         </div>
     </div>
+    -->
     <?php #endif; ?>
     <?php if ($this->session->userdata('usuario_appweb')): ?>
     <div class="panel panel-default no-collapse">
