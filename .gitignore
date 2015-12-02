@@ -8,3 +8,7 @@ application/cache/*
 application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
+appweb.phpproj
+appweb.sln
+appweb.v12.suo
+appweb.phpproj.user

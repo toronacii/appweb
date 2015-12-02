@@ -50,7 +50,7 @@ class Declaraciones extends MY_Controller {
             $this->form_validation->run();
         }
 
-        $_SESSION['sttm_tax']['sttm'] = $param;
+        $_SESSION['sttm_tax']['sttm'] = $param->toString();
 
         $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($param); 
         
@@ -81,7 +81,7 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/detalle_view',$data);
     }
 
-    private function getSteps($sttm)
+    private function getSteps()
     {
         $steps = [
             "Actualice sus datos",
@@ -92,7 +92,7 @@ class Declaraciones extends MY_Controller {
             "Finalizar proceso"
         ];
 
-        if (! $this->statement->show_step_specified_activities($sttm))
+        if (! $this->sttm_properties->show_step_specified_activities())
         {
             unset($steps[3]);
             return array_values($steps);
@@ -104,7 +104,8 @@ class Declaraciones extends MY_Controller {
     public function crear($tax_account_number = NULL)
     {
         $sttm_tax = $this->session->userdata('sttm_tax');
-        $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
+        
+        $this->sttm_properties = new StatementOption($sttm_tax['sttm']);
 
         if ( !(
                 $tax_account_number && #NO EXISTE ALGUN PARAMETRO
@@ -138,24 +139,26 @@ class Declaraciones extends MY_Controller {
         $header['show_breadcrumbs'] = FALSE;
         $this->load->view('header', $header);
 
-        $show_step_four = $this->statement->show_step_specified_activities($sttm_only);
+        $show_step_four = $this->sttm_properties->show_step_specified_activities();
+
+        $sttm_type = "TRUE";
 
         $this->load->view('declaraciones/pasos/pasos', [
             'statementData' => [
-                'steps' => $this->getSteps($sttm_only),
-                'title_statement' => $this->statement->get_title_statement($sttm_only),
+                'steps' => $this->getSteps(),
+                'title_statement' => $this->sttm_properties->get_title(),
                 'sttm_properties' => $this->sttm_properties,
                 'show_step_four' => $show_step_four,
                 'taxpayer' => $this->declaraciones->datos_taxpayer($id_tax),
-                'tax_unit' => $this->declaraciones->get_tax_unit($this->sttm_properties->fiscal_year),
-                'activities' => $this->declaraciones->get_activities($this->sttm_properties->fiscal_year),
+                'tax_unit' => $this->declaraciones->get_tax_unit($this->sttm_properties->year),
+                'activities' => $this->declaraciones->get_activities($this->sttm_properties->year),
                 'tax_activities' => ($id_sttm_form > 0) ?
                     $this->declaraciones->get_data_statement($id_sttm_form) : 
-                    $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->fiscal_year),
+                    $this->declaraciones->tax_activities($id_tax, $this->sttm_properties->year),
                 'sttm_old' => ($this->sttm_properties->closing) ?
-                    $this->declaraciones->get_sttm_sumary($id_tax, $this->sttm_properties->fiscal_year) :
-                    $this->declaraciones->get_total_sttm($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year),
-                'tax_discounts' => $this->declaraciones->get_tax_discounts($id_tax, $this->sttm_properties->type, $this->sttm_properties->fiscal_year, $this->sttm_properties->month),
+                    $this->declaraciones->get_sttm_sumary($id_tax, $this->sttm_properties->year) :
+                    $this->declaraciones->get_total_sttm($id_tax, $sttm_type, $this->sttm_properties->year),
+                'tax_discounts' => $this->declaraciones->get_tax_discounts($id_tax, $sttm_type, $this->sttm_properties->year, $this->sttm_properties->month),
             ],
             'specialized' => ($show_step_four) ? $this->declaraciones->get_tax_classifier_specialized() : []
         ]);
@@ -221,7 +224,7 @@ class Declaraciones extends MY_Controller {
             'function' => array(
                 'id_tax' => $id_tax,
                 'type' => 'TRUE',
-                'fiscal_year' => $this->sttm_properties->fiscal_year,
+                'fiscal_year' => $this->sttm_properties->year,
                 'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
                 'discount' => $discount,
                 'month' => $this->sttm_properties->month,

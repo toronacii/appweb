@@ -121,7 +121,7 @@ statement.service('CalculateTax', [function(){
 				activity.total_tax = (100 - activity.percent_discount) * activity.tax / 100;
 				
 				// CALCULATE MINIMUN FOR STATEMENTS <= 2010
-				if (scope.sttm_properties.fiscal_year <= 2010 && activity.percent_discount < 100) {
+				if (scope.sttm_properties.year <= 2010 && activity.percent_discount < 100) {
 					var minimun = activity.minimun_taxable * scope.tax_unit.value;
 					if (activity.total_tax < minimun) {
 						activity.total_tax = minimun;
@@ -173,7 +173,7 @@ statement.service('CalculateTax', [function(){
 			calculate: function() {
 				calculateTaxes();
 
-				if (scope.sttm_properties.fiscal_year > 2010) {
+				if (scope.sttm_properties.year > 2010) {
 					calculateMaxMinimun();
 				}
 
@@ -213,7 +213,7 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 
 		var init = (function() {
 			removeActivitiesRepeated();
-			var description = (scope.sttm_properties.fiscal_year > 2010) ? 'description' : 'name';
+			var description = (scope.sttm_properties.year > 2010) ? 'description' : 'name';
 			scope.totals = {};
 			_.each(_.union(scope.activities, scope.tax_activities), function(activity) {
 				activity.monto = (activity.monto) ? parseFloat(activity.monto) : 0;
@@ -252,15 +252,12 @@ statement.service('Activities', ['Specialized', 'CalculateTax', function(Special
 
 statement.controller('statementCtrl', ['$scope', 'StatementData', 'Activities', function($scope, StatementData, Activities) {
 	StatementData.have_discount_219 = StatementData.tax_discounts.length > 0;
-	StatementData.is_monthly = StatementData.sttm_properties.month !== "NULL";
+	StatementData.is_monthly = StatementData.sttm_properties.month > 0;
 	StatementData.sttm_old = (StatementData.sttm_old) ? parseFloat(StatementData.sttm_old) : 0;
 	StatementData.is_closing = StatementData.sttm_properties.closing;
 	angular.extend($scope, StatementData);
 	var activities = new Activities($scope);
 	angular.extend($scope, activities);
-
-	console.log(StatementData);
-	console.log($scope);
 
 	$scope.calculate();
 

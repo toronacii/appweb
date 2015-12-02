@@ -65,19 +65,6 @@ class Statement {
         return $final;
     }
 
-    public function show_step_specified_activities($sttm)
-    {
-        $year = $sttm[1];
-        $type = $sttm[0];
-
-        if ($year >= 2013 && $type == 'TRUE')
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public function to_array_pgsql_data($obj, $index = true)
     {
         $return = '{';
@@ -160,6 +147,7 @@ class StatementOption {
     public $type;
     public $month;
     public $year;
+    public $closing;
 
     public function __construct($string)
     {
@@ -168,6 +156,8 @@ class StatementOption {
         $this->type = $params[0];
         $this->month = (int)$params[1];
         $this->year = $params[2];
+
+        $this->closing = !!preg_match('/closing/i', $this->type);
     }
 
     public function toString()
@@ -206,10 +196,17 @@ class StatementOption {
 
             case self::CLOSING_YEAR :
 
-                return (($short) ? 'DJAC ' : 'Declaracion jurada de cierre anual ') . ($this->year - 1);
+                $title = ($short) ? 'DJAC ' : 'Declaracion jurada de cierre anual ';
+
+                break;
         }
 
         return "{$title} {$this->year}";
+    }
+
+    public function show_step_specified_activities()
+    {
+        return $this->year >= 2013;
     }
 
     private function get_month_name($month)
@@ -281,7 +278,7 @@ class SelectStatement {
 
         if ($today->format('Y') > Statement::YEAR_INIT_MONTHLY) 
         {
-            $return[] = new StatementOption(StatementOption::CLOSING_YEAR . $today->format('_0_Y'));
+            $return[] = new StatementOption(StatementOption::CLOSING_YEAR . "_0_" . ((int)$today->format('Y') - 1));
         }
 
         return $return;

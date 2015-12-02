@@ -58,11 +58,13 @@ class Api_model extends CI_Model {
 
         $this->args = $args;
 
+        if (ENVIRONMENT === 'development') 
+        {
+            $this->last_curl .= "?XDEBUG_SESSION_START=" . API_DEBUG;
+            $this->curl->option("TIMEOUT", 30000);
+        }
+
         $response = json_decode($this->curl->simple_post($this->last_curl, $this->args)); 
-
-        #var_dump(API_DIR . "/{$this->controller}/$method/$args", $this->curl->info) ;
-
-        #$this->last_curl = $this->curl->info['url'];
 
         if (isset($response->php_error) || $this->curl->error_code)
         {
@@ -78,8 +80,6 @@ class Api_model extends CI_Model {
             }
             return NULL;
         }
-
-        #var_dump($this->curl->error_code, $this->curl->error_string, $this->curl->info);
 
         return $response;
 
