@@ -812,8 +812,6 @@ class Planilla {
 
         extract($CI->statement->get_init_vars($data_planilla));
 
-        #dd($CI->statement->get_init_vars($data_planilla));
-
         $total_old = round($CI->declaraciones->get_total_sttm($data_planilla[0]->id_tax, $data_planilla[0]->type, $fiscal_year, $month), 2);
          $name_montly = "DETERMINACIÓN DE IMPUESTO ";
         if ($data_planilla[0]->type == 'TRUE'){ #DEFINITIVA
@@ -1075,10 +1073,10 @@ class Planilla {
 
         }
         //MONTO VARIANTE
-        $pdf->SetXY(-34, $pdf->GetY() + 1);
-        $pdf->Cell(50, 7, ($is_monthly && ! $is_closing) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
+        $pdf->SetXY(-34, $pdf->GetY() + 2);
+        $pdf->Cell(28, 7, ($is_monthly && ! $is_closing) ? '' : number_format(round($total_impuesto_reb, 2), 2, ',', '.'), x_, 1, 'R'); #TOTAL INGRESO - REBAJA
         
-        $pdf->SetY($pdf->GetY() + 2);
+        $pdf->SetY($pdf->GetY() + 3);
 
         #d($total_old);
 

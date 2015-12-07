@@ -237,7 +237,7 @@ $(document).ready(function() {
                 'success' : function (){
                     $('#textSubmit').val('liquidar');
                     $('#fDeclaraciones').attr('target', '_blank').submit();
-                    setTimeout("location.href='" + site_url + "/declaraciones'", 1);
+                    //setTimeout("location.href='" + site_url + "/declaraciones'", 1);
                 }
             };
         }

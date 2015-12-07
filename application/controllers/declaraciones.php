@@ -184,19 +184,19 @@ class Declaraciones extends MY_Controller {
     public function declarar(){
 
         $sttm_tax = $this->session->userdata('sttm_tax');
+        $tax_account_number = array_keys($sttm_tax['tax'])[0];
 
-        #dd($sttm_tax);
-
-        if (!$sttm_tax && (!(isset($_POST)) || empty($_POST))){
+        if (!$sttm_tax && (!(isset($_POST)) || empty($_POST)))
+        {
             $this->unset_userdata('sttm_tax');
             redirect (site_url ('declaraciones/cuentas'));
         }
 
-        $this->sttm_properties = $this->statement->get_sttm_properties($sttm_tax);
-        #dd($sttm_tax, $_POST, $this->sttm_properties, $this->statement->proccess_array($_POST['last_children']));
+        $this->sttm_properties = new StatementOption($sttm_tax['sttm']);
 
-        $tax_account_number = $sttm_tax['tax_account_number'];
+        
         $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
+
         $latLong = explode(',', $_POST['latLong']);
 
         if (isset($_POST['tax_discount']))
@@ -223,12 +223,11 @@ class Declaraciones extends MY_Controller {
         $data = array(
             'function' => array(
                 'id_tax' => $id_tax,
-                'type' => 'TRUE',
                 'fiscal_year' => $this->sttm_properties->year,
-                'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
-                'discount' => $discount,
+                'type' => $this->sttm_properties->type,
                 'month' => $this->sttm_properties->month,
-                'closing' => ($this->sttm_properties->closing) ? 'TRUE' : 'FALSE'
+                'activities' => $this->statement->to_array_pgsql_data($_POST['monto']),
+                'discount' => $discount
             ),
             'toolbar' => $_POST['toolbar'] + array('id_taxpayer' => $this->id_taxpayer),
             'maps' => array(
@@ -239,22 +238,12 @@ class Declaraciones extends MY_Controller {
             'activities_specified' => isset($_POST['last_children']) ? $this->statement->proccess_array($_POST['last_children']) : FALSE
         );
 
-        #echo serialize($data);
-
-        #dd($_POST, $data);
-
         $id_sttm_form = $this->declaraciones->save_statement($data);
-
-        #dd($this->declaraciones, $id_sttm_form);
-
-        #var_dump($id_sttm_form); exit;
 
         if ($id_sttm_form > 0){ #GUARDADO EXITOSAMENTE
 
             if ($_POST['textSubmit'] == 'liquidar'){
                 $id_sttm = $this->declaraciones->liquid_statement($id_sttm_form);
-
-                #dd($id_sttm, $this->declaraciones);
 
                 if ($id_sttm > 0){ #LIQUIDADO CON EXITO
                     $this->messages->add_message("Declaración liquidada exitosamente", "success");
@@ -266,7 +255,7 @@ class Declaraciones extends MY_Controller {
                     }
                     $this->messages->add_message($message);
                 }
-                #dd($id_sttm, $this->declaraciones);
+
             }else{
                 $this->messages->add_message("Declaración guardada exitosamente", "success");
             }
@@ -277,8 +266,6 @@ class Declaraciones extends MY_Controller {
             $this->messages->add_message($message);
         }
 
-        #$this->session->unset_userdata('sttm_tax');
-        #var_dump($id_sttm_form, @$id_sttm); exit;
 
         if ($this->messages->have_errors() || ! isset($id_sttm)){
             redirect(site_url('declaraciones/cuentas'));

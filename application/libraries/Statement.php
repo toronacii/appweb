@@ -33,6 +33,11 @@ class Statement {
         return new SelectStatement();
     }
 
+    public function get_month($month)
+    {
+        return $this->months_names[$month - 1];
+    }
+
     public function order_errors_declare_taxpayer_monthly($param)
     {
 
@@ -110,7 +115,7 @@ class Statement {
 
         $r->fiscal_year = $data_planilla[0]->fiscal_year;
         $r->month = $data_planilla[0]->month;
-        $r->is_monthly = is_numeric($r->month);
+        $r->is_monthly = $r->month > 0;
         $r->subtitulo = "DETERMINACIÓN DE IMPUESTO AÑO {$r->fiscal_year}";
         $r->month_text = "AÑO";
         $r->periodo_declarado = (object)[
@@ -206,7 +211,7 @@ class StatementOption {
 
     public function show_step_specified_activities()
     {
-        return $this->year >= 2013;
+        return $this->year >= 2013 && $this->type === self::YEARLY;
     }
 
     private function get_month_name($month)
