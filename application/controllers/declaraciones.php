@@ -53,6 +53,8 @@ class Declaraciones extends MY_Controller {
         $_SESSION['sttm_tax']['sttm'] = $param->toString();
 
         $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($param); 
+
+        $data['method'] = $param->closing ? 'crear_closing' : 'crear';
         
         $this->load->view('declaraciones/cuentas_view', $data);
         $this->load->view('footer');
@@ -179,6 +181,50 @@ class Declaraciones extends MY_Controller {
 
         $this->load->view('footer');
 
+    }
+
+    public function crear_closing($tax_account_number = NULL)
+    {
+        $sttm_tax = $this->session->userdata('sttm_tax');
+        
+        $this->sttm_properties = new StatementOption($sttm_tax['sttm']);
+
+        if ( !(
+                $tax_account_number && #NO EXISTE ALGUN PARAMETRO
+                is_numeric($tax_account_number) && #SON TIPOS DISTINTOS
+                $sttm_tax && #NO EXISTE LA SESION DE LA CUENTAS
+                array_key_exists($tax_account_number, $sttm_tax['tax']) #LA CUENTA ENVIADA NO PERTECNECE A LA DE LA SESION
+            ) || ! $this->sttm_properties->closing)
+
+            redirect (site_url ('declaraciones/cuentas'));
+
+        $sttm_tax['tax'] = array($tax_account_number => $sttm_tax['tax'][$tax_account_number]);
+        $sttm_tax['tax_account_number'] = $tax_account_number;
+        $this->session->set_userdata('sttm_tax', $sttm_tax);
+
+        $id_tax = $sttm_tax['tax'][$tax_account_number]->id_tax;
+
+        $header['arrayCss'] = array('sass/declaracion_cierre.min.css');
+        $header['arrayJs'] = array(
+            'lodash.min.js',
+            'angular/angular.min.js',
+            'angular/declaracion_cierre.js',
+            'number_format.js',
+            'round.js',
+            'validacionesToro.js'
+        );
+        $header['sidebar'] = 'menu/oficina_menu';
+        $header['show_breadcrumbs'] = FALSE;
+        $this->load->view('header', $header);
+
+        $data['data'] = [
+            'sttm_properties' => $this->sttm_properties,
+            'previous_statements' => $this->declaraciones->get_previous_statements($id_tax, $this->sttm_properties->year, $this->sttm_properties->month)
+        ];
+
+        $this->load->view('declaraciones/cierre/declaracion', $data);
+
+        $this->load->view('footer');
     }
 
     public function declarar(){

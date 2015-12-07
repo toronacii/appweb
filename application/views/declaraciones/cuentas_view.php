@@ -72,23 +72,13 @@
                             <?php else : ?>
                                 <?php $_SESSION['sttm_tax']['tax'][$index[0]] = (object)array('id_tax' => $index[1], 'id_sttm_form' => $index[2])?>
                                 <?php if ($index[2] == 0): ?>
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_add" title="Iniciar Declaración">
+                                    <a href="<?php echo site_url("declaraciones/{$method}/{$index[0]}") ?>" class="document_add" title="Iniciar Declaración">
                                         <span class=""></span>
                                     </a>
-                                    <!--
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="btn btn-info" title="Iniciar Declaración">
-                                        <span class="fa fa-file-o" style="font-size:1.5em"></span>
-                                    </a>
-                                    -->
                                 <?php else: ?>
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="document_edit" title="Modificar Declaración">
+                                    <a href="<?php echo site_url("declaraciones/{$method}/{$index[0]}") ?>" class="document_edit" title="Modificar Declaración">
                                         <span></span>
                                     </a>
-                                    <!--
-                                    <a href="<?php echo site_url("declaraciones/crear/{$index[0]}") ?>" class="btn btn-success" title="Modificar Declaración">
-                                        <span class="fa fa-pencil" style="font-size:1.5em"></span>
-                                    </a>
-                                    -->
                                 <?php endif; ?>
                             <?php endif; ?>
 
