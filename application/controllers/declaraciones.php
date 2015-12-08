@@ -219,7 +219,7 @@ class Declaraciones extends MY_Controller {
 
         $data['data'] = [
             'sttm_properties' => $this->sttm_properties,
-            'previous_statements' => $this->declaraciones->get_previous_statements($id_tax, $this->sttm_properties->year, $this->sttm_properties->month)
+            'previous_statements' => (array)$this->declaraciones->get_previous_statements($id_tax, $this->sttm_properties->year, $this->sttm_properties->month)
         ];
 
         $this->load->view('declaraciones/cierre/declaracion', $data);

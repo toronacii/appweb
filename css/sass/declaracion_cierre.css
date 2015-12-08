@@ -1,2 +1,24 @@
-﻿
+﻿div.table .row {
+  position: relative;
+  padding: 8px 0;
+  border-top: 1px solid #ddd; }
+  div.table .row .overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #E76A0B;
+    cursor: pointer;
+    padding: 8px 0; }
+    div.table .row .overlay span {
+      font-weight: bold; }
+  div.table .row.hover .overlay {
+    display: block; }
+div.table .head {
+  font-weight: bold;
+  border-top: none;
+  border-bottom: 1px solid #ddd; }
+
 /*# sourceMappingURL=declaracion_cierre.css.map */

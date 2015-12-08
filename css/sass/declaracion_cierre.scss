@@ -1,2 +1,36 @@
-﻿body {
+﻿div.table {
+
+    .row {
+        position: relative;
+        padding: 8px 0;
+        border-top: 1px solid #ddd;
+
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: #E76A0B;
+            cursor: pointer;
+            padding: 8px 0;
+
+            span {
+                font-weight: bold;
+            }
+
+        }
+
+        &.hover .overlay {
+            display: block;
+        }
+    }
+
+    .head {
+        font-weight:bold;
+        border-top: none;
+        border-bottom: 1px solid #ddd;
+    }
+
 }
