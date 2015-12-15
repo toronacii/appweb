@@ -130,6 +130,7 @@ class Declaraciones extends MY_Controller {
         $header['arrayJs'] = array(
             'lodash.min.js',
             'angular/angular.min.js',
+            'angular/utilities.js',
             'angular/declaraciones.js',
             'bootstrap/bootstrap-steps.js',
             'number_format.js',
@@ -208,6 +209,7 @@ class Declaraciones extends MY_Controller {
         $header['arrayJs'] = array(
             'lodash.min.js',
             'angular/angular.min.js',
+            'angular/utilities.js',
             'angular/declaracion_cierre.js',
             'number_format.js',
             'round.js',
@@ -225,6 +227,43 @@ class Declaraciones extends MY_Controller {
         $this->load->view('declaraciones/cierre/declaracion', $data);
 
         $this->load->view('footer');
+    }
+
+    public function declare_closing()
+    {
+        $sttm_tax = $this->session->userdata('sttm_tax');
+        $this->sttm_properties = new StatementOption($sttm_tax['sttm']);
+        $tax = $sttm_tax['tax'];
+        $id_tax = $tax[array_keys($tax)[0]]->id_tax;
+
+        $data = json_decode($_POST['data']);
+
+        $statements = $this->statement->to_array_pgsql($data->statements);
+
+        try
+        {
+        	$id_sttm_form = $this->statement->save_statement_closing(
+                $id_tax, 
+                $this->sttm_properties->year, 
+                $this->sttm_properties->type, 
+                $this->sttm_properties->month,  
+                $statements);
+
+            if ($data->action == 'liquid')
+            {
+                $this->statement->liquid_statement_closing($id_sttm_form);
+                $this->messages->add_message("Declaración realizada exitosamente", "success");
+            }
+
+        }
+        catch (Exception $exception)
+        {
+            $this->messages->add_message($exception->getMessage());
+        }
+        finally
+        {
+            redirect(site_url('declaraciones/cuentas'));    
+        }
     }
 
     public function declarar(){

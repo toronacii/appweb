@@ -1,4 +1,6 @@
-﻿div.table {
+﻿$row-change: antiquewhite;
+
+div.table {
 
     .row {
         position: relative;
@@ -25,6 +27,10 @@
         &.hover .overlay {
             display: block;
         }
+
+        &.changed {
+            background-color: $row-change;
+        }
     }
 
     .head {
@@ -33,4 +39,33 @@
         border-bottom: 1px solid #ddd;
     }
 
+}
+
+.modal {
+
+    [currency] {
+        max-width: 150px;
+        text-align:center;
+    }
+
+    .modal-lg {
+        width: 80%;
+    }
+
+}
+
+.input-span {
+    font-weight: bold;
+    background-color: #eeeeea;
+    text-align:center;
+}
+
+table {
+    th, td {
+        text-align:center;
+    }
+
+    td .form-control {
+        display:inline-block;
+    }
 }

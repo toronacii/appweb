@@ -16,9 +16,27 @@
       font-weight: bold; }
   div.table .row.hover .overlay {
     display: block; }
+  div.table .row.changed {
+    background-color: antiquewhite; }
 div.table .head {
   font-weight: bold;
   border-top: none;
   border-bottom: 1px solid #ddd; }
+
+.modal [currency] {
+  max-width: 150px;
+  text-align: center; }
+.modal .modal-lg {
+  width: 80%; }
+
+.input-span {
+  font-weight: bold;
+  background-color: #eeeeea;
+  text-align: center; }
+
+table th, table td {
+  text-align: center; }
+table td .form-control {
+  display: inline-block; }
 
 /*# sourceMappingURL=declaracion_cierre.css.map */

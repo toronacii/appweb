@@ -87,7 +87,7 @@ class Statement {
                 $value = $this->my_format_number($value);
             }
 
-            if (empty($value))
+            if ($value != 0 && empty($value))
             {
                 $value = "null";
             }
@@ -95,6 +95,24 @@ class Statement {
             $return .= "{" . ((!$index) ?: "$key, ") . "$value". "}, ";
         }
         return substr($return, 0, -2) . "}";
+    }
+
+    public function to_array_pgsql($obj)
+    {
+        if (is_object($obj)) $obj = (array)$obj;
+        if (is_array($obj) && count($obj) == 0) return null;
+
+        $return = [];
+
+        foreach($obj as $id1 => $element1)
+        {
+            foreach ($element1 as $id2 => $element2)
+            {
+                $return[] = "{" . "{$id1},{$id2},{$element2}" . "}";
+            }
+        }
+
+        return "{" . implode(",", $return) . "}";
     }
 
     public function my_format_number($number, $toEnglish = true)
@@ -136,7 +154,41 @@ class Statement {
         }
 
         return $return;
-    }    
+    }
+
+    public function save_statement_closing($id_tax, $fiscal_year, $type, $month, $statements = null) {
+
+        $id_sttm_form = $this->CI->declaraciones->save_statement_closing(
+            $id_tax, 
+            $fiscal_year, 
+            $type, 
+            $month,  
+            $statements);
+
+        switch ($id_sttm_form) 
+        {
+            case -2: throw new Exception("Debe ser una declaración de cierre", $id_sttm_form);
+            case -1: throw new Exception("No cumple con los requisitos para realizar esta declaración", $id_sttm_form);
+            case 0 : throw new Exception("Error al guardar declaracion, intente de nuevo mas tarde", $id_sttm_form);
+        }
+
+        return $id_sttm_form;
+    }
+
+    public function liquid_statement_closing($id_statement_form)
+    {
+        $liquid = $this->CI->declaraciones->liquid_statement_closing($id_statement_form);
+
+        switch ($liquid)
+        {
+            case -3:
+            case 0 : throw new Exception("Error al realizar declaracion, intente de nuevo mas tarde", $liquid);
+            case -2: throw new Exception("Debe ser una declaración de cierre", $liquid);
+            case -1: throw new Exception("No cumple con los requisitos para realizar esta declaración", $liquid);
+        }
+
+        return $liquid;
+    }
 
 }
 
