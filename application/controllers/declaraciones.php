@@ -37,36 +37,23 @@ class Declaraciones extends MY_Controller {
         $header['sidebar'] = 'menu/oficina_menu';
         $this->load->view('header',$header);
 
-        $this->statement->get_select_statement();
-
         $data['select'] = $this->statement->get_select_statement();
 
-        $params = explode('_', $data['select'][0]);
-
-        #d($data, $params);
+        $param = $data['select']->present;
 
         unset($_SESSION['sttm_tax']);
 
         if (isset($_POST) && !empty($_POST)){
-            $params = explode('_', $_POST['statement_filter']);
+            $param = new StatementOption($_POST['statement_filter']);
             $this->load->library('form_validation');
             $this->form_validation->set_rules('statement_filter', 'Filtro', 'trim');
             $this->form_validation->run();
         }
 
-        $_SESSION['sttm_tax']['sttm'] = $params;
+        $_SESSION['sttm_tax']['sttm'] = $param;
 
-        #var_dump($_SESSION['sttm_tax']);
-        #DECLARACIONES SIMPLES
-        if ($params[0] == 'TRUE')
-        {
-            $params[0] = 'NULL';
-        }
-        #dd($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0]));
-        $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($this->declaraciones->get_errors_declare_monthly($this->id_taxpayer, 'TRUE', $params[1], $params[0])); 
-        #d($this->id_taxpayer, 'TRUE', $params[1], $params[0]);
-        #d($data['declaraciones'], $params, $this->declaraciones);
-
+        $data['declaraciones'] = $this->statement->order_errors_declare_taxpayer_monthly($param); 
+        
         $this->load->view('declaraciones/cuentas_view', $data);
         $this->load->view('footer');
     }

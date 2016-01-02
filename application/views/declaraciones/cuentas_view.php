@@ -16,13 +16,27 @@
             <button class="btn btn-success pull-right" style="margin-left: 15px" id="button_statement_filter">Enviar</button>
             <span class="pull-right">
                 <select name="statement_filter" id="statement_filter" class="form-control">
-                    <?php foreach($select as $i => $sttm): $p = explode('_', $sttm);  ?>
-                    <?php if ($i == 1): ?><optgroup label="Declaraciones anteriores"><?php endif; ?>
-                        <option value="<?php echo $sttm ?>" <?php echo set_select('statement_filter', $sttm) ?>>
-                        <?php echo $this->statement->get_title_statement($p, true) ?>
+
+                    <option value="<?php echo $select->present ?>" <?php echo set_select('statement_filter', $select->present->toString()) ?>>
+                        <?php echo $select->present->get_title(true)  ?>
                     </option>
+
+                    <?php foreach([$select->special, $select->previous] as $object): ?>
+
+                        <optgroup label="<?php echo $object->optgroup ?>">
+
+                            <?php foreach($object->options as $option): ?>
+
+                                <option value="<?php echo $option ?>" <?php echo set_select('statement_filter', $option->toString()) ?>>
+                                    <?php echo $option->get_title(true)  ?>
+                                </option>
+
+                            <?php endforeach ?>
+
+                        </optgroup>
+
                     <?php endforeach; ?>
-                    </optgroup>
+
                 </select>
             </span>
         </h3>

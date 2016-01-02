@@ -30,58 +30,20 @@ class Statement {
     
     public function get_select_statement()
     {
-        return array_merge($this->_select_monthly(), $this->_select_simple());
+        return new SelectStatement();
     }
 
-    public function get_month($number)
+    public function order_errors_declare_taxpayer_monthly($param)
     {
-        return $this->months_names[$number -1];
-    }
 
-    public function get_title_statement($data_sttm, $short = false)
-    {
-        $year = $data_sttm[1];
-        $type_month = $data_sttm[0];
-        $closing = (isset($data_sttm[2]));
+        $errors = $this->CI->declaraciones->get_errors_declare_monthly($this->CI->id_taxpayer, $param->year, $param->month, $param->type);
 
-        if ($type_month == 'TRUE')
+        $final = [];
+        $return = [];
+
+        if ($errors) 
         {
-            $title = ($short) ? 'Definitiva' : 'Declaracion definitiva de ingresos brutos';
-        }
-        else
-        {
-            $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month($type_month);
-
-            if ($closing) {
-                $title = 'Declaración de cese de actividades económicas';
-            }
-
-        }
-
-        return $title . " " . $year;
-    }
-
-    private function _select_simple(){
-        $year_now = (int)date('Y');
-
-        for ($year = self::YEAR_INI; $year < self::YEAR_INIT_MONTHLY; $year++)
-        {
-            $return[] = "TRUE_" . $year;
-/*
-            if ($year + 1 < 2015 && ($year + 1 == $year_now || ($year == $year_now && $month_now >= 10))){
-                $return[] = 'FALSE_' . ($year + 1);
-            }
-*/
-        }
-        return array_reverse($return);
-    }
-
-    public function order_errors_declare_taxpayer_monthly($r)
-    {
-        $final = array();
-        if ($r) 
-        {
-            foreach ($r as $obj) {
+            foreach ($errors as $obj) {
                 $return[$obj->tax_account_number][] = $obj;
             }
             foreach ($return as $tan => $array) {
@@ -153,24 +115,7 @@ class Statement {
         return number_format($number, 2, ',', '.');
     }
 
-    private function _select_monthly()
-    {
-        $year_now = date('Y');
-        $month_now = date('m');
-        $not_aplicable = [];
-        $return = [];
-
-        for ($year = self::YEAR_INIT_MONTHLY; $year <= $year_now; $year++)
-        {
-            for ($month = self::MONTH_INIT_MONTHLY; $month <= 12; $month++)
-            {
-                if ($year < $year_now || $month < $month_now)
-                    $return[] = "{$month}_{$year}";
-            }
-        }
-
-        return array_reverse($return);
-    }
+    
 
     public function get_init_vars($data_planilla)
     {
@@ -199,6 +144,149 @@ class Statement {
         }
 
         return $return;
+    }    
+
+}
+
+class StatementOption {
+
+    const CLOSING_YEAR = 'YCLOSING';
+    const CLOSING_MONTH = 'MCLOSING';
+    const YEARLY = 'YEARLY';
+    const MONTHLY = 'MONTHLY';
+
+    private $MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    public $type;
+    public $month;
+    public $year;
+
+    public function __construct($string)
+    {
+        $params = explode("_", $string);
+
+        $this->type = $params[0];
+        $this->month = (int)$params[1];
+        $this->year = $params[2];
+    }
+
+    public function toString()
+    {
+        return "{$this->type}_{$this->month}_{$this->year}";
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
+    }
+
+    public function get_title($short = false)
+    {
+        $title = "";
+
+        switch ($this->type)
+        {
+            case self::YEARLY :
+
+                $title = ($short) ? 'Definitiva' : 'Declaracion definitiva de ingresos brutos';
+
+                break;
+
+            case self::MONTHLY :
+
+                $title = (($short) ? 'DJM ' : 'Declaracion jurada mensual de ingresos brutos ') . $this->get_month_name($this->month);
+
+                break;
+
+            case self::CLOSING_MONTH :
+
+                $title = (($short) ? 'DJC ' : 'Declaracion jurada de cese de actividades ') . $this->get_month_name($this->month);
+
+                break;
+
+            case self::CLOSING_YEAR :
+
+                return (($short) ? 'DJAC ' : 'Declaracion jurada de cierre anual ') . ($this->year - 1);
+        }
+
+        return "{$title} {$this->year}";
+    }
+
+    private function get_month_name($month)
+    {
+        return $this->MONTH_NAMES[$month - 1];
     }
 
 }
+
+class SelectStatement {
+    
+    public $present;
+
+    public $previous;
+
+    public $special;
+
+    public function __construct() 
+    {
+        $months = $this->select_monthly();
+        $simple = $this->select_simple();
+
+        $this->present = array_shift($months);
+
+        $this->previous = (object)[
+            "optgroup" => "Declaraciones Anteriores",
+            "options" => array_merge($months, $simple)
+        ];
+
+        $this->special = (object)[
+            "optgroup" => "Declaraciones Especiales",
+            "options" => $this->select_special()
+        ];
+    }
+
+    private function select_monthly()
+    {
+        $end = new DateTime('-1 month');
+        $begin = new DateTime();
+        $return = [];
+
+        for ($begin->setDate(Statement::YEAR_INIT_MONTHLY, Statement::MONTH_INIT_MONTHLY, 1); $begin < $end; $begin->modify('+1 month'))
+        {
+            $return[] = new StatementOption(StatementOption::MONTHLY . $begin->format("_m_Y"));
+        }
+
+        return array_reverse($return);
+    }
+
+    private function select_simple()
+    {
+        $return = [];
+
+        for ($year = Statement::YEAR_INI; $year < Statement::YEAR_INIT_MONTHLY; $year++)
+        {
+            $return[] = new StatementOption(StatementOption::YEARLY . "_0_" . $year);
+        }
+
+        return array_reverse($return);
+    }
+
+    private function select_special()
+    {
+        $today = new DateTime();
+
+        $return = [];
+        $return[] = new StatementOption(StatementOption::MONTHLY . $today->format('_m_Y'));
+        $return[] = new StatementOption(StatementOption::CLOSING_MONTH . $today->format('_m_Y'));
+
+        if ($today->format('Y') > Statement::YEAR_INIT_MONTHLY) 
+        {
+            $return[] = new StatementOption(StatementOption::CLOSING_YEAR . $today->format('_0_Y'));
+        }
+
+        return $return;
+    }
+
+}
+
+
